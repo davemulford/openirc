@@ -4,3 +4,4 @@ openirc
 Makefile
 moc*
 qrc*
+*.swp
