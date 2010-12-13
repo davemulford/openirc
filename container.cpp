@@ -1,5 +1,5 @@
 #include "container.h"
-#include "window.h"
+#include "statuswindow.h"
 
 Container::Container()
 {
@@ -13,4 +13,6 @@ Container::Container()
 void Container::newWindow()
 {
 	Window *window = new Window(this->mdiArea);
+	window->setTitle("Not Connected");
 }
+
