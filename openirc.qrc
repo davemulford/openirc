@@ -19,5 +19,8 @@
      <file>images/help.png</file>
      <file>images/dcc_chat.png</file>
      <file>images/dcc_send.png</file>
+     <file>images/leftarrow.png</file>
+     <file>images/rightarrow.png</file>
+     <file>images/home.png</file>
  </qresource>
  </RCC>

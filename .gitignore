@@ -5,3 +5,4 @@ Makefile
 moc*
 qrc*
 *.swp
+*.old*

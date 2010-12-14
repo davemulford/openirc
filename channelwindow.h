@@ -24,6 +24,7 @@ class ChannelWindow : public QMdiSubWindow
   	QTextEdit *chatBuffer;
 	QLineEdit *inputBuffer;
 	QListView *nickList;
+	QSplitter *chatSplitter;
 
 	QToolBar *toolbar;
 	QAction *channelInfoAction;

@@ -29,11 +29,11 @@ ChannelWindow::ChannelWindow(QWidget *parent)
 	// Create the chat section
 	this->chatBuffer = new QTextEdit(this->chatContainer);
 	this->nickList = new QListView(this->chatContainer);
+	this->chatSplitter = new QSplitter(this->chatContainer);
+	this->chatSplitter->addWidget(this->chatBuffer);
+	this->chatSplitter->addWidget(this->nickList);
 
-	this->nickList->setMaximumWidth(100);
-
-	this->chatLayout->addWidget(this->chatBuffer);
-	this->chatLayout->addWidget(this->nickList);
+	this->chatLayout->addWidget(this->chatSplitter);
 
 	this->inputBuffer = new QLineEdit(this->internalWidget);
 

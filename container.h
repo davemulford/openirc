@@ -3,13 +3,14 @@
 #define OPENIRC_CONTAINER_H
 
 #include <QtGui>
+#include "contextbar.h"
 
 class Container : public QMainWindow
 {
 	Q_OBJECT
   
   public:
-  	Container();
+  	Container(QWidget *parent = 0, Qt::WindowFlags flags = 0);
 
 	void newWindow(void);
 
@@ -22,6 +23,7 @@ class Container : public QMainWindow
 
   private:
   	QMdiArea *mdiArea;
+	ContextBar *contextBar;
 };
 
 #endif

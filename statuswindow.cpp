@@ -10,7 +10,7 @@ StatusWindow::StatusWindow(QWidget *parent)
 	this->mainBuffer = new QTextEdit(this);
 	this->inputBuffer = new QLineEdit(this);
 
-	this->toolbar = new QToolBar(this->internalWidget);
+	this->toolbar = new QToolBar(this);
 
 	this->newConnectionAction = new QAction(QIcon(":/images/new_connection.png"), tr(""), this->toolbar);
 	this->newConnectionAction->setToolTip(tr("New Connection"));
