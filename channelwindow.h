@@ -15,7 +15,15 @@ class ChannelWindow : public QMdiSubWindow
 	void inputBufferReturnPressed();
 	
   private:
-  	QTextEdit *mainBuffer;
+	QHBoxLayout *chatLayout;
+  	QVBoxLayout *mainLayout;
+	QHBoxLayout *toolbarLayout;
+
+	QWidget *chatContainer;
+	QWidget *internalWidget;
+	QWidget *toolbarContainer;
+
+  	QTextEdit *chatBuffer;
 	QLineEdit *inputBuffer;
 	QListView *nickList;
 };

@@ -22,10 +22,7 @@ class StatusWindow : public QMdiSubWindow
 	QTextEdit *mainBuffer;
 	QLineEdit *inputBuffer;
 
-  	QWidget *toolbarButtons;
-	QHBoxLayout *toolbarLayout;
-	QPushButton *btnNew;
-	QPushButton *btnConnectDisconnect;
+	QToolBar *toolbar;
 };
 
 #endif

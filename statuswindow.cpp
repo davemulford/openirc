@@ -10,24 +10,9 @@ StatusWindow::StatusWindow(QWidget *parent)
 	this->mainBuffer = new QTextEdit(this);
 	this->inputBuffer = new QLineEdit(this);
 
-	// Create the toolbar buttons
-	this->toolbarButtons = new QWidget(this);
-	this->toolbarLayout = new QHBoxLayout(this->toolbarButtons);
-	this->toolbarLayout->setAlignment(Qt::AlignLeft);
-
-	this->btnNew = new QPushButton(QIcon(":/images/new_connection.png"), tr(""), this->toolbarButtons);
-	this->btnNew->setMaximumWidth(32);
-	this->btnNew->setMinimumWidth(32);
-	this->btnNew->setMaximumHeight(32);
-	this->btnNew->setMinimumHeight(32);
-	this->toolbarLayout->addWidget(this->btnNew);
-
-	this->btnConnectDisconnect = new QPushButton(QIcon(":/images/connect.png"), tr(""), this->toolbarButtons);
-	this->btnConnectDisconnect->setMaximumWidth(32);
-	this->btnConnectDisconnect->setMinimumWidth(32);
-	this->btnConnectDisconnect->setMaximumHeight(32);
-	this->btnConnectDisconnect->setMinimumHeight(32);
-	this->toolbarLayout->addWidget(this->btnConnectDisconnect);
+	this->toolbar = new QToolBar(this);
+	this->toolbar->addAction(new QAction(QIcon(":/images/new_connection.png"), tr(""), this->toolbar));
+	this->toolbar->addAction(new QAction(QIcon(":/images/connect.png"), tr(""), this->toolbar));
 
 	// The internalWidget is the 'container' for all the controls in the window.
 	// That's just how a QMdiSubWindow works.
@@ -42,7 +27,7 @@ StatusWindow::StatusWindow(QWidget *parent)
 	this->layout->setSpacing(0);
 
 	// We add the controls to the vertical layout
-	layout->addWidget(this->toolbarButtons);
+	layout->addWidget(this->toolbar);
 	layout->addWidget(this->mainBuffer);
 	layout->addWidget(this->inputBuffer);
 
@@ -54,8 +39,6 @@ StatusWindow::StatusWindow(QWidget *parent)
 
 	// Connect any signals/slots we want
 	connect(this->inputBuffer, SIGNAL(returnPressed()), this, SLOT(inputBufferReturnPressed()));
-	connect(this->btnNew, SIGNAL(released()), this, SLOT(newButtonClicked()));
-	connect(this->btnConnectDisconnect, SIGNAL(released()), this, SLOT(connectDisconnectButtonClicked()));
 }
 
 void StatusWindow::setTitle(const QString &title)
