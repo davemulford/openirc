@@ -8,26 +8,26 @@
 class Container : public QMainWindow
 {
 	Q_OBJECT
-  
-  public:
-  	Container(QWidget *parent = 0, Qt::WindowFlags flags = 0);
 
-	void newWindow(void);
+	public:
+		Container(QWidget *parent = 0, Qt::WindowFlags flags = 0);
 
-	/*newQueryWindow();
-	newStatusWindow();
-	newChannelWindow();*/
+		void newWindow(void);
 
-  /*protected:
-     void closeEvent(QCloseEvent *event);*/
+		/*newQueryWindow();
+		  newStatusWindow();
+		  newChannelWindow();*/
 
-  private:
-  	QMdiArea *mdiArea;
-	ContextBar *contextBar;
-        QStatusBar *statusbar;
-        QToolBar *toolbar;
+		/*protected:
+		  void closeEvent(QCloseEvent *event);*/
 
-	QAction *MainAction;
+	private:
+		QMdiArea *mdiArea;
+		ContextBar *contextBar;
+		QStatusBar *statusbar;
+		QToolBar *toolbar;
+
+		QAction *MainAction;
 
 };
 
