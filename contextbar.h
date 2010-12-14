@@ -17,6 +17,7 @@ class ContextBar : public QDockWidget
 
   private:
   	QHBoxLayout *layout;
+	QWidget *internalWidget;
 
   	QToolBar *toolbar;
 	QAction *previousWindowAction;

@@ -5,16 +5,21 @@ ContextBar::ContextBar(QWidget *parent, Qt::WindowFlags flags)
   : QDockWidget(parent, flags)
 {
 	this->setFeatures(QDockWidget::NoDockWidgetFeatures);
+
 	// Create the horizontal layout
-	this->layout = new QHBoxLayout(this);
+	this->internalWidget = new QWidget(this);
+	this->layout = new QHBoxLayout(this->internalWidget);
+
+	this->layout->setSpacing(0);
+	this->layout->setContentsMargins(0,0,0,0);
 
 	// Create the toolbar
 	this->toolbar = new QToolBar(this);
 
-	this->previousWindowAction = new QAction(QIcon(":/images/leftarray.png"), tr(""), this->toolbar);
+	this->previousWindowAction = new QAction(QIcon(":/images/leftarrow.png"), tr(""), this->toolbar);
 	this->toolbar->addAction(this->previousWindowAction);
 
-	this->nextWindowAction = new QAction(QIcon(":/images/rightarray.png"), tr(""), this->toolbar);
+	this->nextWindowAction = new QAction(QIcon(":/images/rightarrow.png"), tr(""), this->toolbar);
 	this->toolbar->addAction(this->nextWindowAction);
 
 	this->homeAction = new QAction(QIcon(":/images/home.png"), tr(""), this->toolbar);
@@ -25,5 +30,6 @@ ContextBar::ContextBar(QWidget *parent, Qt::WindowFlags flags)
 
 	this->layout->addWidget(this->toolbar);
 	this->layout->addWidget(this->buffer);
-	this->setLayout(this->layout);
+
+	this->setWidget(this->internalWidget);
 }

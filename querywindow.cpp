@@ -15,7 +15,7 @@ QueryWindow::QueryWindow(QWidget *parent)
 	this->layout->setContentsMargins(0,0,0,0);
 
 	// Create the toolbar
-	this->toolbar = new QToolBar(this->internalWidget);
+	this->toolbar = new QToolBar(this);
 
 	this->whoisAction = new QAction(QIcon(":/images/whois.png"), tr(""), this->toolbar);
 	this->whoisAction->setToolTip(tr("Whois"));
