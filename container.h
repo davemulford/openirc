@@ -24,6 +24,11 @@ class Container : public QMainWindow
   private:
   	QMdiArea *mdiArea;
 	ContextBar *contextBar;
+        QStatusBar *statusbar;
+        QToolBar *toolbar;
+
+	QAction *MainAction;
+
 };
 
 #endif
