@@ -11,8 +11,14 @@ StatusWindow::StatusWindow(QWidget *parent)
 	this->inputBuffer = new QLineEdit(this);
 
 	this->toolbar = new QToolBar(this->internalWidget);
-	this->toolbar->addAction(new QAction(QIcon(":/images/new_connection.png"), tr(""), this->toolbar));
-	this->toolbar->addAction(new QAction(QIcon(":/images/connect.png"), tr(""), this->toolbar));
+
+	this->newConnectionAction = new QAction(QIcon(":/images/new_connection.png"), tr(""), this->toolbar);
+	this->newConnectionAction->setToolTip(tr("New Connection"));
+	this->toolbar->addAction(this->newConnectionAction);
+
+	this->connectDisconnectAction = new QAction(QIcon(":/images/connect.png"), tr(""), this->toolbar);
+	this->connectDisconnectAction->setToolTip(tr("Connect"));
+	this->toolbar->addAction(this->connectDisconnectAction);
 
 	// The internalWidget is the 'container' for all the controls in the window.
 	// That's just how a QMdiSubWindow works.

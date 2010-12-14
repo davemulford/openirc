@@ -21,11 +21,14 @@ class ChannelWindow : public QMdiSubWindow
 	QWidget *chatContainer;
 	QWidget *internalWidget;
 
-	QToolBar *toolbar;
-
   	QTextEdit *chatBuffer;
 	QLineEdit *inputBuffer;
 	QListView *nickList;
+
+	QToolBar *toolbar;
+	QAction *channelInfoAction;
+	QAction *channelStatsAction;
+	QAction *cycleChannelAction;
 };
 
 #endif

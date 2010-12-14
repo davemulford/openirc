@@ -13,9 +13,18 @@ ChannelWindow::ChannelWindow(QWidget *parent)
 
 	// Create the toolbar
 	this->toolbar = new QToolBar(this);
-	this->toolbar->addAction(new QAction(QIcon(":/images/info.png"), tr(""), this->toolbar));
-	this->toolbar->addAction(new QAction(QIcon(":/images/chanstats.png"), tr(""), this->toolbar));
-	this->toolbar->addAction(new QAction(QIcon(":/images/reload.png"), tr(""), this->toolbar));
+
+	this->channelInfoAction = new QAction(QIcon(":/images/info.png"), tr(""), this->toolbar);
+	this->channelInfoAction->setToolTip(tr("Channel Info"));
+	this->toolbar->addAction(this->channelInfoAction);
+
+	this->channelStatsAction = new QAction(QIcon(":/images/chanstats.png"), tr(""), this->toolbar);
+	this->channelStatsAction->setToolTip(tr("Channel Stats"));
+	this->toolbar->addAction(this->channelStatsAction);
+
+	this->cycleChannelAction = new QAction(QIcon(":/images/reload.png"), tr(""), this->toolbar);
+	this->cycleChannelAction->setToolTip(tr("Cycle Channel"));
+	this->toolbar->addAction(this->cycleChannelAction);
 
 	// Create the chat section
 	this->chatBuffer = new QTextEdit(this->chatContainer);

@@ -17,5 +17,7 @@
      <file>images/ctcp_version.png</file>
      <file>images/ctcp_ping.png</file>
      <file>images/help.png</file>
+     <file>images/dcc_chat.png</file>
+     <file>images/dcc_send.png</file>
  </qresource>
  </RCC>

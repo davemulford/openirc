@@ -19,7 +19,14 @@ class QueryWindow : public QMdiSubWindow
 	QVBoxLayout *layout;
 	QTextEdit *chatBuffer;
 	QLineEdit *inputBuffer;
+
   	QToolBar *toolbar;
+	QAction *whoisAction;
+	QAction *ctcpPingAction;
+	QAction *ctcpVersionAction;
+	QAction *dccChatAction;
+	QAction *dccSendAction;
+	QAction *addNotifyAction;
 };
 
 #endif

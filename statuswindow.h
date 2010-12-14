@@ -19,9 +19,13 @@ class StatusWindow : public QMdiSubWindow
   private:
 	QWidget *internalWidget;
 	QVBoxLayout *layout;
+
 	QTextEdit *mainBuffer;
 	QLineEdit *inputBuffer;
+
 	QToolBar *toolbar;
+	QAction *newConnectionAction;
+	QAction *connectDisconnectAction;
 };
 
 #endif

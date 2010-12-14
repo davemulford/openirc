@@ -16,12 +16,36 @@ QueryWindow::QueryWindow(QWidget *parent)
 
 	// Create the toolbar
 	this->toolbar = new QToolBar(this->internalWidget);
-	this->toolbar->addAction(new QAction(QIcon(":/images/whois.png"), tr(""), this->toolbar));
+
+	this->whoisAction = new QAction(QIcon(":/images/whois.png"), tr(""), this->toolbar);
+	this->whoisAction->setToolTip(tr("Whois"));
+	this->toolbar->addAction(this->whoisAction);
+
 	this->toolbar->addSeparator();
-	this->toolbar->addAction(new QAction(QIcon(":/images/ctcp_ping.png"), tr(""), this->toolbar));
-	this->toolbar->addAction(new QAction(QIcon(":/images/ctcp_version.png"), tr(""), this->toolbar));
+
+	this->ctcpPingAction = new QAction(QIcon(":/images/ctcp_ping.png"), tr(""), this->toolbar);
+	this->ctcpPingAction->setToolTip(tr("Ping"));
+	this->toolbar->addAction(this->ctcpPingAction);
+
+	this->ctcpVersionAction = new QAction(QIcon(":/images/ctcp_version.png"), tr(""), this->toolbar);
+	this->ctcpVersionAction->setToolTip(tr("Version"));
+	this->toolbar->addAction(this->ctcpVersionAction);
+
 	this->toolbar->addSeparator();
-	this->toolbar->addAction(new QAction(QIcon(":/images/add_notify.png"), tr(""), this->toolbar));
+
+	this->dccChatAction = new QAction(QIcon(":/images/dcc_chat.png"), tr(""), this->toolbar);
+	this->dccChatAction->setToolTip(tr("DCC Chat"));
+	this->toolbar->addAction(this->dccChatAction);
+
+	this->dccSendAction = new QAction(QIcon(":/images/dcc_send.png"), tr(""), this->toolbar);
+	this->dccSendAction->setToolTip(tr("DCC Send"));
+	this->toolbar->addAction(this->dccSendAction);
+
+	this->toolbar->addSeparator();
+
+	this->addNotifyAction = new QAction(QIcon(":/images/add_notify.png"), tr(""), this->toolbar);
+	this->addNotifyAction->setToolTip(tr("Add To Notify"));
+	this->toolbar->addAction(this->addNotifyAction);
 
 	// Create the text and line edit controls
 	this->chatBuffer = new QTextEdit(this->internalWidget);
