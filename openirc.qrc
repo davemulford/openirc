@@ -9,5 +9,8 @@
      <file>images/new_connection.png</file>
      <file>images/connect.png</file>
      <file>images/disconnect.png</file>
+     <file>images/reload.png</file>
+     <file>images/chanstats.png</file>
+     <file>images/info.png</file>
  </qresource>
  </RCC>

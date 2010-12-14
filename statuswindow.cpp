@@ -25,7 +25,7 @@ StatusWindow::StatusWindow(QWidget *parent)
 	// the parent of the vertical layout.
 	this->layout = new QVBoxLayout(this->internalWidget);
 	this->layout->setSpacing(0);
-        this->layout->setContentsMargins(0,0,0,0);
+	this->layout->setContentsMargins(0,0,0,0);
 
 	// We add the controls to the vertical layout
 	layout->addWidget(this->toolbar);

@@ -17,11 +17,11 @@ class ChannelWindow : public QMdiSubWindow
   private:
 	QHBoxLayout *chatLayout;
   	QVBoxLayout *mainLayout;
-	QHBoxLayout *toolbarLayout;
 
 	QWidget *chatContainer;
 	QWidget *internalWidget;
-	QWidget *toolbarContainer;
+
+	QToolBar *toolbar;
 
   	QTextEdit *chatBuffer;
 	QLineEdit *inputBuffer;
