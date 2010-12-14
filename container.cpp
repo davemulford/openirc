@@ -7,6 +7,15 @@
 Container::Container(QWidget *parent, Qt::WindowFlags flags)
   : QMainWindow(parent, flags)
 {
+        this->toolbar = new QToolBar(this);
+        this->toolbar->setObjectName(QString::fromUtf8("toolBar"));
+
+	this->MainAction = new QAction(QIcon(":/images/whois.png"), tr(""), this->toolbar);
+	this->MainAction->setToolTip(tr("Whois"));
+	this->toolbar->addAction(this->MainAction);
+
+        this->addToolBar(Qt::TopToolBarArea, toolbar);
+
 	// Create the dock window
 	//this->contextBar = new ContextBar(this, 0);
 	//this->addDockWidget(Qt::TopDockWidgetArea, this->contextBar);
@@ -14,6 +23,10 @@ Container::Container(QWidget *parent, Qt::WindowFlags flags)
 	// Create the mdi area
 	this->mdiArea = new QMdiArea(this);
 	this->setCentralWidget(this->mdiArea);
+
+        this->statusbar = new QStatusBar(this);
+        this->statusbar->setObjectName(QString::fromUtf8("statusbar"));
+        this->setStatusBar(statusbar);
 
 	this->newWindow();
 }
