@@ -12,5 +12,10 @@
      <file>images/reload.png</file>
      <file>images/chanstats.png</file>
      <file>images/info.png</file>
+     <file>images/whois.png</file>
+     <file>images/add_notify.png</file>
+     <file>images/ctcp_version.png</file>
+     <file>images/ctcp_ping.png</file>
+     <file>images/help.png</file>
  </qresource>
  </RCC>

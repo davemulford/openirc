@@ -3,7 +3,6 @@
 #define OPENIRC_CONTAINER_H
 
 #include <QtGui>
-#include "statuswindow.h"
 
 class Container : public QMainWindow
 {

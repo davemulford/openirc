@@ -21,7 +21,6 @@ class StatusWindow : public QMdiSubWindow
 	QVBoxLayout *layout;
 	QTextEdit *mainBuffer;
 	QLineEdit *inputBuffer;
-
 	QToolBar *toolbar;
 };
 

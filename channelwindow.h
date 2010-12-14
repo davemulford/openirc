@@ -8,7 +8,7 @@ class ChannelWindow : public QMdiSubWindow
 	Q_OBJECT
 
   public:
-  	ChannelWindow(QWidget *parent);
+  	ChannelWindow(QWidget *parent = 0);
 	void setTitle(const QString &title);
 
   public slots:
