@@ -22,5 +22,10 @@
      <file>images/leftarrow.png</file>
      <file>images/rightarrow.png</file>
      <file>images/home.png</file>
+     <file>images/configure.png</file>
+     <file>images/tile_vertical.png</file>
+     <file>images/tile_horizontal.png</file>
+     <file>images/tile_cascade.png</file>
+     <file>images/search.png</file>
  </qresource>
  </RCC>

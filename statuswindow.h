@@ -2,6 +2,7 @@
 #define OPENIRC_STATUSWINDOW_H
 
 #include <QtGui>
+#include "ircclient.h"
 
 class StatusWindow : public QMdiSubWindow
 {
@@ -10,6 +11,11 @@ class StatusWindow : public QMdiSubWindow
   public:
   	StatusWindow(QWidget *parent = 0);
 	void setTitle(const QString &title);
+
+	IRCClient *client();
+	void setClient(IRCClient *);
+
+	void appendToMainBuffer(const QString &);
 
   public slots:
 	void inputBufferReturnPressed();
@@ -26,6 +32,8 @@ class StatusWindow : public QMdiSubWindow
 	QToolBar *toolbar;
 	QAction *newConnectionAction;
 	QAction *connectDisconnectAction;
+
+	IRCClient *_client;
 };
 
 #endif

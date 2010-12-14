@@ -1,4 +1,8 @@
 #include "statuswindow.h"
+#include "irccommandparser.h"
+
+#include <iostream>
+using namespace std;
 
 StatusWindow::StatusWindow(QWidget *parent)
   : QMdiSubWindow(parent, 0) 
@@ -53,9 +57,41 @@ void StatusWindow::setTitle(const QString &title)
 	this->setWindowTitle(title);
 }
 
+IRCClient *StatusWindow::client()
+{
+	return(this->_client);
+}
+
+void StatusWindow::setClient(IRCClient *client)
+{
+	this->_client = client;
+}
+
+void StatusWindow::appendToMainBuffer(const QString &string)
+{
+	this->mainBuffer->append(string);
+}
+
 void StatusWindow::inputBufferReturnPressed()
 {
-	this->mainBuffer->append(this->inputBuffer->text());
+	QString inputText = this->inputBuffer->text();
+
+	IRCCommandParser *parser = new IRCCommandParser(inputText);
+
+	if ((parser->type() == IRCCommandParser::OfflineCommand) && (parser->command() == "SERVER")) {
+		QStringList serverArgs = parser->argList();
+
+		if (serverArgs.isEmpty()) {
+			this->mainBuffer->append(tr("!!! /server: two arguments possible: host (required), port (optional)"));
+		} else {
+			QString host = serverArgs.at(0);
+			int port = (serverArgs.count() > 1 ? (serverArgs.at(1).toInt()) : 6667);
+			this->mainBuffer->append(tr("--- Connecting to server..."));
+			this->_client->connectToHost(host, port);
+		}
+	}
+
+	// Clear the input buffer
 	this->inputBuffer->clear();
 }
 

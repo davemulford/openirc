@@ -1,6 +1,5 @@
 openirc
 *.o
-*.pro
 Makefile
 moc*
 qrc*
