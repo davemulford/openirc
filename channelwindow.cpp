@@ -37,6 +37,11 @@ ChannelWindow::ChannelWindow(QWidget *parent)
 	this->chatSplitter->addWidget(this->chatBuffer);
 	this->chatSplitter->addWidget(this->nickList);
 
+	QList<int> splitterSizes;
+
+	splitterSizes << 300 << 100;
+	this->chatSplitter->setSizes(splitterSizes);
+
 	this->chatLayout->addWidget(this->chatSplitter);
 
 	this->inputBuffer = new QLineEdit(this->internalWidget);
