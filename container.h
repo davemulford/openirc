@@ -8,6 +8,7 @@
 #include "statuswindow.h"
 #include "contextbar.h"
 #include "ircclient.h"
+#include "inifile.h"
 
 class Container : public QMainWindow
 {
@@ -60,6 +61,9 @@ class Container : public QMainWindow
 	QList<StatusWindow *> statusWindows;
 	QList<QMdiSubWindow *> channelWindows;
 	QList<QMdiSubWindow *> queryWindows;
+
+	IniFile *configFile;
+	void readConfigFile(const QString &filename = "openirc.ini");
 };
 
 #endif

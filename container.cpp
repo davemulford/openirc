@@ -1,6 +1,3 @@
-#include <iostream>
-using namespace std;
-
 #include "container.h"
 
 #include "statuswindow.h"
@@ -10,16 +7,16 @@ using namespace std;
 Container::Container(QWidget *parent, Qt::WindowFlags flags)
   : QMainWindow(parent, flags)
 {
-        this->menu_File_Exit = new QAction(this);
-        this->menubar = new QMenuBar(this);
-        this->menu_File = new QMenu(this->menubar);
-        this->setMenuBar(this->menubar);
+	this->menu_File_Exit = new QAction(this);
+	this->menubar = new QMenuBar(this);
+	this->menu_File = new QMenu(this->menubar);
+	this->setMenuBar(this->menubar);
 
-        this->menubar->addAction(this->menu_File->menuAction());
-        this->menu_File->addAction(this->menu_File_Exit);
+	this->menubar->addAction(this->menu_File->menuAction());
+	this->menu_File->addAction(this->menu_File_Exit);
 
-        this->menu_File->setTitle(QApplication::translate("MainWindow", "&File", 0, QApplication::UnicodeUTF8));
-        this->menu_File_Exit->setText(QApplication::translate("MainWindow", "E&xit", 0, QApplication::UnicodeUTF8));
+	this->menu_File->setTitle(QApplication::translate("MainWindow", "&File", 0, QApplication::UnicodeUTF8));
+	this->menu_File_Exit->setText(QApplication::translate("MainWindow", "E&xit", 0, QApplication::UnicodeUTF8));
 
 	/*this->toolbar = new QToolBar(this);
 	this->toolbar->setObjectName(QString::fromUtf8("toolBar"));
@@ -49,6 +46,7 @@ Container::Container(QWidget *parent, Qt::WindowFlags flags)
 	connect(this->contextBar, SIGNAL(previousWindowClicked()), this, SLOT(previousWindowButtonClicked()));
 	connect(this->contextBar, SIGNAL(nextWindowClicked()), this, SLOT(nextWindowButtonClicked()));
 
+	this->readConfigFile();
 	this->newStatusWindow();
 }
 
@@ -75,6 +73,11 @@ void Container::newStatusWindow()
 
 	QueryWindow *queryWindow = new QueryWindow(this->mdiArea);
 	queryWindow->setTitle(tr("@Query Window"));*/
+}
+
+void Container::readConfigFile(const QString &filename)
+{
+	this->configFile = new IniFile(filename);
 }
 
 void Container::tileHorizontalButtonClicked()
@@ -115,8 +118,6 @@ void Container::connected(IRCClient *client)
 {
 	int statusWindowsCount = statusWindows.count();
 
-	cout << "Connected to server!" << endl;
-
 	for (int i = 0; i < statusWindowsCount; i++) {
 		StatusWindow *statusWindow = statusWindows.at(i);
 		if (statusWindow->client() == client) {
@@ -129,8 +130,6 @@ void Container::connected(IRCClient *client)
 void Container::disconnected(IRCClient *client)
 {
 	int statusWindowsCount = statusWindows.count();
-
-	cout << "Disconnected from server!" << endl;
 
 	for (int i = 0; i < statusWindowsCount; i++) {
 		StatusWindow *statusWindow = statusWindows.at(i);
@@ -155,8 +154,6 @@ void Container::ircError(IRCClient *client, QAbstractSocket::SocketError error)
 void Container::incomingData(IRCClient *client, const QString &data) // FIXME: Remove this later
 {
 	int statusWindowsCount = statusWindows.count();
-
-	cout << "Incoming data event triggered!" << endl;
 
 	for (int i = 0; i < statusWindowsCount; i++) {
 		StatusWindow *statusWindow = statusWindows.at(i);

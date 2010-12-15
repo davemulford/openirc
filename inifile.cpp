@@ -12,7 +12,6 @@ QStringList IniFile::groups()
 	QHash<QString, QHash<QString, QString> >::const_iterator groupIterator = this->configItems.constBegin();
 
 	for (groupIterator = this->configItems.constBegin(); groupIterator!= this->configItems.constEnd(); groupIterator++) {
-		qDebug() << groupIterator.key();
 		groups.append(groupIterator.key());
 	}
 
