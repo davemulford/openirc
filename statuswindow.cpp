@@ -70,6 +70,8 @@ void StatusWindow::setClient(IRCClient *client)
 void StatusWindow::appendToMainBuffer(const QString &string)
 {
 	this->mainBuffer->append(string);
+	QScrollBar *sb = this->mainBuffer->verticalScrollBar();
+	sb->setValue(sb->maximum());
 }
 
 void StatusWindow::inputBufferReturnPressed()
