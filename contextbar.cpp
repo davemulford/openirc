@@ -3,8 +3,19 @@
 ContextBar::ContextBar(QWidget *parent, Qt::WindowFlags flags)
   : QDockWidget(parent, flags)
 {
-	this->setFeatures(QDockWidget::NoDockWidgetFeatures);
-	this->setFixedHeight(50);
+        //not sure if we wanna keep this but it makes the docked widget expandable with a slider
+        QSizePolicy sizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+        sizePolicy.setHorizontalStretch(0);
+        sizePolicy.setVerticalStretch(0);
+        sizePolicy.setHeightForWidth(this->sizePolicy().hasHeightForWidth());
+        this->setSizePolicy(sizePolicy);
+
+        this->setFeatures(QDockWidget::NoDockWidgetFeatures | QDockWidget::DockWidgetVerticalTitleBar);
+        //make a blank qwidget for the dockwidget titlebar so the size is 0 instead of the nasty default
+        QWidget* titleWidget = new QWidget(this);
+        this->setTitleBarWidget(titleWidget);
+
+	//this->setFixedHeight(50);
 
 	// Create the horizontal layout
 	this->internalWidget = new QWidget(this);
