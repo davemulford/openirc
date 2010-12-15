@@ -10,6 +10,17 @@ using namespace std;
 Container::Container(QWidget *parent, Qt::WindowFlags flags)
   : QMainWindow(parent, flags)
 {
+        this->menu_File_Exit = new QAction(this);
+        this->menubar = new QMenuBar(this);
+        this->menu_File = new QMenu(this->menubar);
+        this->setMenuBar(this->menubar);
+
+        this->menubar->addAction(this->menu_File->menuAction());
+        this->menu_File->addAction(this->menu_File_Exit);
+
+        this->menu_File->setTitle(QApplication::translate("MainWindow", "&File", 0, QApplication::UnicodeUTF8));
+        this->menu_File_Exit->setText(QApplication::translate("MainWindow", "E&xit", 0, QApplication::UnicodeUTF8));
+
 	/*this->toolbar = new QToolBar(this);
 	this->toolbar->setObjectName(QString::fromUtf8("toolBar"));
 

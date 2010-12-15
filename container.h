@@ -44,6 +44,10 @@ class Container : public QMainWindow
 	//void privateMessageReceived(IRCClient *client, const QString &nick, const QString &message);
 
   private:
+        QMenuBar *menubar;
+        QMenu *menu_File;
+        QAction *menu_File_Exit;
+
 	QMdiArea *mdiArea;
 	ContextBar *contextBar;
 	QStatusBar *statusbar;
