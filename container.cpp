@@ -123,6 +123,7 @@ void Container::connected(IRCClient *client)
 		if (statusWindow->client() == client) {
 			statusWindow->appendToMainBuffer("--- Connected to server");
 			//client->changeNick("mw007\n\rUSER mw007 mw007 irc.webchat.org :mw");
+			client->sendRawMessage(tr("NICK mw007\nUSER mw mw irc.webchat.org :mw\n"));
 		}
 	}
 }

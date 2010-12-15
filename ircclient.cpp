@@ -24,7 +24,9 @@ void IRCClient::changeNick(const QString &newNick)
 
 void IRCClient::sendRawMessage(const QString &rawMessage)
 {
-	this->write(rawMessage.toAscii());
+	QString message = QString(rawMessage);
+	message.append("\n");
+	this->write(message.toAscii());
 }
 
 void IRCClient::connectedToIRCHost()
