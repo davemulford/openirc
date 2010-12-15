@@ -2,16 +2,57 @@
 #define OPENIRC_OPTIONSWINDOW_H
 
 #include <QtGui>
+#include "inifile.h"
 
 class OptionsWindow : public QDialog
 {
   Q_OBJECT
 
   public:
-  	OptionsWindow(QWidget *parent = 0, Qt::WindowFlags flags = 0);
+  	OptionsWindow(IniFile *optionsFile, QWidget *parent = 0, Qt::WindowFlags flags = 0);
+	~OptionsWindow();
+
+	void loadOptionsFromFile(IniFile *optionsFile);
 
   private:
-	QTabWidget *tabWidget;
+  	IniFile *optionsFile;
+
+	QTabWidget *tabContainer;
+	QVBoxLayout *tabLayout;
+
+	QWidget *setupTab;
+	QVBoxLayout *setupLayout;
+
+	QWidget *generalTab;
+
+	// User info section
+	QGroupBox *userInfoGroup;
+	QHBoxLayout *userInfoLayout;
+	QLabel *userInfoImage;
+	QWidget *userInfoFormContainer;
+	QFormLayout *userInfoFormLayout;
+	QLabel *nickLabel;
+	QLineEdit *nick;
+	QLabel *alternateLabel;
+	QLineEdit *alternate;
+	QLabel *emailLabel;
+	QLineEdit *email;
+	QLabel *realNameLabel;
+	QLineEdit *realName;
+
+	// IRC Server section
+	QGroupBox *ircServerGroup;
+	QHBoxLayout *ircServerLayout;
+	QLabel *ircServerImage;
+	QWidget *ircServerFormContainer;
+	QFormLayout *ircServerFormLayout;
+	QLabel *serverLabel;
+	QLineEdit *server;
+	QLabel *portLabel;
+	QLineEdit *port;
+
+
+	/*QTabWidget *tabWidget;
 	QWidget *tab;
 	QGroupBox *groupBox;
 	QLabel *label;
@@ -44,7 +85,7 @@ class OptionsWindow : public QDialog
 	QPushButton *pushButton_3;
 	QLabel *label_11;
 	QPushButton *pushButton_4;
-	QPushButton *pushButton_5;
+	QPushButton *pushButton_5;*/
 };
 
 #endif

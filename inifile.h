@@ -8,14 +8,16 @@ class IniFile
   public:
   	IniFile(const QString &filename);
 
+	void save(const QString &filename);
+	void setValue(QString groupName, QString keyName, QString value);
+
 	QStringList groups();
 	QStringList keys(const QString &groupName);
 	QString value(const QString &groupName, const QString &keyName);
 
   private:
-  	QHash<QString, QHash<QString, QString> > configItems;
-
   	void parseFile(const QString &filename);
+  	QHash<QString, QHash<QString, QString> > configItems;
 };
 
 #endif

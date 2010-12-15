@@ -38,6 +38,52 @@ QString IniFile::value(const QString &groupName, const QString &keyName)
 	return(this->configItems.value(groupName).value(keyName));
 }
 
+void IniFile::setValue(QString groupName, QString keyName, QString value)
+{
+	this->configItems[groupName][keyName] = value;
+}
+
+void IniFile::save(const QString &filename)
+{
+	GKeyFile *keyFile = g_key_file_new();
+
+	if (g_key_file_load_from_file(keyFile, filename.toLocal8Bit().constData(), G_KEY_FILE_NONE, 0 /* no error handling */) == FALSE) {
+		g_key_file_free(keyFile);
+		return;
+	}
+
+	// Take all the values from the IniFile and put it into
+	// the GKeyFile structure.
+	QStringList groups = this->groups();
+
+	QStringList::const_iterator groupIter;
+	for (groupIter = groups.constBegin(); groupIter != groups.constEnd(); groupIter++) {
+		QString groupName = *groupIter;
+		QStringList keys = this->keys(groupName);
+
+		QStringList::const_iterator keyIter;
+		for (keyIter = keys.constBegin(); keyIter != keys.constEnd(); keyIter++) {
+			QString keyName = *keyIter;
+			QString value = this->value(groupName, keyName);
+
+			g_key_file_set_value(keyFile, groupName.toLocal8Bit().constData(), keyName.toLocal8Bit().constData(), value.toLocal8Bit().constData());
+		}
+	}
+
+	// Save our GKeyFile to a file
+	gsize keyFileDataLength;
+	gchar *keyFileData = g_key_file_to_data(keyFile, &keyFileDataLength, 0 /* no error handler */);
+
+	QFile file(filename);
+	if (file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+		QTextStream out(&file);
+		out << keyFileData;
+	}
+
+	g_free(keyFileData);
+	g_key_file_free(keyFile);
+}
+
 void IniFile::parseFile(const QString &filename)
 {
 	gchar **groups;

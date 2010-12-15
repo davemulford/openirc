@@ -1,6 +1,86 @@
 #include "optionswindow.h"
 
-OptionsWindow::OptionsWindow(QWidget *parent, Qt::WindowFlags flags)
+OptionsWindow::OptionsWindow(IniFile *optionsFile, QWidget *parent, Qt::WindowFlags flags)
+  : QDialog(parent, flags)
+{
+	this->setFixedSize(500, 350);
+
+	// Setup the tab widgets
+	this->tabContainer = new QTabWidget();
+	this->tabLayout = new QVBoxLayout(this);
+
+	this->setupTab = new QWidget();
+	this->setupLayout = new QVBoxLayout(this->setupTab);
+
+	// User info section
+	this->userInfoGroup = new QGroupBox(tr("User Information"), this->setupTab);
+
+	this->userInfoLayout = new QHBoxLayout(this->userInfoGroup);
+	this->userInfoLayout->setAlignment(Qt::AlignTop | Qt::AlignLeft);
+
+	this->userInfoImage = new QLabel();
+	this->userInfoImage->setPixmap(QPixmap(tr(":/images/config-userinfo.png")));
+	this->userInfoLayout->addWidget(this->userInfoImage);
+	this->userInfoLayout->addSpacing(20);
+
+	this->userInfoFormContainer = new QWidget();
+	this->userInfoFormLayout = new QFormLayout(this->userInfoFormContainer);
+
+	this->nickLabel = new QLabel(tr("Nickname:"));
+	this->nick = new QLineEdit();
+	this->userInfoFormLayout->addRow(this->nickLabel, this->nick);
+
+	this->alternateLabel = new QLabel(tr("Alternate:"));
+	this->alternate = new QLineEdit();
+	this->userInfoFormLayout->addRow(this->alternateLabel, this->alternate);
+
+	this->emailLabel = new QLabel(tr("Email:"));
+	this->email = new QLineEdit();
+	this->userInfoFormLayout->addRow(this->emailLabel, this->email);
+
+	this->realNameLabel = new QLabel(tr("IRC Name:"));
+	this->realName = new QLineEdit();
+	this->userInfoFormLayout->addRow(this->realNameLabel, this->realName);
+
+	this->userInfoLayout->addWidget(this->userInfoFormContainer);
+
+	// IRC Server section
+	this->ircServerGroup = new QGroupBox(tr("IRC Server"), this->setupTab);
+
+	this->ircServerLayout = new QHBoxLayout(this->ircServerGroup);
+	this->ircServerLayout->setAlignment(Qt::AlignTop | Qt::AlignLeft);
+
+	this->ircServerImage = new QLabel();
+	this->ircServerImage->setPixmap(QPixmap(tr(":/images/connect.png")));
+	this->ircServerLayout->addWidget(this->ircServerImage);
+	this->ircServerLayout->addSpacing(20);
+
+	this->ircServerFormContainer = new QWidget();
+	this->ircServerFormLayout = new QFormLayout(this->ircServerFormContainer);
+
+	this->serverLabel = new QLabel(tr("Server:"));
+	this->server = new QLineEdit();
+	this->ircServerFormLayout->addRow(this->serverLabel, this->server);
+
+	this->portLabel = new QLabel(tr("Port:"));
+	this->port = new QLineEdit();
+	this->ircServerFormLayout->addRow(this->portLabel, this->port);
+
+	this->ircServerLayout->addWidget(this->ircServerFormContainer);
+
+	this->setupLayout->addWidget(this->userInfoGroup);
+	this->setupLayout->addWidget(this->ircServerGroup);
+
+	this->tabContainer->addTab(this->setupTab, QString());
+	this->tabContainer->setTabText(0, tr("Setup"));
+	//this->tabContainer->setTabText(1, tr("General"));
+
+	this->tabLayout->addWidget(this->tabContainer);
+	this->loadOptionsFromFile(optionsFile);
+
+}
+
+/*OptionsWindow::OptionsWindow(QWidget *parent, Qt::WindowFlags flags)
   : QDialog(parent, flags)
 {
 	this->setFixedSize(391, 356);
@@ -109,4 +189,36 @@ OptionsWindow::OptionsWindow(QWidget *parent, Qt::WindowFlags flags)
         this->tabWidget->setTabText(tabWidget->indexOf(tab_2), QApplication::translate("Dialog", "General", 0, QApplication::UnicodeUTF8));
         this->pushButton_4->setText(QApplication::translate("Dialog", "Ok", 0, QApplication::UnicodeUTF8));
         this->pushButton_5->setText(QApplication::translate("Dialog", "Cancel", 0, QApplication::UnicodeUTF8));
+}*/
+
+OptionsWindow::~OptionsWindow()
+{
+	this->optionsFile->setValue("UserInfo", "nick", this->nick->text());
+	this->optionsFile->setValue("UserInfo", "alternate", this->alternate->text());
+	this->optionsFile->setValue("UserInfo", "email", this->email->text());
+	this->optionsFile->setValue("UserInfo", "realName", this->realName->text());
+
+	this->optionsFile->setValue("IrcServer", "server", this->server->text());
+	this->optionsFile->setValue("IrcServer", "port", this->port->text());
+
+	this->optionsFile->save("openirc.ini");
+}
+
+void OptionsWindow::loadOptionsFromFile(IniFile *optionsFile)
+{
+	if (optionsFile != 0) {
+
+		this->optionsFile = optionsFile;
+
+		// User info
+		this->nick->setText(optionsFile->value("UserInfo", "nick"));
+		this->alternate->setText(optionsFile->value("UserInfo", "alternate"));
+		this->email->setText(optionsFile->value("UserInfo", "email"));
+		this->realName->setText(optionsFile->value("UserInfo", "realName"));
+
+		// Server info
+		this->server->setText(optionsFile->value("IrcServer", "server"));
+		this->port->setText(optionsFile->value("IrcServer", "port"));
+
+	}
 }
