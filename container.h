@@ -27,6 +27,8 @@ class Container : public QMainWindow
 	  void closeEvent(QCloseEvent *event);*/
 
   public slots:
+  	void optionsButtonClicked();
+
   	void tileHorizontalButtonClicked();
   	void tileCascadeButtonClicked();
 

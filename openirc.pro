@@ -15,6 +15,7 @@ HEADERS += channelwindow.h \
            inifile.h \
            ircclient.h \
            irccommandparser.h \
+           optionswindow.h \
            querywindow.h \
            statuswindow.h
 SOURCES += channelwindow.cpp \
@@ -24,6 +25,7 @@ SOURCES += channelwindow.cpp \
            ircclient.cpp \
            irccommandparser.cpp \
            main.cpp \
+           optionswindow.cpp \
            querywindow.cpp \
            statuswindow.cpp
 RESOURCES += openirc.qrc

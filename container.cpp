@@ -3,6 +3,7 @@
 #include "statuswindow.h"
 #include "channelwindow.h"
 #include "querywindow.h"
+#include "optionswindow.h"
 
 Container::Container(QWidget *parent, Qt::WindowFlags flags)
   : QMainWindow(parent, flags)
@@ -41,6 +42,7 @@ Container::Container(QWidget *parent, Qt::WindowFlags flags)
 	this->setStatusBar(statusbar);
 
 	// Connect the contextbar signals
+	connect(this->contextBar, SIGNAL(optionsClicked()), this, SLOT(optionsButtonClicked()));
 	connect(this->contextBar, SIGNAL(tileHorizontalClicked()), this, SLOT(tileHorizontalButtonClicked()));
 	connect(this->contextBar, SIGNAL(tileCascadeClicked()), this, SLOT(tileCascadeButtonClicked()));
 	connect(this->contextBar, SIGNAL(previousWindowClicked()), this, SLOT(previousWindowButtonClicked()));
@@ -78,6 +80,12 @@ void Container::newStatusWindow()
 void Container::readConfigFile(const QString &filename)
 {
 	this->configFile = new IniFile(filename);
+}
+
+void Container::optionsButtonClicked()
+{
+	OptionsWindow optionsWindow;
+	optionsWindow.exec();
 }
 
 void Container::tileHorizontalButtonClicked()
