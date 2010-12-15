@@ -27,5 +27,9 @@
      <file>images/tile_horizontal.png</file>
      <file>images/tile_cascade.png</file>
      <file>images/search.png</file>
+     <file>images/config-ctcps.png</file>
+     <file>images/config-customize.png</file>
+     <file>images/config-home.png</file>
+     <file>images/config-userinfo.png</file>
  </qresource>
  </RCC>
