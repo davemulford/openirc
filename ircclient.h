@@ -14,7 +14,11 @@ class IRCClient : public QTcpSocket
 	void joinChannel(const QString &channel);
 	void partChannel(const QString &channel);
 
+	void changeNick(const QString &newNick);
 	void sendPrivateMessage(const QString &nick, const QString &message);
+
+
+	void sendRawMessage(const QString &rawMessage);
 
   Q_SIGNALS:
 	void connected(IRCClient *client);

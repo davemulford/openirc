@@ -89,6 +89,8 @@ void StatusWindow::inputBufferReturnPressed()
 			this->mainBuffer->append(tr("--- Connecting to server..."));
 			this->_client->connectToHost(host, port);
 		}
+	} else if (parser->type() == IRCCommandParser::IRCMessage) {
+		this->_client->sendRawMessage(parser->command());
 	}
 
 	// Clear the input buffer

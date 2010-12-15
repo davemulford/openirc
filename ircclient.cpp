@@ -2,7 +2,7 @@
 
 IRCClient::IRCClient(QObject *parent, const QString &server, const int port)
   : QTcpSocket(parent)
- {
+{
 	 // Connect the signals and slots
 	connect(this, SIGNAL(readyRead()), this, SLOT(dataReceived()));
 	connect(this, SIGNAL(connected()), this, SLOT(connectedToIRCHost()));
@@ -12,7 +12,20 @@ IRCClient::IRCClient(QObject *parent, const QString &server, const int port)
 	 if (server != 0) {
 		 // TODO: Connect to the server
 	 }
- }
+}
+
+void IRCClient::changeNick(const QString &newNick)
+{
+	QString changeNickString("NICK ");
+	changeNickString.append(newNick);
+
+	this->write(changeNickString.toAscii());
+}
+
+void IRCClient::sendRawMessage(const QString &rawMessage)
+{
+	this->write(rawMessage.toAscii());
+}
 
 void IRCClient::connectedToIRCHost()
 {

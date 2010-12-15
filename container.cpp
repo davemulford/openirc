@@ -110,6 +110,7 @@ void Container::connected(IRCClient *client)
 		StatusWindow *statusWindow = statusWindows.at(i);
 		if (statusWindow->client() == client) {
 			statusWindow->appendToMainBuffer("--- Connected to server");
+			//client->changeNick("mw007\n\rUSER mw007 mw007 irc.webchat.org :mw");
 		}
 	}
 }

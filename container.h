@@ -43,8 +43,6 @@ class Container : public QMainWindow
 	void incomingData(IRCClient *client, const QString &data); // FIXME: Remove this later
 	//void privateMessageReceived(IRCClient *client, const QString &nick, const QString &message);
 
-
-
   private:
 	QMdiArea *mdiArea;
 	ContextBar *contextBar;
