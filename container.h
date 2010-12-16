@@ -18,6 +18,7 @@ class Container : public QMainWindow
 	Container(QWidget *parent = 0, Qt::WindowFlags flags = 0);
 
 	void newStatusWindow(void);
+	void newQueryWidow(IRCClient *client, const QString &queryName);
 
 	/*newQueryWindow();
 	  newStatusWindow();

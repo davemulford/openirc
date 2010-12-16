@@ -85,6 +85,22 @@ void Container::newStatusWindow()
 	queryWindow->setTitle(tr("@Query Window"));*/
 }
 
+void Container::newQueryWidow(IRCClient *client, const QString &queryName)
+{
+	if (client != 0) {
+
+		// Create the query window
+		QueryWindow *queryWindow = new QueryWindow();
+		QHash<QString, QMdiSubWindow *> windowHash;
+
+		// Insert the query window into the window hash
+		windowHash.insert(queryName, queryWindow);
+		this->windows.insert(client->cid, windowHash);
+
+		// TODO: Connect any signals to slots
+	}
+}
+
 void Container::readConfigFile(const QString &filename)
 {
 	this->configFile = new IniFile(filename);
@@ -99,7 +115,7 @@ void Container::optionsButtonClicked()
 void Container::serversButtonClicked()
 {
 	IniFile *serversFile = new IniFile("servers.ini");
-	ServersWindow serversWindow(serversFile);//(/*this->configFile*/);
+	ServersWindow serversWindow(serversFile);
 	serversWindow.exec();
 }
 
