@@ -80,6 +80,7 @@ void Container::newStatusWindow()
 	connect(client, SIGNAL(disconnected(IRCClient *)), this, SLOT(disconnected(IRCClient *)));
 	connect(client, SIGNAL(ircError(IRCClient *, QAbstractSocket::SocketError error)), this, SLOT(ircError(IRCClient *, QAbstractSocket::SocketError error)));
 	connect(client, SIGNAL(privateMessageReceived(IRCClient *, const QString &, const QString &, const QString &)), this, SLOT(privateMessageReceived(IRCClient *, const QString &, const QString &, const QString &)));
+	connect(client, SIGNAL(channelMessageReceived(IRCClient *, const QString &, const QString &, const QString &, const QString &)), this, SLOT(channelMessageReceived(IRCClient *, const QString &, const QString &, const QString &, const QString &)));
 	connect(client, SIGNAL(incomingData(IRCClient *, const QString &)), this, SLOT(incomingData(IRCClient *, const QString &)));
 
 	// connect the new status button to new status window
@@ -112,6 +113,25 @@ QueryWindow *Container::newQueryWindow(IRCClient *client, const QString &queryNa
 	return(queryWindow);
 }
 
+ChannelWindow *Container::newChannelWindow(IRCClient *client, const QString &chanName)
+{
+	ChannelWindow *chanWindow = 0;
+
+	if ((client != 0) && (this->windows.contains(client->cid))) {
+
+		// Create the query window
+		chanWindow = new ChannelWindow();
+		chanWindow->setTitle(chanName);
+		this->mdiArea->addSubWindow(chanWindow);
+
+		this->windows[client->cid].insert(chanName, chanWindow);
+		chanWindow->show();
+
+		// TODO: Connect any signals to slots
+	}
+
+	return(chanWindow);
+}
 void Container::readConfigFile(const QString &filename)
 {
 	this->configFile = new IniFile(filename);
@@ -246,6 +266,19 @@ void Container::privateMessageReceived(IRCClient *client, const QString &nick, c
 	}
 
 	queryWindow->appendBuffer("<" + nick + "> " + message);
+}
+
+void Container::channelMessageReceived(IRCClient *client, const QString &chan, const QString &nick, const QString &address, const QString &message)
+{
+	ChannelWindow *chanWindow;
+
+	if (!this->windows[client->cid].contains(chan)) {
+		chanWindow = this->newChannelWindow(client, chan);
+	} else {
+		chanWindow = (ChannelWindow *)this->windows[client->cid][chan];
+	}
+
+	chanWindow->appendBuffer("<" + nick + "> " + message);
 }
 
 void Container::incomingData(IRCClient *client, const QString &data) // FIXME: Remove this later

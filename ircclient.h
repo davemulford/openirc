@@ -31,6 +31,7 @@ class IRCClient : public QTcpSocket
 	void channelParted(IRCClient *client, const QString &channel, const QString &nick);
 
 	void privateMessageReceived(IRCClient *client, const QString &nick, const QString &address, const QString &message);
+	void channelMessageReceived(IRCClient *client, const QString &chan, const QString &nick, const QString &address, const QString &message);
 
 	void incomingData(IRCClient *client, const QString &data); // FIXME: Remove this later
 
