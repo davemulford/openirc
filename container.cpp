@@ -84,7 +84,7 @@ void Container::readConfigFile(const QString &filename)
 
 void Container::optionsButtonClicked()
 {
-	OptionsWindow optionsWindow(this->configFile);
+	OptionsWindow optionsWindow;//(/*this->configFile*/);
 	optionsWindow.exec();
 }
 
