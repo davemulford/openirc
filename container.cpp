@@ -99,7 +99,7 @@ QueryWindow *Container::newQueryWindow(IRCClient *client, const QString &queryNa
 	if ((client != 0) && (this->windows.contains(client->cid))) {
 
 		// Create the query window
-		queryWindow = new QueryWindow();
+		queryWindow = new QueryWindow(client, queryName);
 		queryWindow->setTitle(queryName + " (" + address + ")");
 		this->mdiArea->addSubWindow(queryWindow);
 
@@ -245,7 +245,7 @@ void Container::privateMessageReceived(IRCClient *client, const QString &nick, c
 		queryWindow = (QueryWindow *)this->windows[client->cid][nick];
 	}
 
-	queryWindow->appendBuffer(message);
+	queryWindow->appendBuffer("<" + nick + "> " + message);
 }
 
 void Container::incomingData(IRCClient *client, const QString &data) // FIXME: Remove this later

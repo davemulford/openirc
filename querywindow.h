@@ -2,13 +2,14 @@
 #define OPENIRC_QUERYWINDOW_H
 
 #include <QtGui>
+#include "ircclient.h"
 
 class QueryWindow : public QMdiSubWindow
 {
 	Q_OBJECT
 
   public:
-  	QueryWindow(QWidget *parent = 0);
+  	QueryWindow(IRCClient *client, const QString &otherNick, QWidget *parent = 0);
 	void setTitle(const QString &title);
 	void appendBuffer(const QString &string);
 
@@ -28,6 +29,9 @@ class QueryWindow : public QMdiSubWindow
 	QAction *dccChatAction;
 	QAction *dccSendAction;
 	QAction *addNotifyAction;
+
+	IRCClient *client;
+	QString otherNick;
 };
 
 #endif

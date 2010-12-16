@@ -1,10 +1,13 @@
 #include "querywindow.h"
 
-QueryWindow::QueryWindow(QWidget *parent)
+QueryWindow::QueryWindow(IRCClient *client, const QString &otherNick, QWidget *parent)
   : QMdiSubWindow(parent, 0)
 {
 	// Set the minimum size of the query window
 	this->setMinimumSize(250, 250);
+
+	this->client = client;
+	this->otherNick = otherNick;
 
 	// Create internalWidget
 	this->internalWidget = new QWidget(this);
@@ -58,6 +61,9 @@ QueryWindow::QueryWindow(QWidget *parent)
 
 	// Set the widget of the window to internalWidget
 	this->setWidget(this->internalWidget);
+
+	// Connect signals to slots
+	connect(this->inputBuffer, SIGNAL(returnPressed()), this, SLOT(inputBufferReturnPressed()));
 }
 
 void QueryWindow::setTitle(const QString &title)
@@ -70,7 +76,15 @@ void QueryWindow::appendBuffer(const QString &string)
 	this->chatBuffer->append(string);
 }
 
-
 void QueryWindow::inputBufferReturnPressed()
 {
+	QString msg = this->inputBuffer->text();
+
+	if (!msg.startsWith("/")) {
+		// TODO: Use the IRCCommandParser to check for any commands
+		this->client->sendRawMessage("PRIVMSG " + this->otherNick + " :" + msg);
+		this->chatBuffer->append("<me>" + msg);
+	}
+
+	this->inputBuffer->clear();
 }
