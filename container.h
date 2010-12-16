@@ -9,6 +9,7 @@
 #include "contextbar.h"
 #include "ircclient.h"
 #include "inifile.h"
+#include "querywindow.h"
 
 class Container : public QMainWindow
 {
@@ -18,7 +19,7 @@ class Container : public QMainWindow
 	Container(QWidget *parent = 0, Qt::WindowFlags flags = 0);
 
 	void newStatusWindow(void);
-	void newQueryWidow(IRCClient *client, const QString &queryName);
+	QueryWindow *newQueryWindow(IRCClient *client, const QString &queryName, const QString &address);
 
 	/*newQueryWindow();
 	  newStatusWindow();
@@ -45,8 +46,9 @@ class Container : public QMainWindow
   	//void channelJoined(IRCClient *client, const QString &channel, const QString &nick);
 	//void channelParted(IRCClient *client, const QString &channel, const QString &nick);
 
+	void privateMessageReceived(IRCClient *client, const QString &nick, const QString &address, const QString &message);
+
 	void incomingData(IRCClient *client, const QString &data); // FIXME: Remove this later
-	//void privateMessageReceived(IRCClient *client, const QString &nick, const QString &message);
 
   private:
 	QMenuBar *menubar;

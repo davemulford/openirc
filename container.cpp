@@ -2,7 +2,6 @@
 
 #include "statuswindow.h"
 #include "channelwindow.h"
-#include "querywindow.h"
 #include "optionswindow.h"
 #include "serverswindow.h"
 #include "pcrecpp.h"
@@ -76,6 +75,7 @@ void Container::newStatusWindow()
 	connect(client, SIGNAL(connected(IRCClient *)), this, SLOT(connected(IRCClient *)));
 	connect(client, SIGNAL(disconnected(IRCClient *)), this, SLOT(disconnected(IRCClient *)));
 	connect(client, SIGNAL(ircError(IRCClient *, QAbstractSocket::SocketError error)), this, SLOT(ircError(IRCClient *, QAbstractSocket::SocketError error)));
+	connect(client, SIGNAL(privateMessageReceived(IRCClient *, const QString &, const QString &, const QString &)), this, SLOT(privateMessageReceived(IRCClient *, const QString &, const QString &, const QString &)));
 	connect(client, SIGNAL(incomingData(IRCClient *, const QString &)), this, SLOT(incomingData(IRCClient *, const QString &)));
 
 	/*ChannelWindow *channelWindow = new ChannelWindow(this->mdiArea);
@@ -85,12 +85,14 @@ void Container::newStatusWindow()
 	queryWindow->setTitle(tr("@Query Window"));*/
 }
 
-void Container::newQueryWidow(IRCClient *client, const QString &queryName)
+QueryWindow *Container::newQueryWindow(IRCClient *client, const QString &queryName, const QString &address)
 {
+	QueryWindow *queryWindow = 0;
+
 	if (client != 0) {
 
 		// Create the query window
-		QueryWindow *queryWindow = new QueryWindow();
+		queryWindow = new QueryWindow();
 		QHash<QString, QMdiSubWindow *> windowHash;
 
 		// Insert the query window into the window hash
@@ -99,6 +101,8 @@ void Container::newQueryWidow(IRCClient *client, const QString &queryName)
 
 		// TODO: Connect any signals to slots
 	}
+
+	return(queryWindow);
 }
 
 void Container::readConfigFile(const QString &filename)
@@ -216,6 +220,19 @@ void Container::ircError(IRCClient *client, QAbstractSocket::SocketError error)
 		}
 	}
 */
+}
+
+void Container::privateMessageReceived(IRCClient *client, const QString &nick, const QString &address, const QString &message)
+{
+	QueryWindow *queryWindow;
+
+	if (!this->windows[client->cid].contains(nick)) {
+		queryWindow = this->newQueryWindow(client, nick, address);
+	} else {
+		queryWindow = (QueryWindow *)this->windows[client->cid][nick];
+	}
+
+	queryWindow->appendBuffer(message);
 }
 
 void Container::incomingData(IRCClient *client, const QString &data) // FIXME: Remove this later

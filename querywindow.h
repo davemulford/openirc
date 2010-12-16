@@ -10,6 +10,7 @@ class QueryWindow : public QMdiSubWindow
   public:
   	QueryWindow(QWidget *parent = 0);
 	void setTitle(const QString &title);
+	void appendBuffer(const QString &string);
 
   public slots:
   	void inputBufferReturnPressed();

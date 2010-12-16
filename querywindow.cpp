@@ -65,6 +65,12 @@ void QueryWindow::setTitle(const QString &title)
 	this->setWindowTitle(title);
 }
 
+void QueryWindow::appendBuffer(const QString &string)
+{
+	this->chatBuffer->append(string);
+}
+
+
 void QueryWindow::inputBufferReturnPressed()
 {
 }
