@@ -48,9 +48,9 @@ class Container : public QMainWindow
 	//void privateMessageReceived(IRCClient *client, const QString &nick, const QString &message);
 
   private:
-        QMenuBar *menubar;
-        QMenu *menu_File;
-        QAction *menu_File_Exit;
+	QMenuBar *menubar;
+	QMenu *menu_File;
+	QAction *menu_File_Exit;
 
 	QMdiArea *mdiArea;
 	ContextBar *contextBar;
@@ -61,9 +61,11 @@ class Container : public QMainWindow
 
 	QList<IRCClient *> clients;
 
-	QList<StatusWindow *> statusWindows;
-	QList<QMdiSubWindow *> channelWindows;
-	QList<QMdiSubWindow *> queryWindows;
+	QHash<int, QHash<QString, QMdiSubWindow *> > windows;
+
+	//QList<StatusWindow *> statusWindows;
+	//QList<QMdiSubWindow *> channelWindows;
+	//QList<QMdiSubWindow *> queryWindows;
 
 	IniFile *configFile;
 	void readConfigFile(const QString &filename = "openirc.ini");

@@ -9,6 +9,7 @@ class IRCClient : public QTcpSocket
 	Q_OBJECT
 
   public:
+  	static int cid;
   	IRCClient(QObject *parent = 0, const QString &server = 0, const int port = 6667);
 
 	void joinChannel(const QString &channel);
@@ -16,7 +17,6 @@ class IRCClient : public QTcpSocket
 
 	void changeNick(const QString &newNick);
 	void sendPrivateMessage(const QString &nick, const QString &message);
-
 
 	void sendRawMessage(const QString &rawMessage);
 
@@ -31,7 +31,6 @@ class IRCClient : public QTcpSocket
 
 	void incomingData(IRCClient *client, const QString &data); // FIXME: Remove this later
 	void privateMessageReceived(IRCClient *client, const QString &nick, const QString &message);
-
 
   public slots:
   	void connectedToIRCHost();

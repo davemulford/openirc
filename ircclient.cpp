@@ -1,8 +1,12 @@
 #include "ircclient.h"
 
+int IRCClient::cid;
+
 IRCClient::IRCClient(QObject *parent, const QString &server, const int port)
   : QTcpSocket(parent)
 {
+	this->cid++;
+
 	 // Connect the signals and slots
 	connect(this, SIGNAL(readyRead()), this, SLOT(dataReceived()));
 	connect(this, SIGNAL(connected()), this, SLOT(connectedToIRCHost()));

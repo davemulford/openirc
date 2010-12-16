@@ -64,7 +64,12 @@ void Container::newStatusWindow()
 	IRCClient *client = new IRCClient(this);
 	statusWindow->setClient(client);
 
-	this->statusWindows.append(statusWindow);
+	QHash<QString, QMdiSubWindow *> windowHash;
+	windowHash.insert("__STATUS__", statusWindow);
+
+	this->windows.insert(client->cid, windowHash);
+
+	//this->statusWindows.append(statusWindow);
 
 	// Connect the IRCClient signals to the Container slots
 	connect(client, SIGNAL(connected(IRCClient *)), this, SLOT(connected(IRCClient *)));
@@ -133,22 +138,31 @@ void Container::nextWindowButtonClicked()
 
 void Container::connected(IRCClient *client)
 {
-	int statusWindowsCount = statusWindows.count();
+	//int statusWindowsCount = statusWindows.count();
+	StatusWindow *statusWindow = (StatusWindow *)this->windows[client->cid]["__STATUS__"];
 
-	for (int i = 0; i < statusWindowsCount; i++) {
-		StatusWindow *statusWindow = statusWindows.at(i);
-		if (statusWindow->client() == client) {
-			statusWindow->appendToMainBuffer("--- Connected to server");
-			//client->changeNick("mw007\n\rUSER mw007 mw007 irc.webchat.org :mw");
-			client->sendRawMessage(tr("NICK mw007"));
-			client->sendRawMessage(tr("USER mw mw irc.webchat.org :mw"));
-		}
-	}
+	statusWindow->appendToMainBuffer("--- Connected to server");
+
+	client->sendRawMessage(tr("NICK mw007"));
+	client->sendRawMessage(tr("USER mw mw irc.webchat.org :mw"));
+
+//	for (int i = 0; i < statusWindowsCount; i++) {
+//		StatusWindow *statusWindow = statusWindows.at(i);
+//		if (statusWindow->client() == client) {
+//			statusWindow->appendToMainBuffer("--- Connected to server");
+//			//client->changeNick("mw007\n\rUSER mw007 mw007 irc.webchat.org :mw");
+//			client->sendRawMessage(tr("NICK mw007"));
+//			client->sendRawMessage(tr("USER mw mw irc.webchat.org :mw"));
+//		}
+//	}
 }
 
 void Container::disconnected(IRCClient *client)
 {
-	int statusWindowsCount = statusWindows.count();
+	StatusWindow *statusWindow = (StatusWindow *)this->windows[client->cid]["__STATUS__"];
+	statusWindow->appendToMainBuffer("--- Disconnected from server");
+
+/*	int statusWindowsCount = statusWindows.count();
 
 	for (int i = 0; i < statusWindowsCount; i++) {
 		StatusWindow *statusWindow = statusWindows.at(i);
@@ -156,10 +170,12 @@ void Container::disconnected(IRCClient *client)
 			statusWindow->appendToMainBuffer("--- Disconnected from server");
 		}
 	}
+*/
 }
 
 void Container::ircError(IRCClient *client, QAbstractSocket::SocketError error)
 {
+/*	
 	int statusWindowsCount = statusWindows.count();
 
 	for (int i = 0; i < statusWindowsCount; i++) {
@@ -168,11 +184,15 @@ void Container::ircError(IRCClient *client, QAbstractSocket::SocketError error)
 			statusWindow->appendToMainBuffer("!!! A socket error occurred");
 		}
 	}
+*/
 }
 
 void Container::incomingData(IRCClient *client, const QString &data) // FIXME: Remove this later
 {
-	int statusWindowsCount = statusWindows.count();
+	StatusWindow *statusWindow = (StatusWindow *)this->windows[client->cid]["__STATUS__"];
+	statusWindow->appendToMainBuffer(data);
+
+/*	int statusWindowsCount = statusWindows.count();
 
 	for (int i = 0; i < statusWindowsCount; i++) {
 		StatusWindow *statusWindow = statusWindows.at(i);
@@ -180,5 +200,6 @@ void Container::incomingData(IRCClient *client, const QString &data) // FIXME: R
 			statusWindow->appendToMainBuffer(data);
 		}
 	}
+*/
 }
 
