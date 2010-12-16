@@ -234,16 +234,6 @@ void Container::privateMessageReceived(IRCClient *client, const QString &nick, c
 
 void Container::incomingData(IRCClient *client, const QString &data) // FIXME: Remove this later
 {
-  string NorS;
-  string Event;
-  string Args;
-  string Extra;
-  pcrecpp::RE re("^(?:\\x3a(\\S+) )?(\\d{3}|[a-zA-Z]+)(?: ((?:[^\\x00\\x0a\\x0d\\x20\\x3a][^\\x00\\x0a\\x0d\\x20]*)(?: [^\\x00\\x0a\\x0d\\x20\\x3a][^\\x00\\x0a\\x0d\\x20]*)*))?(?: \\x3a([^\\x00\\x0a\\x0d]*))?\\x20*$");
-
-  if (re.PartialMatch(data.toStdString(), &NorS, &Event, &Args, &Extra)) {
-    if (Event == "PING") { client->sendRawMessage(QString::fromStdString("PONG " + Extra)); }
-  }
-
 	StatusWindow *statusWindow = (StatusWindow *)this->windows[client->cid]["__STATUS__"];
 	statusWindow->appendToMainBuffer(data);
 
