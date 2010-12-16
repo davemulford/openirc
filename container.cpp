@@ -5,6 +5,7 @@
 #include "querywindow.h"
 #include "optionswindow.h"
 #include "serverswindow.h"
+#include "pcrecpp.h"
 
 Container::Container(QWidget *parent, Qt::WindowFlags flags)
   : QMainWindow(parent, flags)
@@ -144,7 +145,21 @@ void Container::connected(IRCClient *client)
 	statusWindow->appendToMainBuffer("--- Connected to server");
 
 	client->sendRawMessage("NICK " + this->configFile->value("UserInfo", "nick"));
-	client->sendRawMessage("USER mw mw irc.webchat.org :mw");
+
+        QString Email = this->configFile->value("UserInfo", "email");
+        QString Server = this->configFile->value("IrcServer", "server");
+        QString RealName = this->configFile->value("UserInfo", "realName");
+        string Email1;
+        string Email2;
+
+        pcrecpp::RE re("^([^@]+)@(.*)$");
+
+	if (!re.PartialMatch(Email.toStdString(), &Email1, &Email2)) {
+		Email1 = "OpenIRC";
+		Email2 = "OpenIRC.Linux.Sh";
+	}
+	// USER Email1 "Email2" "server" :fullname
+	client->sendRawMessage(QString::fromStdString("USER " + Email1 + " \"" + Email2 + "\" \"" + Server.toStdString() + "\" :" + RealName.toStdString()));
 
 //	for (int i = 0; i < statusWindowsCount; i++) {
 //		StatusWindow *statusWindow = statusWindows.at(i);
@@ -189,6 +204,16 @@ void Container::ircError(IRCClient *client, QAbstractSocket::SocketError error)
 
 void Container::incomingData(IRCClient *client, const QString &data) // FIXME: Remove this later
 {
+  string NorS;
+  string Event;
+  string Args;
+  string Extra;
+  pcrecpp::RE re("^(?:\\x3a(\\S+) )?(\\d{3}|[a-zA-Z]+)(?: ((?:[^\\x00\\x0a\\x0d\\x20\\x3a][^\\x00\\x0a\\x0d\\x20]*)(?: [^\\x00\\x0a\\x0d\\x20\\x3a][^\\x00\\x0a\\x0d\\x20]*)*))?(?: \\x3a([^\\x00\\x0a\\x0d]*))?\\x20*$");
+
+  if (re.PartialMatch(data.toStdString(), &NorS, &Event, &Args, &Extra)) {
+    if (Event == "PING") { client->sendRawMessage(QString::fromStdString("PONG " + Extra)); }
+  }
+
 	StatusWindow *statusWindow = (StatusWindow *)this->windows[client->cid]["__STATUS__"];
 	statusWindow->appendToMainBuffer(data);
 

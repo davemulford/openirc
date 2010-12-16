@@ -50,7 +50,16 @@ void IRCClient::networkError(SocketError error)
 
 void IRCClient::dataReceived()
 {
-	QByteArray data = this->readAll();
-	emit incomingData(this, QString(data));
+	while (this->canReadLine()) {
+		QString line = this->readLine();
+		line.remove('\r');
+		line.remove('\n');
+		if (!line.isEmpty()) {
+			emit incomingData(this, line);
+		}
+	}
+
+	//QByteArray data = this->readAll();
+	//emit incomingData(this, QString(data));
 }
 
