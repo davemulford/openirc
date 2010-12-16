@@ -33,6 +33,6 @@ SOURCES += channelwindow.cpp \
 RESOURCES += openirc.qrc
 
 unix {
-	CONFIG += link_pkgconfig
-	PKGCONFIG += glib-2.0
+	CONFIG += link_pkgconfig link_libpcrecpp
+	PKGCONFIG += glib-2.0 libpcrecpp
 }
