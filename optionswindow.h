@@ -9,13 +9,13 @@ class OptionsWindow : public QDialog
   Q_OBJECT
 
   public:
-  	OptionsWindow(/*IniFile *optionsFile, */QWidget *parent = 0, Qt::WindowFlags flags = 0);
+  	OptionsWindow(IniFile *optionsFile, QWidget *parent = 0, Qt::WindowFlags flags = 0);
 	~OptionsWindow();
 
-	//void loadOptionsFromFile(IniFile *optionsFile);
+	void loadOptionsFromFile(IniFile *optionsFile);
 
   private:
-  	/*IniFile *optionsFile;
+  	IniFile *optionsFile;
 
 	QTabWidget *tabContainer;
 	QVBoxLayout *tabLayout;
@@ -49,10 +49,10 @@ class OptionsWindow : public QDialog
 	QLabel *serverLabel;
 	QLineEdit *server;
 	QLabel *portLabel;
-	QLineEdit *port;*/
+	QLineEdit *port;
 
 
-	QTabWidget *tabWidget;
+	/*QTabWidget *tabWidget;
 	QWidget *tab;
 	QGroupBox *groupBox;
 	QLabel *label;
@@ -85,7 +85,7 @@ class OptionsWindow : public QDialog
 	QPushButton *pushButton_3;
 	QLabel *label_11;
 	QPushButton *pushButton_4;
-	QPushButton *pushButton_5;
+	QPushButton *pushButton_5;*/
 };
 
 #endif

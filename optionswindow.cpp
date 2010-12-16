@@ -1,6 +1,6 @@
 #include "optionswindow.h"
 
-/*OptionsWindow::OptionsWindow(IniFile *optionsFile, QWidget *parent, Qt::WindowFlags flags)
+OptionsWindow::OptionsWindow(IniFile *optionsFile, QWidget *parent, Qt::WindowFlags flags)
   : QDialog(parent, flags)
 {
 	this->setFixedSize(500, 350);
@@ -78,9 +78,9 @@
 	this->tabLayout->addWidget(this->tabContainer);
 	this->loadOptionsFromFile(optionsFile);
 
-}*/
+}
 
-OptionsWindow::OptionsWindow(QWidget *parent, Qt::WindowFlags flags)
+/*OptionsWindow::OptionsWindow(QWidget *parent, Qt::WindowFlags flags)
   : QDialog(parent, flags)
 {
 	this->setFixedSize(391, 356);
@@ -189,11 +189,10 @@ OptionsWindow::OptionsWindow(QWidget *parent, Qt::WindowFlags flags)
         this->tabWidget->setTabText(tabWidget->indexOf(tab_2), QApplication::translate("Dialog", "General", 0, QApplication::UnicodeUTF8));
         this->pushButton_4->setText(QApplication::translate("Dialog", "Ok", 0, QApplication::UnicodeUTF8));
         this->pushButton_5->setText(QApplication::translate("Dialog", "Cancel", 0, QApplication::UnicodeUTF8));
-}
+}*/
 
 OptionsWindow::~OptionsWindow()
 {
-/*
 	this->optionsFile->setValue("UserInfo", "nick", this->nick->text());
 	this->optionsFile->setValue("UserInfo", "alternate", this->alternate->text());
 	this->optionsFile->setValue("UserInfo", "email", this->email->text());
@@ -203,10 +202,9 @@ OptionsWindow::~OptionsWindow()
 	this->optionsFile->setValue("IrcServer", "port", this->port->text());
 
 	this->optionsFile->save("openirc.ini");
-*/
 }
 
-/*void OptionsWindow::loadOptionsFromFile(IniFile *optionsFile)
+void OptionsWindow::loadOptionsFromFile(IniFile *optionsFile)
 {
 	if (optionsFile != 0) {
 
@@ -223,4 +221,4 @@ OptionsWindow::~OptionsWindow()
 		this->port->setText(optionsFile->value("IrcServer", "port"));
 
 	}
-}*/
+}

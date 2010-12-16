@@ -18,11 +18,11 @@ ServersWindow::ServersWindow(IniFile *serversFile, QWidget *parent, Qt::WindowFl
 	this->serverList->setModel(this->model);
 
 	// Setup the push buttons
-	this->connect = new QPushButton(tr("Connect"));
+	this->connectButton = new QPushButton(tr("Connect"));
 
 	layout->addWidget(this->filterBox);
 	layout->addWidget(this->serverList);
-	layout->addWidget(this->connect);
+	layout->addWidget(this->connectButton);
 
 	if (serversFile != 0) {
 		int rowId = 0;
@@ -42,9 +42,42 @@ ServersWindow::ServersWindow(IniFile *serversFile, QWidget *parent, Qt::WindowFl
 				this->model->setData(model->index(rowId, 0, QModelIndex()), groupName);
 				this->model->setData(model->index(rowId, 1, QModelIndex()), value);
 
+				/*QStandardItem *editableItem = new QStandardItem(true);
+				editableItem->setText(value);
+				editableItem->setEditable(true);
+				this->model->setItem(model->index(rowId, 1, QModelIndex()).row(), 1, editableItem);*/
+
 				rowId++;
 			}
 		}
+	}
 
+	this->serversFile = serversFile;
+
+	connect(this->filterBox, SIGNAL(textEdited(const QString &)), this, SLOT(filterBoxTextChanged(const QString &)));
+}
+
+void ServersWindow::filterBoxTextChanged(const QString &text)
+{
+	QStringList networks = this->serversFile->groups().filter(text, Qt::CaseInsensitive);
+	this->model->removeRows(0, this->model->rowCount(QModelIndex()), QModelIndex());
+
+	int rowId = 0;
+	QStringList::const_iterator networkIter;
+	for (networkIter = networks.constBegin(); networkIter != networks.constEnd(); networkIter++) {
+		QString networkName = *networkIter;
+		QStringList keys = serversFile->keys(networkName);
+
+		QStringList::const_iterator keyIter;
+		for (keyIter = keys.constBegin(); keyIter != keys.constEnd(); keyIter++) {
+			QString keyName = *keyIter;
+			QString value = serversFile->value(networkName, keyName);
+
+			this->model->insertRow(rowId);
+			this->model->setData(model->index(rowId, 0, QModelIndex()), networkName);
+			this->model->setData(model->index(rowId, 1, QModelIndex()), value);
+
+			rowId++;
+		}
 	}
 }

@@ -38,9 +38,6 @@ class IRCClient : public QTcpSocket
 	void networkError(SocketError error);
 
 	void dataReceived();
-
-  private:
-  	IRCClient *client;
 };
 
 #endif

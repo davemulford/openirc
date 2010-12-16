@@ -91,7 +91,7 @@ void Container::readConfigFile(const QString &filename)
 
 void Container::optionsButtonClicked()
 {
-	OptionsWindow optionsWindow;//(/*this->configFile*/);
+	OptionsWindow optionsWindow(this->configFile);
 	optionsWindow.exec();
 }
 
@@ -143,8 +143,8 @@ void Container::connected(IRCClient *client)
 
 	statusWindow->appendToMainBuffer("--- Connected to server");
 
-	client->sendRawMessage(tr("NICK mw007"));
-	client->sendRawMessage(tr("USER mw mw irc.webchat.org :mw"));
+	client->sendRawMessage("NICK " + this->configFile->value("UserInfo", "nick"));
+	client->sendRawMessage("USER mw mw irc.webchat.org :mw");
 
 //	for (int i = 0; i < statusWindowsCount; i++) {
 //		StatusWindow *statusWindow = statusWindows.at(i);

@@ -11,14 +11,19 @@ class ServersWindow : public QDialog
   public:
   	ServersWindow(IniFile *serversFile, QWidget *parent = 0, Qt::WindowFlags flags = 0);
 
+  public slots:
+  	void filterBoxTextChanged(const QString &text);
+
   private:
   	QLineEdit *filterBox;
 	QTableView *serverList;
 
-	QPushButton *connect;
-	QPushButton *close;
+	QPushButton *connectButton;
+	QPushButton *closeButton;
 
 	QStandardItemModel *model;
+
+	IniFile *serversFile;
 };
 
 #endif
