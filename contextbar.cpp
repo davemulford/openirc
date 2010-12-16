@@ -31,6 +31,10 @@ ContextBar::ContextBar(QWidget *parent, Qt::WindowFlags flags)
 	this->optionsAction->setToolTip(tr("Options"));
 	this->toolbar->addAction(this->optionsAction);
 
+	this->serversAction = new QAction(QIcon(":/images/servers.png"), tr(""), this->toolbar);
+	this->serversAction->setToolTip(tr("Servers"));
+	this->toolbar->addAction(this->serversAction);
+
 	this->toolbar->addSeparator();
 
 	this->tileHorizontalAction = new QAction(QIcon(":/images/tile_horizontal.png"), tr(""), this->toolbar);
@@ -77,6 +81,7 @@ ContextBar::ContextBar(QWidget *parent, Qt::WindowFlags flags)
 
 	// Connect the toolbar actions
 	connect(this->optionsAction, SIGNAL(triggered(bool)), this, SLOT(optionsActionTriggered(bool)));
+	connect(this->serversAction, SIGNAL(triggered(bool)), this, SLOT(serversActionTriggered(bool)));
 	connect(this->tileHorizontalAction, SIGNAL(triggered(bool)), this, SLOT(tileHorizontalActionTriggered(bool)));
 	connect(this->tileVerticalAction, SIGNAL(triggered(bool)), this, SLOT(tileVerticalActionTriggered(bool)));
 	connect(this->tileCascadeAction, SIGNAL(triggered(bool)), this, SLOT(tileCascadeActionTriggered(bool)));
@@ -88,6 +93,11 @@ ContextBar::ContextBar(QWidget *parent, Qt::WindowFlags flags)
 void ContextBar::optionsActionTriggered(bool checked)
 {
 	emit optionsClicked();
+}
+
+void ContextBar::serversActionTriggered(bool checked)
+{
+	emit serversClicked();
 }
 
 void ContextBar::tileHorizontalActionTriggered(bool checked)

@@ -4,6 +4,7 @@
 #include "channelwindow.h"
 #include "querywindow.h"
 #include "optionswindow.h"
+#include "serverswindow.h"
 
 Container::Container(QWidget *parent, Qt::WindowFlags flags)
   : QMainWindow(parent, flags)
@@ -43,6 +44,7 @@ Container::Container(QWidget *parent, Qt::WindowFlags flags)
 
 	// Connect the contextbar signals
 	connect(this->contextBar, SIGNAL(optionsClicked()), this, SLOT(optionsButtonClicked()));
+	connect(this->contextBar, SIGNAL(serversClicked()), this, SLOT(serversButtonClicked()));
 	connect(this->contextBar, SIGNAL(tileHorizontalClicked()), this, SLOT(tileHorizontalButtonClicked()));
 	connect(this->contextBar, SIGNAL(tileCascadeClicked()), this, SLOT(tileCascadeButtonClicked()));
 	connect(this->contextBar, SIGNAL(previousWindowClicked()), this, SLOT(previousWindowButtonClicked()));
@@ -86,6 +88,13 @@ void Container::optionsButtonClicked()
 {
 	OptionsWindow optionsWindow;//(/*this->configFile*/);
 	optionsWindow.exec();
+}
+
+void Container::serversButtonClicked()
+{
+	IniFile *serversFile = new IniFile("servers.ini");
+	ServersWindow serversWindow(serversFile);//(/*this->configFile*/);
+	serversWindow.exec();
 }
 
 void Container::tileHorizontalButtonClicked()

@@ -12,6 +12,7 @@ class ContextBar : public QDockWidget
 
   Q_SIGNALS:
   	void optionsClicked();
+	void serversClicked();
 
 	void tileHorizontalClicked();
 	void tileVerticalClicked();
@@ -25,6 +26,7 @@ class ContextBar : public QDockWidget
 
   public slots:
   	void optionsActionTriggered(bool checked = false);
+  	void serversActionTriggered(bool checked = false);
 
 	void tileHorizontalActionTriggered(bool checked = false);
 	void tileVerticalActionTriggered(bool checked = false);
@@ -40,6 +42,7 @@ class ContextBar : public QDockWidget
 
   	QToolBar *toolbar;
 	QAction *optionsAction;
+	QAction *serversAction;
 	QAction *tileHorizontalAction;
 	QAction *tileVerticalAction;
 	QAction *tileCascadeAction;

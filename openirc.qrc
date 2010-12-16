@@ -31,5 +31,6 @@
      <file>images/config-customize.png</file>
      <file>images/config-home.png</file>
      <file>images/config-userinfo.png</file>
+     <file>images/servers.png</file>
  </qresource>
  </RCC>

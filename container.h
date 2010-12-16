@@ -28,6 +28,7 @@ class Container : public QMainWindow
 
   public slots:
   	void optionsButtonClicked();
+  	void serversButtonClicked();
 
   	void tileHorizontalButtonClicked();
   	void tileCascadeButtonClicked();
