@@ -100,7 +100,7 @@ QueryWindow *Container::newQueryWindow(IRCClient *client, const QString &queryNa
 	if ((client != 0) && (this->windows.contains(client->cid))) {
 
 		// Create the query window
-		queryWindow = new QueryWindow();
+		queryWindow = new QueryWindow(client, queryName);
 		queryWindow->setTitle(queryName + " (" + address + ")");
 		this->mdiArea->addSubWindow(queryWindow);
 
