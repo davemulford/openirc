@@ -87,7 +87,7 @@ void IRCClient::dataReceived()
 								emit incomingData(this, line);
 							}
 							else { 
-								emit privateMessageReceived(this, QString::fromStdString(Nick),QString::fromStdString(Address),QString::fromStdString(Extra));
+								emit privateMessageReceived(this, QString::fromStdString(Nick).trimmed(),QString::fromStdString(Address).trimmed(),QString::fromStdString(Extra).trimmed());
 							}
 						}
 						else { emit incomingData(this, line); }

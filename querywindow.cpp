@@ -1,7 +1,7 @@
 #include "querywindow.h"
 
 QueryWindow::QueryWindow(QWidget *parent)
-  : QMdiSubWindow(parent)
+  : QMdiSubWindow(parent, 0)
 {
 	// Set the minimum size of the query window
 	this->setMinimumSize(250, 250);

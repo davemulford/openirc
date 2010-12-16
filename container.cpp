@@ -92,8 +92,12 @@ QueryWindow *Container::newQueryWindow(IRCClient *client, const QString &queryNa
 	if ((client != 0) && (this->windows.contains(client->cid))) {
 
 		// Create the query window
-		queryWindow = new QueryWindow(this->mdiArea);
+		queryWindow = new QueryWindow();
+		queryWindow->setTitle("@" + queryName + " (" + address + ")");
+		this->mdiArea->addSubWindow(queryWindow);
+
 		this->windows[client->cid].insert(queryName, queryWindow);
+		queryWindow->show();
 
 		// TODO: Connect any signals to slots
 	}
