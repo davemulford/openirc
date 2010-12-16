@@ -10,6 +10,7 @@ class ChannelWindow : public QMdiSubWindow
   public:
   	ChannelWindow(QWidget *parent = 0);
 	void setTitle(const QString &title);
+	void appendBuffer(const QString &string);
 
   public slots:
 	void inputBufferReturnPressed();

@@ -84,7 +84,8 @@ void IRCClient::dataReceived()
 						NickUser.PartialMatch(NorS, &Nick, &Address);
 						if (Event == "PRIVMSG") {
 							if (IsChan.PartialMatch(Args)) {
-								emit incomingData(this, line);
+								//emit incomingData(this, line);
+								emit channelMessageReceived(this, QString::fromStdString(Args).trimmed(),QString::fromStdString(Nick).trimmed(),QString::fromStdString(Address).trimmed(),QString::fromStdString(Extra).trimmed());
 							}
 							else { 
 								emit privateMessageReceived(this, QString::fromStdString(Nick).trimmed(),QString::fromStdString(Address).trimmed(),QString::fromStdString(Extra).trimmed());
