@@ -2,14 +2,15 @@
 #define OPENIRC_IRCCLIENT_H
 
 #include <QtNetwork>
-#include "ircclient.h"
 
 class IRCClient : public QTcpSocket
 {
 	Q_OBJECT
 
+  private:
+  	static int Cid;
   public:
-  	static int cid;
+	int cid;
   	IRCClient(QObject *parent = 0, const QString &server = 0, const int port = 6667);
 
 	void joinChannel(const QString &channel);

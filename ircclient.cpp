@@ -3,12 +3,12 @@
 
 using namespace std;
 
-int IRCClient::cid;
+int IRCClient::Cid = 0;
 
 IRCClient::IRCClient(QObject *parent, const QString &server, const int port)
   : QTcpSocket(parent)
 {
-	this->cid++;
+	this->cid = Cid++;
 
 	 // Connect the signals and slots
 	connect(this, SIGNAL(readyRead()), this, SLOT(dataReceived()));

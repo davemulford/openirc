@@ -64,6 +64,9 @@ void Container::newStatusWindow()
 	// Create the new IRCClient
 	IRCClient *client = new IRCClient(this);
 	statusWindow->setClient(client);
+        char newbuf[100];
+        sprintf(newbuf,"--- Connection id: %d",client->cid);
+        statusWindow->appendToMainBuffer(newbuf);
 
 	QHash<QString, QMdiSubWindow *> windowHash;
 	windowHash.insert("__STATUS__", statusWindow);
@@ -97,7 +100,7 @@ QueryWindow *Container::newQueryWindow(IRCClient *client, const QString &queryNa
 
 		// Create the query window
 		queryWindow = new QueryWindow();
-		queryWindow->setTitle("@" + queryName + " (" + address + ")");
+		queryWindow->setTitle(queryName + " (" + address + ")");
 		this->mdiArea->addSubWindow(queryWindow);
 
 		this->windows[client->cid].insert(queryName, queryWindow);
@@ -168,6 +171,11 @@ void Container::connected(IRCClient *client)
 
 	statusWindow->setTitle("Status: " + this->configFile->value("UserInfo", "nick") + " on (" + client->peerName() + ")");
 	statusWindow->appendToMainBuffer("--- Connected to " + client->peerName());
+
+        char newbuf[100];
+        sprintf(newbuf,"--- Connection id: %d",client->cid);
+        statusWindow->appendToMainBuffer(newbuf);
+
 
 	client->sendRawMessage("NICK " + this->configFile->value("UserInfo", "nick"));
 
