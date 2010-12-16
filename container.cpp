@@ -89,15 +89,11 @@ QueryWindow *Container::newQueryWindow(IRCClient *client, const QString &queryNa
 {
 	QueryWindow *queryWindow = 0;
 
-	if (client != 0) {
+	if ((client != 0) && (this->windows.contains(client->cid))) {
 
 		// Create the query window
 		queryWindow = new QueryWindow();
-		QHash<QString, QMdiSubWindow *> windowHash;
-
-		// Insert the query window into the window hash
-		windowHash.insert(queryName, queryWindow);
-		this->windows.insert(client->cid, windowHash);
+		this->windows[client->cid].insert(queryName, queryWindow);
 
 		// TODO: Connect any signals to slots
 	}
@@ -162,7 +158,8 @@ void Container::connected(IRCClient *client)
 	//int statusWindowsCount = statusWindows.count();
 	StatusWindow *statusWindow = (StatusWindow *)this->windows[client->cid]["__STATUS__"];
 
-	statusWindow->appendToMainBuffer("--- Connected to server");
+	statusWindow->setTitle("Status: " + this->configFile->value("UserInfo", "nick") + " on (" + client->peerName() + ")");
+	statusWindow->appendToMainBuffer("--- Connected to " + client->peerName());
 
 	client->sendRawMessage("NICK " + this->configFile->value("UserInfo", "nick"));
 

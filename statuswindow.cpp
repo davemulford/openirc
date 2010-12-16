@@ -12,6 +12,8 @@ StatusWindow::StatusWindow(QWidget *parent)
 
 	// Create the controls that the window will hold.
 	this->mainBuffer = new QTextEdit(this);
+	this->mainBuffer->setReadOnly(true);
+
 	this->inputBuffer = new QLineEdit(this);
 
 	this->toolbar = new QToolBar(this);
