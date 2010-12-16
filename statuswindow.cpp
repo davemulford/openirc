@@ -52,6 +52,8 @@ StatusWindow::StatusWindow(QWidget *parent)
 
 	// Connect any signals/slots we want
 	connect(this->inputBuffer, SIGNAL(returnPressed()), this, SLOT(inputBufferReturnPressed()));
+	connect(this->newConnectionAction, SIGNAL(triggered(bool)), this, SLOT(newButtonClicked(bool)));
+	connect(this->connectDisconnectAction, SIGNAL(triggered(bool)), this, SLOT(connectDisconnectButtonClicked(bool)));
 }
 
 void StatusWindow::setTitle(const QString &title)
@@ -101,11 +103,12 @@ void StatusWindow::inputBufferReturnPressed()
 	this->inputBuffer->clear();
 }
 
-void StatusWindow::newButtonClicked() {
+void StatusWindow::newButtonClicked(bool checked) {
+	emit newStatusWin();
 	this->mainBuffer->append(tr("*** New connection button clicked"));
 }
 
-void StatusWindow::connectDisconnectButtonClicked()
+void StatusWindow::connectDisconnectButtonClicked(bool checked)
 {
 	this->mainBuffer->append(tr("*** Connect/Disconnect button clicked"));
 }

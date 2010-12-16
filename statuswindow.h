@@ -17,10 +17,13 @@ class StatusWindow : public QMdiSubWindow
 
 	void appendToMainBuffer(const QString &);
 
+  Q_SIGNALS:
+	void newStatusWin();
+
   public slots:
 	void inputBufferReturnPressed();
-	void newButtonClicked();
-	void connectDisconnectButtonClicked();
+	void newButtonClicked(bool checked);
+	void connectDisconnectButtonClicked(bool checked);
 
   private:
 	QWidget *internalWidget;

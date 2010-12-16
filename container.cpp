@@ -59,6 +59,7 @@ void Container::newStatusWindow()
 	// Create the new status window
 	StatusWindow *statusWindow = new StatusWindow(this->mdiArea);
 	statusWindow->setTitle(tr("Not Connected"));
+        statusWindow->show();
 
 	// Create the new IRCClient
 	IRCClient *client = new IRCClient(this);
@@ -77,6 +78,9 @@ void Container::newStatusWindow()
 	connect(client, SIGNAL(ircError(IRCClient *, QAbstractSocket::SocketError error)), this, SLOT(ircError(IRCClient *, QAbstractSocket::SocketError error)));
 	connect(client, SIGNAL(privateMessageReceived(IRCClient *, const QString &, const QString &, const QString &)), this, SLOT(privateMessageReceived(IRCClient *, const QString &, const QString &, const QString &)));
 	connect(client, SIGNAL(incomingData(IRCClient *, const QString &)), this, SLOT(incomingData(IRCClient *, const QString &)));
+
+	// connect the new status button to new status window
+	connect(statusWindow, SIGNAL(newStatusWin()), this, SLOT(newStatusWindow()));
 
 	/*ChannelWindow *channelWindow = new ChannelWindow(this->mdiArea);
 	channelWindow->setTitle(tr("#Channel Window"));

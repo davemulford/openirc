@@ -18,7 +18,6 @@ class Container : public QMainWindow
   public:
 	Container(QWidget *parent = 0, Qt::WindowFlags flags = 0);
 
-	void newStatusWindow(void);
 	QueryWindow *newQueryWindow(IRCClient *client, const QString &queryName, const QString &address);
 
 	/*newQueryWindow();
@@ -29,6 +28,8 @@ class Container : public QMainWindow
 	  void closeEvent(QCloseEvent *event);*/
 
   public slots:
+	void newStatusWindow(void);
+
   	void optionsButtonClicked();
   	void serversButtonClicked();
 
