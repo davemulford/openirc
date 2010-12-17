@@ -9,7 +9,8 @@ INCLUDEPATH += .
 QT += network
 
 # Input
-HEADERS += channelwindow.h \
+HEADERS += cctohtml.h \
+           channelwindow.h \
            container.h \
            contextbar.h \
            inifile.h \
@@ -19,7 +20,8 @@ HEADERS += channelwindow.h \
            querywindow.h \
            serverswindow.h \
            statuswindow.h
-SOURCES += channelwindow.cpp \
+SOURCES += cctohtml.cpp \
+           channelwindow.cpp \
            container.cpp \
            contextbar.cpp \
            inifile.cpp \

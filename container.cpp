@@ -5,6 +5,7 @@
 #include "optionswindow.h"
 #include "serverswindow.h"
 #include "pcrecpp.h"
+#include "cctohtml.h"
 
 Container::Container(QWidget *parent, Qt::WindowFlags flags)
   : QMainWindow(parent, flags)
@@ -267,8 +268,8 @@ void Container::privateMessageReceived(IRCClient *client, const QString &nick, c
 	} else {
 		queryWindow = (QueryWindow *)this->windows[client->cid][nick];
 	}
-
-	queryWindow->appendBuffer("[" + nick + "] " + message);
+	CCtoHTML str(message.toStdString());
+	queryWindow->appendBuffer("<span style=\"color: #0000FC\">&lt;</span><b>" + nick + "</b><span style=\"color: #0000FC\">&gt;</span> " + QString::fromStdString(str.translate()));
 }
 
 void Container::channelMessageReceived(IRCClient *client, const QString &chan, const QString &nick, const QString &address, const QString &message)
@@ -281,7 +282,8 @@ void Container::channelMessageReceived(IRCClient *client, const QString &chan, c
 		chanWindow = (ChannelWindow *)this->windows[client->cid][chan];
 	}
 
-	chanWindow->appendBuffer("[" + nick + "] " + message);
+	CCtoHTML str(message.toStdString());
+	chanWindow->appendBuffer("<span style=\"color: #0000FC\">&lt;</span><b>" + nick + "</b><span style=\"color: #0000FC\">&gt;</span> " + QString::fromStdString(str.translate()));
 }
 
 void Container::incomingData(IRCClient *client, const QString &data) // FIXME: Remove this later
