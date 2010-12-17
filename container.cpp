@@ -51,7 +51,7 @@ Container::Container(QWidget *parent, Qt::WindowFlags flags)
 	// Connect the contextbar signals
 	connect(this->contextBar, SIGNAL(optionsClicked()), this, SLOT(optionsButtonClicked()));
 	connect(this->contextBar, SIGNAL(serversClicked()), this, SLOT(serversButtonClicked()));
-	connect(this->contextBar, SIGNAL(tileHorizontalClicked()), this, SLOT(tileHorizontalButtonClicked()));
+	connect(this->contextBar, SIGNAL(tileClicked()), this, SLOT(tileButtonClicked()));
 	connect(this->contextBar, SIGNAL(tileCascadeClicked()), this, SLOT(tileCascadeButtonClicked()));
 	connect(this->contextBar, SIGNAL(previousWindowClicked()), this, SLOT(previousWindowButtonClicked()));
 	connect(this->contextBar, SIGNAL(nextWindowClicked()), this, SLOT(nextWindowButtonClicked()));
@@ -60,7 +60,7 @@ Container::Container(QWidget *parent, Qt::WindowFlags flags)
 	this->newStatusWindow();
 }
 
-void Container::newStatusWindow()
+void Container::newStatusWindow(const QString &server, const int port)
 {
 	// Create the new status window
 	StatusWindow *statusWindow = new StatusWindow(this->mdiArea);
@@ -70,16 +70,21 @@ void Container::newStatusWindow()
 	// Create the new IRCClient
 	IRCClient *client = new IRCClient(this);
 	statusWindow->setClient(client);
-        char newbuf[100];
-        sprintf(newbuf,"--- Connection id: %d",client->cid);
-        statusWindow->appendToMainBuffer(newbuf);
+
+	char newbuf[100];
+	sprintf(newbuf,"--- Connection id: %d",client->cid);
+	statusWindow->appendToMainBuffer(newbuf);
 
 	QHash<QString, QMdiSubWindow *> windowHash;
 	windowHash.insert("__STATUS__", statusWindow);
 
 	this->windows.insert(client->cid, windowHash);
 
-	//this->statusWindows.append(statusWindow);
+	if ((!server.isEmpty()) && (port > 0)) {
+		// TODO: Connect to the server
+		statusWindow->appendToMainBuffer("--- Connecting to " + server + " (" + QString::number(port) + ")");
+		client->connectToHost(server, port);
+	}
 
 	// Connect the IRCClient signals to the Container slots
 	connect(client, SIGNAL(connected(IRCClient *)), this, SLOT(connected(IRCClient *)));
@@ -91,12 +96,6 @@ void Container::newStatusWindow()
 
 	// connect the new status button to new status window
 	connect(statusWindow, SIGNAL(newStatusWin()), this, SLOT(newStatusWindow()));
-
-	/*ChannelWindow *channelWindow = new ChannelWindow(this->mdiArea);
-	channelWindow->setTitle(tr("#Channel Window"));
-
-	QueryWindow *queryWindow = new QueryWindow(this->mdiArea);
-	queryWindow->setTitle(tr("@Query Window"));*/
 }
 
 QueryWindow *Container::newQueryWindow(IRCClient *client, const QString &queryName, const QString &address)
@@ -152,11 +151,14 @@ void Container::optionsButtonClicked()
 void Container::serversButtonClicked()
 {
 	IniFile *serversFile = new IniFile("servers.ini");
+
 	ServersWindow serversWindow(serversFile);
+
+	connect(&serversWindow, SIGNAL(clicked(const QString &, const int)), this, SLOT(serversWindowConnectClicked(const QString &, const int)));
 	serversWindow.exec();
 }
 
-void Container::tileHorizontalButtonClicked()
+void Container::tileButtonClicked()
 {
 	this->mdiArea->tileSubWindows();
 }
@@ -306,3 +308,11 @@ void Container::incomingData(IRCClient *client, const QString &data) // FIXME: R
 */
 }
 
+void Container::serversWindowConnectClicked(const QString &server, const int port)
+{
+	qDebug() << "Servers window closed and we want to connect to: " << server << " (" << port << ")" << endl;
+
+	QString awesome("awesome");
+	qDebug() << awesome << endl;
+	this->newStatusWindow(server, port);
+}

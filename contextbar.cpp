@@ -37,16 +37,12 @@ ContextBar::ContextBar(QWidget *parent, Qt::WindowFlags flags)
 
 	this->toolbar->addSeparator();
 
-	this->tileHorizontalAction = new QAction(QIcon(":/images/tile_horizontal.png"), tr(""), this->toolbar);
-	this->tileHorizontalAction->setToolTip(tr("Tile Horizontal"));
-	this->toolbar->addAction(this->tileHorizontalAction);
-
-	this->tileVerticalAction = new QAction(QIcon(":/images/tile_vertical.png"), tr(""), this->toolbar);
-	this->tileVerticalAction->setToolTip(tr("Tile Vertical"));
-	this->toolbar->addAction(this->tileVerticalAction);
+	this->tileAction = new QAction(QIcon(":/images/tile.png"), tr(""), this->toolbar);
+	this->tileAction->setToolTip(tr("Tile Windows"));
+	this->toolbar->addAction(this->tileAction);
 
 	this->tileCascadeAction = new QAction(QIcon(":/images/tile_cascade.png"), tr(""), this->toolbar);
-	this->tileCascadeAction->setToolTip(tr("Tile Cascade"));
+	this->tileCascadeAction->setToolTip(tr("Cascade Windows"));
 	this->toolbar->addAction(this->tileCascadeAction);
 
 	this->toolbar->addSeparator();
@@ -82,8 +78,7 @@ ContextBar::ContextBar(QWidget *parent, Qt::WindowFlags flags)
 	// Connect the toolbar actions
 	connect(this->optionsAction, SIGNAL(triggered(bool)), this, SLOT(optionsActionTriggered(bool)));
 	connect(this->serversAction, SIGNAL(triggered(bool)), this, SLOT(serversActionTriggered(bool)));
-	connect(this->tileHorizontalAction, SIGNAL(triggered(bool)), this, SLOT(tileHorizontalActionTriggered(bool)));
-	connect(this->tileVerticalAction, SIGNAL(triggered(bool)), this, SLOT(tileVerticalActionTriggered(bool)));
+	connect(this->tileAction, SIGNAL(triggered(bool)), this, SLOT(tileActionTriggered(bool)));
 	connect(this->tileCascadeAction, SIGNAL(triggered(bool)), this, SLOT(tileCascadeActionTriggered(bool)));
 	connect(this->previousWindowAction, SIGNAL(triggered(bool)), this, SLOT(previousWindowActionTriggered(bool)));
 	connect(this->nextWindowAction, SIGNAL(triggered(bool)), this, SLOT(nextWindowActionTriggered(bool)));
@@ -100,14 +95,9 @@ void ContextBar::serversActionTriggered(bool checked)
 	emit serversClicked();
 }
 
-void ContextBar::tileHorizontalActionTriggered(bool checked)
+void ContextBar::tileActionTriggered(bool checked)
 {
-	emit tileHorizontalClicked();
-}
-
-void ContextBar::tileVerticalActionTriggered(bool checked)
-{
-	emit tileVerticalClicked();
+	emit tileClicked();
 }
 
 void ContextBar::tileCascadeActionTriggered(bool checked)

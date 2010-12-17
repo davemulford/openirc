@@ -14,13 +14,8 @@ StatusWindow::StatusWindow(QWidget *parent)
 	this->mainBuffer = new QTextEdit(this);
 	this->mainBuffer->setReadOnly(true);
 
-	//this->mainBuffer->append(tr("<span style='color: Green>*** Opened status window!</span>'"));
-	this->mainBuffer->append("<b>hello</b>");
-	this->mainBuffer->append("<code>#include <iostream></code>");
-
-	this->inputBuffer = new QLineEdit(this);
-
 	this->toolbar = new QToolBar(this);
+	this->inputBuffer = new QLineEdit(this);
 
 	this->newConnectionAction = new QAction(QIcon(":/images/new_connection.png"), tr(""), this->toolbar);
 	this->newConnectionAction->setToolTip(tr("New Connection"));

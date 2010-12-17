@@ -33,6 +33,7 @@ ChannelWindow::ChannelWindow(IRCClient *client, const QString &channel, QWidget 
 	this->chatBuffer = new QTextEdit(this->chatContainer);
 	this->nickList = new QListView(this->chatContainer);
 
+	this->chatBuffer->setReadOnly(true);
 	this->nickList->setMaximumWidth(350);
 	this->nickList->setMinimumWidth(120);
 

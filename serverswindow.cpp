@@ -5,10 +5,13 @@ ServersWindow::ServersWindow(IniFile *serversFile, QWidget *parent, Qt::WindowFl
 {
 	QVBoxLayout *layout; 
 
+	this->setMinimumSize(550,650);
+
 	// Setup the model
-	this->model = new QStandardItemModel(8, 2, this);
+	this->model = new QStandardItemModel(8, 3, this);
 	this->model->setHeaderData(0, Qt::Horizontal, tr("Network"));
 	this->model->setHeaderData(1, Qt::Horizontal, tr("Server"));
+	this->model->setHeaderData(2, Qt::Horizontal, tr("Port"));
 
 	layout = new QVBoxLayout(this);
 
@@ -16,6 +19,11 @@ ServersWindow::ServersWindow(IniFile *serversFile, QWidget *parent, Qt::WindowFl
 
 	this->serverList = new QTableView();
 	this->serverList->setModel(this->model);
+	this->serverList->verticalHeader()->hide();
+	this->serverList->horizontalHeader()->setStretchLastSection(true);
+
+	this->serverList->setSelectionBehavior(QAbstractItemView::SelectRows);
+	this->serverList->setSelectionMode(QAbstractItemView::SingleSelection);
 
 	// Setup the push buttons
 	this->connectButton = new QPushButton(tr("Connect"));
@@ -38,23 +46,23 @@ ServersWindow::ServersWindow(IniFile *serversFile, QWidget *parent, Qt::WindowFl
 				QString keyName = *keyIter;
 				QString value = serversFile->value(groupName, keyName);
 
+				QStringList hostAndPort = value.split("/");
+
 				this->model->insertRow(rowId);
 				this->model->setData(model->index(rowId, 0, QModelIndex()), groupName);
-				this->model->setData(model->index(rowId, 1, QModelIndex()), value);
-
-				/*QStandardItem *editableItem = new QStandardItem(true);
-				editableItem->setText(value);
-				editableItem->setEditable(true);
-				this->model->setItem(model->index(rowId, 1, QModelIndex()).row(), 1, editableItem);*/
+				this->model->setData(model->index(rowId, 1, QModelIndex()), hostAndPort[0]);
+				this->model->setData(model->index(rowId, 2, QModelIndex()), (hostAndPort.count() > 1 ? hostAndPort[1] : "6667"));
 
 				rowId++;
 			}
 		}
+		this->serverList->resizeColumnsToContents();
 	}
 
 	this->serversFile = serversFile;
 
 	connect(this->filterBox, SIGNAL(textEdited(const QString &)), this, SLOT(filterBoxTextChanged(const QString &)));
+	connect(this->connectButton, SIGNAL(clicked()), this, SLOT(connectButtonClicked()));
 }
 
 void ServersWindow::filterBoxTextChanged(const QString &text)
@@ -73,11 +81,30 @@ void ServersWindow::filterBoxTextChanged(const QString &text)
 			QString keyName = *keyIter;
 			QString value = serversFile->value(networkName, keyName);
 
+			QStringList hostAndPort = value.split("/");
+
 			this->model->insertRow(rowId);
 			this->model->setData(model->index(rowId, 0, QModelIndex()), networkName);
-			this->model->setData(model->index(rowId, 1, QModelIndex()), value);
+			this->model->setData(model->index(rowId, 1, QModelIndex()), hostAndPort[0]);
+			this->model->setData(model->index(rowId, 2, QModelIndex()), (hostAndPort.count() > 1 ? hostAndPort[1] : "6667"));
 
 			rowId++;
 		}
+	}
+}
+
+void ServersWindow::connectButtonClicked()
+{
+	QModelIndexList selectedIndexes = this->serverList->selectionModel()->selectedIndexes();
+
+	if (selectedIndexes.count() > 0) {
+		// We only care about the first selected item
+		// (user should only be allowed single-select anyway)
+
+		QString server = selectedIndexes[1].data().toString().trimmed();
+		int port = selectedIndexes[2].data().toString().trimmed().toInt();
+
+		emit clicked(server, port);
+		this->close();
 	}
 }

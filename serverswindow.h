@@ -13,6 +13,10 @@ class ServersWindow : public QDialog
 
   public slots:
   	void filterBoxTextChanged(const QString &text);
+	void connectButtonClicked();
+
+  Q_SIGNALS:
+  	void clicked(const QString &server, const int port);
 
   private:
   	QLineEdit *filterBox;

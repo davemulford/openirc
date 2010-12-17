@@ -30,12 +30,12 @@ class Container : public QMainWindow
 	  void closeEvent(QCloseEvent *event);*/
 
   public slots:
-	void newStatusWindow(void);
+	void newStatusWindow(const QString &server = QString(), const int port = 0);
 
   	void optionsButtonClicked();
   	void serversButtonClicked();
 
-  	void tileHorizontalButtonClicked();
+  	void tileButtonClicked();
   	void tileCascadeButtonClicked();
 
 	void previousWindowButtonClicked();
@@ -53,6 +53,9 @@ class Container : public QMainWindow
 	void channelMessageReceived(IRCClient *client, const QString &chan, const QString &nick, const QString &address, const QString &message);
 
 	void incomingData(IRCClient *client, const QString &data); // FIXME: Remove this later
+
+	// Miscellaneous QDialg slots
+	void serversWindowConnectClicked(const QString &server, const int port);
 
   private:
 	QMenuBar *menubar;

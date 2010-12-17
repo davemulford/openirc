@@ -54,6 +54,8 @@ QueryWindow::QueryWindow(IRCClient *client, const QString &otherNick, QWidget *p
 	this->chatBuffer = new QTextEdit(this->internalWidget);
 	this->inputBuffer = new QLineEdit(this->internalWidget);
 
+	this->chatBuffer->setReadOnly(true);
+
 	// Add the controls to the layout
 	this->layout->addWidget(this->toolbar);
 	this->layout->addWidget(this->chatBuffer);

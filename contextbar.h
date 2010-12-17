@@ -14,8 +14,7 @@ class ContextBar : public QDockWidget
   	void optionsClicked();
 	void serversClicked();
 
-	void tileHorizontalClicked();
-	void tileVerticalClicked();
+	void tileClicked();
 	void tileCascadeClicked();
 
 	void previousWindowClicked();
@@ -28,8 +27,7 @@ class ContextBar : public QDockWidget
   	void optionsActionTriggered(bool checked = false);
   	void serversActionTriggered(bool checked = false);
 
-	void tileHorizontalActionTriggered(bool checked = false);
-	void tileVerticalActionTriggered(bool checked = false);
+	void tileActionTriggered(bool checked = false);
 	void tileCascadeActionTriggered(bool checked = false);
 
 	void previousWindowActionTriggered(bool checked = false);
@@ -43,8 +41,7 @@ class ContextBar : public QDockWidget
   	QToolBar *toolbar;
 	QAction *optionsAction;
 	QAction *serversAction;
-	QAction *tileHorizontalAction;
-	QAction *tileVerticalAction;
+	QAction *tileAction;
 	QAction *tileCascadeAction;
 	QAction *previousWindowAction;
 	QAction *nextWindowAction;
