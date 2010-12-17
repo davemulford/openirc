@@ -91,7 +91,7 @@ void Container::newStatusWindow(const QString &server, const int port)
 	connect(client, SIGNAL(disconnected(IRCClient *)), this, SLOT(disconnected(IRCClient *)));
 	//connect(client, SIGNAL(ircError(IRCClient *, QAbstractSocket::SocketError)), this, SLOT(ircError(IRCClient *, QAbstractSocket::SocketError)));
 	connect(client, SIGNAL(privateMessageReceived(IRCClient *, const QString &, const QString &, const QString &)), this, SLOT(privateMessageReceived(IRCClient *, const QString &, const QString &, const QString &)));
-	connect(client, SIGNAL(channelMessageReceived(IRCClient *, const QString &, const QString &, const QString &, const QString &)), this, SLOT(channelMessageReceived(IRCClient *, const QString &, const QString &, const QString &, const QString &)));
+	connect(client, SIGNAL(channelMessageReceived(IRCClient *, const QString &, const QString &, const QString &, const QString &, const QString &)), this, SLOT(channelMessageReceived(IRCClient *, const QString &, const QString &, const QString &, const QString &, const QString &)));
 	connect(client, SIGNAL(incomingData(IRCClient *, const QString &)), this, SLOT(incomingData(IRCClient *, const QString &)));
 
 	// connect the new status button to new status window
@@ -277,7 +277,7 @@ void Container::privateMessageReceived(IRCClient *client, const QString &nick, c
 	queryWindow->appendBuffer("<span style=\"color: #0000FC\">&lt;</span><b>" + nick + "</b><span style=\"color: #0000FC\">&gt;</span> " + QString::fromStdString(str.translate()));
 }
 
-void Container::channelMessageReceived(IRCClient *client, const QString &chan, const QString &nick, const QString &address, const QString &message)
+void Container::channelMessageReceived(IRCClient *client, const QString &chan, const QString &event, const QString &nick, const QString &address, const QString &message)
 {
 	ChannelWindow *chanWindow;
 
@@ -287,9 +287,21 @@ void Container::channelMessageReceived(IRCClient *client, const QString &chan, c
 		chanWindow = (ChannelWindow *)this->windows[client->cid][chan];
 	}
 
-	QString msg = Qt::escape(message);
-	CCtoHTML str(msg.toStdString());
-	chanWindow->appendBuffer("<span style=\"color: #0000FC\">&lt;</span><b>" + nick + "</b><span style=\"color: #0000FC\">&gt;</span> " + QString::fromStdString(str.translate()));
+	if (event == "JOIN") {
+		string AddLine = "10*** Joins: " + nick.toStdString() + " (" + address.toStdString() + ")";
+		CCtoHTML str(AddLine);
+		chanWindow->appendBuffer(QString::fromStdString(str.translate()));
+	}
+	else if (event == "PART") {
+		string AddLine = "10*** Parts: " + nick.toStdString() + " (" + address.toStdString() + ")";
+		CCtoHTML str(AddLine);
+		chanWindow->appendBuffer(QString::fromStdString(str.translate()));
+	}
+	else if (event == "PRIVMSG") {
+		QString msg = Qt::escape(message);
+		CCtoHTML str(msg.toStdString());
+		chanWindow->appendBuffer("<span style=\"color: #0000FC\">&lt;</span><b>" + nick + "</b><span style=\"color: #0000FC\">&gt;</span> " + QString::fromStdString(str.translate()));
+	}
 }
 
 void Container::incomingData(IRCClient *client, const QString &data) // FIXME: Remove this later

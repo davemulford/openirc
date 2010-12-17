@@ -74,7 +74,30 @@ void IRCClient::dataReceived()
 				}
 				else {
 					if (NickOrServer.PartialMatch(NorS)) {
-						//Server Message
+						/*
+						Server Message
+						trigger RAW event
+						*/
+						Me = Args;
+						if (Event == "001") {
+							//set server NorS
+							//find out our userhost info
+							this->sendRawMessage(QString::fromStdString("USERHOST " + Me));
+						}
+						/*
+						SERIOUS parsing of 005 for chanmodes, chantypes, modes, network, prefix, nickmode,namesx,uhnames...
+						else if (Event == "005") {
+						}
+						*/
+						else if (Event == "302") {
+							//userhost return raw use to set ial of ourself
+						}
+						else if (Event == "305") {
+							//set back from being away
+						}
+						else if (Event == "306") {
+							//we set ourself away
+						}
 						emit incomingData(this, line);
 					}
 					else {
@@ -82,10 +105,13 @@ void IRCClient::dataReceived()
 						string Nick;
 						string Address;
 						NickUser.PartialMatch(NorS, &Nick, &Address);
-						if (Event == "PRIVMSG") {
+						if (Event == "JOIN" || Event == "PART") {
+							emit channelMessageReceived(this, QString::fromStdString((IsChan.PartialMatch(Extra) > 0 ? Extra : Args)).trimmed(),QString::fromStdString(Event).trimmed(),QString::fromStdString(Nick).trimmed(),QString::fromStdString(Address).trimmed(),QString::fromStdString(Extra).trimmed());
+						}
+						else if (Event == "PRIVMSG") {
 							if (IsChan.PartialMatch(Args)) {
 								//emit incomingData(this, line);
-								emit channelMessageReceived(this, QString::fromStdString(Args).trimmed(),QString::fromStdString(Nick).trimmed(),QString::fromStdString(Address).trimmed(),QString::fromStdString(Extra).trimmed());
+								emit channelMessageReceived(this, QString::fromStdString(Args).trimmed(),QString::fromStdString(Event).trimmed(),QString::fromStdString(Nick).trimmed(),QString::fromStdString(Address).trimmed(),QString::fromStdString(Extra).trimmed());
 							}
 							else { 
 								emit privateMessageReceived(this, QString::fromStdString(Nick).trimmed(),QString::fromStdString(Address).trimmed(),QString::fromStdString(Extra).trimmed());
