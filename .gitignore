@@ -1,5 +1,6 @@
+doc/
 openirc
-openirc.ini
+*.ini
 *.o
 Makefile
 moc*

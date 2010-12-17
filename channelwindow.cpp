@@ -1,8 +1,11 @@
 #include "channelwindow.h"
 
-ChannelWindow::ChannelWindow(QWidget *parent)
+ChannelWindow::ChannelWindow(IRCClient *client, const QString &channel, QWidget *parent)
   : QMdiSubWindow(parent, 0)
 {
+	this->client = client;
+	this->channel = channel;
+
 	// Create our main internal widget
 	this->internalWidget = new QWidget(this);
 
@@ -59,6 +62,9 @@ ChannelWindow::ChannelWindow(QWidget *parent)
 	this->mainLayout->setContentsMargins(0,0,0,0);
 
 	this->setWidget(this->internalWidget);
+
+	// Connect signals to slots
+	connect(this->inputBuffer, SIGNAL(returnPressed()), this, SLOT(inputBufferReturnPressed()));
 }
 
 void ChannelWindow::setTitle(const QString &title)
@@ -72,5 +78,13 @@ void ChannelWindow::appendBuffer(const QString &string)
 
 void ChannelWindow::inputBufferReturnPressed()
 {
-	// TODO: Do something with this.
+	QString msg = this->inputBuffer->text();
+
+	if (!msg.startsWith("/")) {
+		// TODO: Use the IRCCommandParser to check for any commands
+		this->client->sendRawMessage("PRIVMSG " + this->channel + " :" + msg);
+		this->chatBuffer->append("[me]" + msg);
+	}
+
+	this->inputBuffer->clear();
 }

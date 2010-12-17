@@ -2,13 +2,14 @@
 #define OPENIRC_CHANNELWINDOW_H
 
 #include <QtGui>
+#include "ircclient.h"
 
 class ChannelWindow : public QMdiSubWindow
 {
 	Q_OBJECT
 
   public:
-  	ChannelWindow(QWidget *parent = 0);
+  	ChannelWindow(IRCClient *client, const QString &channel, QWidget *parent = 0);
 	void setTitle(const QString &title);
 	void appendBuffer(const QString &string);
 
@@ -31,6 +32,9 @@ class ChannelWindow : public QMdiSubWindow
 	QAction *channelInfoAction;
 	QAction *channelStatsAction;
 	QAction *cycleChannelAction;
+
+	IRCClient *client;
+	QString channel;
 };
 
 #endif

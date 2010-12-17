@@ -83,7 +83,7 @@ void QueryWindow::inputBufferReturnPressed()
 	if (!msg.startsWith("/")) {
 		// TODO: Use the IRCCommandParser to check for any commands
 		this->client->sendRawMessage("PRIVMSG " + this->otherNick + " :" + msg);
-		this->chatBuffer->append("<me>" + msg);
+		this->chatBuffer->append("[me]" + msg);
 	}
 
 	this->inputBuffer->clear();

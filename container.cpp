@@ -9,6 +9,9 @@
 Container::Container(QWidget *parent, Qt::WindowFlags flags)
   : QMainWindow(parent, flags)
 {
+	this->setWindowIcon(QIcon(":/images/openirc.png"));
+	this->setWindowTitle("OpenIRC");
+
 	this->menu_File_Exit = new QAction(this);
 	this->menubar = new QMenuBar(this);
 	this->menu_File = new QMenu(this->menubar);
@@ -59,7 +62,7 @@ void Container::newStatusWindow()
 	// Create the new status window
 	StatusWindow *statusWindow = new StatusWindow(this->mdiArea);
 	statusWindow->setTitle(tr("Not Connected"));
-        statusWindow->show();
+	statusWindow->show();
 
 	// Create the new IRCClient
 	IRCClient *client = new IRCClient(this);
@@ -120,7 +123,7 @@ ChannelWindow *Container::newChannelWindow(IRCClient *client, const QString &cha
 	if ((client != 0) && (this->windows.contains(client->cid))) {
 
 		// Create the query window
-		chanWindow = new ChannelWindow();
+		chanWindow = new ChannelWindow(client, chanName);
 		chanWindow->setTitle(chanName);
 		this->mdiArea->addSubWindow(chanWindow);
 
@@ -265,7 +268,7 @@ void Container::privateMessageReceived(IRCClient *client, const QString &nick, c
 		queryWindow = (QueryWindow *)this->windows[client->cid][nick];
 	}
 
-	queryWindow->appendBuffer("<" + nick + "> " + message);
+	queryWindow->appendBuffer("[" + nick + "] " + message);
 }
 
 void Container::channelMessageReceived(IRCClient *client, const QString &chan, const QString &nick, const QString &address, const QString &message)
@@ -278,7 +281,7 @@ void Container::channelMessageReceived(IRCClient *client, const QString &chan, c
 		chanWindow = (ChannelWindow *)this->windows[client->cid][chan];
 	}
 
-	chanWindow->appendBuffer("<" + nick + "> " + message);
+	chanWindow->appendBuffer("[" + nick + "] " + message);
 }
 
 void Container::incomingData(IRCClient *client, const QString &data) // FIXME: Remove this later
