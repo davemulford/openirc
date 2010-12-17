@@ -8,6 +8,8 @@ class CCtoHTML
 	private:
 		bool bold;
 		bool underline;
+		int fg;
+		int bg;
 		map<int, string> ColorChart;
 	public:
 		string Text;

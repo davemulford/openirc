@@ -7,6 +7,8 @@
 #include "pcrecpp.h"
 #include "cctohtml.h"
 
+#include <QTextDocument>
+
 Container::Container(QWidget *parent, Qt::WindowFlags flags)
   : QMainWindow(parent, flags)
 {
@@ -268,7 +270,8 @@ void Container::privateMessageReceived(IRCClient *client, const QString &nick, c
 	} else {
 		queryWindow = (QueryWindow *)this->windows[client->cid][nick];
 	}
-	CCtoHTML str(message.toStdString());
+	QString msg = Qt::escape(message);
+	CCtoHTML str(msg.toStdString());
 	queryWindow->appendBuffer("<span style=\"color: #0000FC\">&lt;</span><b>" + nick + "</b><span style=\"color: #0000FC\">&gt;</span> " + QString::fromStdString(str.translate()));
 }
 
@@ -282,7 +285,8 @@ void Container::channelMessageReceived(IRCClient *client, const QString &chan, c
 		chanWindow = (ChannelWindow *)this->windows[client->cid][chan];
 	}
 
-	CCtoHTML str(message.toStdString());
+	QString msg = Qt::escape(message);
+	CCtoHTML str(msg.toStdString());
 	chanWindow->appendBuffer("<span style=\"color: #0000FC\">&lt;</span><b>" + nick + "</b><span style=\"color: #0000FC\">&gt;</span> " + QString::fromStdString(str.translate()));
 }
 
