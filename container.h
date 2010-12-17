@@ -11,6 +11,7 @@
 #include "inifile.h"
 #include "querywindow.h"
 #include "channelwindow.h"
+#include "windowtree.h"
 
 class Container : public QMainWindow
 {
@@ -62,8 +63,10 @@ class Container : public QMainWindow
 	QMenu *menu_File;
 	QAction *menu_File_Exit;
 
-	QMdiArea *mdiArea;
 	ContextBar *contextBar;
+	WindowTree *windowTree;
+
+	QMdiArea *mdiArea;
 	QStatusBar *statusbar;
 	QToolBar *toolbar;
 

@@ -39,6 +39,9 @@ Container::Container(QWidget *parent, Qt::WindowFlags flags)
 	this->contextBar = new ContextBar(this, 0);
 	this->addDockWidget(Qt::TopDockWidgetArea, this->contextBar);
 
+	this->windowTree = new WindowTree(this, 0);
+	this->addDockWidget(Qt::LeftDockWidgetArea, this->windowTree);
+
 	// Create the mdi area
 	this->mdiArea = new QMdiArea(this);
 	//this->mdiArea->setViewMode(QMdiArea::TabbedView);
