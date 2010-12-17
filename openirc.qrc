@@ -32,5 +32,6 @@
      <file>images/config-home.png</file>
      <file>images/config-userinfo.png</file>
      <file>images/servers.png</file>
+     <file>images/openirc.png</file>
  </qresource>
  </RCC>
