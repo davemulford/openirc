@@ -25,6 +25,7 @@ CCtoHTML::CCtoHTML(string text) {
 	Text = text;
 	string ctrl;
 	string txt;
+	bold = underline = false;
 	pcrecpp::RE ParseCC("((?:(?:\\d\\d?),)?(?:\\d\\d?)|[])([^]*)");
 	while (ParseCC.PartialMatch(Text,&ctrl,&txt) > 0) {
 		ParseCC.Replace(ReturnHTML(ctrl,txt),&Text);
@@ -35,13 +36,13 @@ string CCtoHTML::ReturnHTML(string control, string text) {
 	int bg = 16;
 	bool colored;
         string styles;
-	pcrecpp::RE ParseColor("^(\\d\\d?),?(\\d\\d?)");
+	pcrecpp::RE ParseColor("^(\\d\\d?),?(\\d\\d?)?");
 	pcrecpp::RE ParseBold("^");
 	pcrecpp::RE ParseUnder("^");
 	//todo reverse? not important imho...
 	pcrecpp::RE ParseStop("^");
-        if (ParseBold.PartialMatch(control)) { bold = bold == true ? false : true; }
-        if (ParseUnder.PartialMatch(control)) { underline = underline == true ? false : true; }
+        if (ParseBold.PartialMatch(control)) { bold = (bold == true ? false : true); }
+        if (ParseUnder.PartialMatch(control)) { underline = (underline == true ? false : true); }
         if (ParseStop.PartialMatch(control)) { bold = underline = false; }
         if (ParseColor.PartialMatch(control,&fg,&bg)) { colored = true; }
         if (colored == true) {
