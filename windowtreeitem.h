@@ -3,14 +3,17 @@
 
 #include <QtGui>
 
-class WindowTreeItem : public QStandardItem
+class WindowTreeItem : public QTreeWidgetItem
 {
   public:
-  	WindowTreeItem(QWidget *parent = 0);
+	WindowTreeItem(QTreeWidget *parent = 0, const unsigned int cid = 0, QMdiSubWindow *window = 0);
+  	WindowTreeItem(WindowTreeItem *parent = 0, const unsigned int cid = 0, QMdiSubWindow *window = 0);
+
+	QMdiSubWindow *window();
 
   private:
   	unsigned int cid;
-	QMdiSubWindow *window;
+	QMdiSubWindow *_window;
 };
 
 #endif

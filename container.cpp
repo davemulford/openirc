@@ -42,6 +42,8 @@ Container::Container(QWidget *parent, Qt::WindowFlags flags)
 	this->windowTree = new WindowTree(this, 0);
 	this->addDockWidget(Qt::LeftDockWidgetArea, this->windowTree);
 
+	connect(this->windowTree, SIGNAL(windowItemClicked(QMdiSubWIndow *)), this, SLOT(windowItemClicked(QMdiSubWindow *)));
+
 	// Create the mdi area
 	this->mdiArea = new QMdiArea(this);
 	//this->mdiArea->setViewMode(QMdiArea::TabbedView);
@@ -68,11 +70,13 @@ void Container::newStatusWindow(const QString &server, const int port)
 	// Create the new status window
 	StatusWindow *statusWindow = new StatusWindow(this->mdiArea);
 	statusWindow->setTitle(tr("Not Connected"));
-	statusWindow->show();
 
 	// Create the new IRCClient
 	IRCClient *client = new IRCClient(this);
 	statusWindow->setClient(client);
+
+	// Add an entry in the window tree
+	this->windowTree->addStatusWindow(client->cid, server, statusWindow);
 
 	char newbuf[100];
 	sprintf(newbuf,"--- Connection id: %d",client->cid);
@@ -99,6 +103,7 @@ void Container::newStatusWindow(const QString &server, const int port)
 
 	// connect the new status button to new status window
 	connect(statusWindow, SIGNAL(newStatusWin()), this, SLOT(newStatusWindow()));
+	statusWindow->show();
 }
 
 QueryWindow *Container::newQueryWindow(IRCClient *client, const QString &queryName, const QString &address)
@@ -111,6 +116,9 @@ QueryWindow *Container::newQueryWindow(IRCClient *client, const QString &queryNa
 		queryWindow = new QueryWindow(client, queryName);
 		queryWindow->setTitle(queryName + " (" + address + ")");
 		this->mdiArea->addSubWindow(queryWindow);
+
+		// Add an entry in the window tree
+		this->windowTree->addQueryWindow(client->cid, queryName, queryWindow);
 
 		this->windows[client->cid].insert(queryName, queryWindow);
 		queryWindow->show();
@@ -131,6 +139,9 @@ ChannelWindow *Container::newChannelWindow(IRCClient *client, const QString &cha
 		chanWindow = new ChannelWindow(client, chanName);
 		chanWindow->setTitle(chanName);
 		this->mdiArea->addSubWindow(chanWindow);
+
+		// Add an entry in the window tree
+		this->windowTree->addChannelWindow(client->cid, chanName, chanWindow);
 
 		this->windows[client->cid].insert(chanName, chanWindow);
 		chanWindow->show();
@@ -330,4 +341,9 @@ void Container::serversWindowConnectClicked(const QString &server, const int por
 	QString awesome("awesome");
 	qDebug() << awesome << endl;
 	this->newStatusWindow(server, port);
+}
+
+void Container::windowItemClicked(QMdiSubWindow *subWindow)
+{
+	this->mdiArea->setActiveSubWindow(subWindow);
 }

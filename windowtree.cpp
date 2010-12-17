@@ -9,7 +9,11 @@ WindowTree::WindowTree(QWidget *parent, Qt::WindowFlags flags)
 
 	this->containerWidget = new QWidget(this);
 
-	this->tree = new QTreeView();
+	this->tree = new QTreeWidget();
+	this->tree->setColumnCount(1);
+
+	connect(this->tree, SIGNAL(itemClicked(QTreeWidgetItem *, int)), this, SLOT(itemClicked(QTreeWidgetItem *, int)));
+
 	this->layout = new QVBoxLayout(this->containerWidget);
 
 	this->layout->setSpacing(0);
@@ -19,26 +23,61 @@ WindowTree::WindowTree(QWidget *parent, Qt::WindowFlags flags)
 	this->setWidget(this->containerWidget);
 }
 
+void WindowTree::addStatusWindow(const unsigned int cid, const QString &name, QMdiSubWindow *window)
+{
+	// Add status window gets added as a root-level item,
+	// so its parent MUST be set to the tree
+	WindowTreeItem *item = new WindowTreeItem(this->tree, cid, window);
+	this->rootItems.insert(cid, item);
+
+	if (name.isEmpty() || name.isNull()) {
+		item->setText(0, tr("Unnamed Network"));
+	} else {
+		item->setText(0, name);
+	}
+}
+
+void WindowTree::addChannelWindow(const unsigned int cid, const QString &name, QMdiSubWindow *window)
+{
+	if (this->rootItems.contains(cid)) {
+		WindowTreeItem *networkItem = this->rootItems[cid];
+		WindowTreeItem *channelItem = new WindowTreeItem(networkItem, cid, window);
+
+		channelItem->setText(0, name);
+	}
+}
+
+void WindowTree::addQueryWindow(const unsigned int cid, const QString &name, QMdiSubWindow *window)
+{
+	if (this->rootItems.contains(cid)) {
+		WindowTreeItem *networkItem = this->rootItems[cid];
+		WindowTreeItem *queryItem = new WindowTreeItem(networkItem, cid, window);
+
+		queryItem->setText(0, name);
+	}
+}
+
 void WindowTree::createMockItems(void)
 {
-	// Create the model
-	this->model = new QStandardItemModel(8, 1, this);
-	this->model->setHeaderData(0, Qt::Horizontal, tr(""));
-	//this->model->verticalHeader()->hide();
-	//this->model->setHeaderData(1, Qt::Horizontal, tr(""));
+	QTreeWidgetItem *cities = new QTreeWidgetItem(this->tree);
+	cities->setText(0, tr("Cities"));
 
-	// Give the model to the tree
-	this->tree->setModel(this->model);
+	QTreeWidgetItem *planets = new QTreeWidgetItem(this->tree, cities);
+	planets->setText(0, tr("Planets"));
 
-	// Add some items to the tree
-	int rowId = 0;
-	this->model->insertRow(rowId);
-	this->model->setData(this->model->index(rowId, 0, QModelIndex()), "ok1");
+	QTreeWidgetItem *osloItem = new QTreeWidgetItem(cities);
+	osloItem->setText(0, tr("Oslo"));
+}
 
-	rowId++;
-	this->model->insertRow(1);
-	this->model->setData(this->model->index(rowId, 0, QModelIndex()), "ok2");
+void WindowTree::itemClicked(QTreeWidgetItem *item, int column)
+{
+	WindowTreeItem *treeItem = (WindowTreeItem *)item;
 
+	//qDebug() << "Attempting to activate and raise a subwindow" << endl;
 
+	emit windowItemClicked(treeItem->window());
 
+	//treeItem->window()->activateWindow();
+	//treeItem->window()->raise();
+	treeItem->window()->show();
 }

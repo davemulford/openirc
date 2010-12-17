@@ -58,6 +58,9 @@ class Container : public QMainWindow
 	// Miscellaneous QDialg slots
 	void serversWindowConnectClicked(const QString &server, const int port);
 
+	// The slot to handle when an item is clicked in the window tree
+  	void windowItemClicked(QMdiSubWindow *subWindow);
+
   private:
 	QMenuBar *menubar;
 	QMenu *menu_File;
