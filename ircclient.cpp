@@ -14,7 +14,7 @@ IRCClient::IRCClient(QObject *parent, const QString &server, const int port)
 	connect(this, SIGNAL(readyRead()), this, SLOT(dataReceived()));
 	connect(this, SIGNAL(connected()), this, SLOT(connectedToIRCHost()));
 	connect(this, SIGNAL(disconnected()), this, SLOT(disconnectedFromIRCHost()));
-	connect(this, SIGNAL(error(SocketError)), this, SLOT(error(SocketError)));
+	//connect(this, SIGNAL(error(SocketError)), this, SLOT(networkError(SocketError)));
 
 	 if (server != 0) {
 		 // TODO: Connect to the server

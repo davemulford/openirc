@@ -101,6 +101,15 @@ void ServersWindow::connectButtonClicked()
 		// We only care about the first selected item
 		// (user should only be allowed single-select anyway)
 
+		// This was a bit of a pain to work with.
+		//
+		// In order to get the selected "row" you have to use the model,
+		// not the QTableView. And then, you don't get it back on a per-row
+		// basis. You get the data on a per-cell basis.
+		//
+		// So, we take selectedIndexes as an array (knowing there are only 3 elements)
+		// and get the data, convert it to a string, and trim it.
+
 		QString server = selectedIndexes[1].data().toString().trimmed();
 		int port = selectedIndexes[2].data().toString().trimmed().toInt();
 
