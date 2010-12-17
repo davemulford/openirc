@@ -58,11 +58,13 @@ void IRCClient::dataReceived()
 	string Event;
 	string args;
 	string Extra;
+	string Action;
 
-	pcrecpp::RE ParseLine("^(?:\\x3a(\\S+) )?(\\d{3}|[a-zA-Z]+)(?: ((?:[^\\x00\\x0a\\x0d\\x20\\x3a][^\\x00\\x0a\\x0d\\x20]*)(?: [^\\x00\\x0a\\x0d\\x20\\x3a][^\\x00\\x0a\\x0d\\x20]*)*))?(?: \\x3a([^\\x00\\x0a\\x0d]*))?\\x20*$");
+	pcrecpp::RE ParseLine("^(?:\\x3a(\\S+) )?(\\d{3}|[a-zA-Z]+)(?: ((?:[^\\x00\\x0a\\x0d\\x20\\x3a][^\\x00\\x0a\\x0d\\x20]*)(?: [^\\x00\\x0a\\x0d\\x20\\x3a][^\\x00\\x0a\\x0d\\x20]*)*))? (?:\\x3a([^\\x00\\x0a\\x0d]*))?\\x20*$");
 	pcrecpp::RE NickOrServer("^[^!@]+$");
 	pcrecpp::RE NickUser("^([^!]+)!(.*)$");
 	pcrecpp::RE IsChan("^\\#");
+	pcrecpp::RE IsAction("^ACTION (.*)$");
 
 	while (this->canReadLine()) {
 		QString line = this->readLine();
@@ -114,15 +116,19 @@ void IRCClient::dataReceived()
 						string Address;
 						NickUser.PartialMatch(NorS, &Nick, &Address);
 						if (Event == "JOIN" || Event == "PART") {
-							emit channelMessageReceived(this, QString::fromStdString((IsChan.PartialMatch(Extra) > 0 ? Extra : Args.at(0))).trimmed(),QString::fromStdString(Event).trimmed(),QString::fromStdString(Nick).trimmed(),QString::fromStdString(Address).trimmed(),QString::fromStdString(Extra).trimmed());
+							emit channelMessageReceived(this, QString::fromStdString((IsChan.PartialMatch(Extra) > 0 ? Extra : Args.at(0))),QString::fromStdString(Event),QString::fromStdString(Nick),QString::fromStdString(Address),QString::fromStdString(Extra));
 						}
 						else if (Event == "PRIVMSG") {
 							if (IsChan.PartialMatch(Args.at(0))) {
-								//emit incomingData(this, line);
-								emit channelMessageReceived(this, QString::fromStdString(Args.at(0)).trimmed(),QString::fromStdString(Event).trimmed(),QString::fromStdString(Nick).trimmed(),QString::fromStdString(Address).trimmed(),QString::fromStdString(Extra).trimmed());
+								if (IsAction.PartialMatch(Extra,&Action)) {
+									emit channelMessageReceived(this, QString::fromStdString(Args.at(0)),QString::fromStdString("ACTION"),QString::fromStdString(Nick),QString::fromStdString(Address),QString::fromStdString(Action));
+								}
+								else {
+									emit channelMessageReceived(this, QString::fromStdString(Args.at(0)),QString::fromStdString(Event),QString::fromStdString(Nick),QString::fromStdString(Address),QString::fromStdString(Extra));
+								}
 							}
 							else { 
-								emit privateMessageReceived(this, QString::fromStdString(Nick).trimmed(),QString::fromStdString(Address).trimmed(),QString::fromStdString(Extra).trimmed());
+								emit privateMessageReceived(this, QString::fromStdString(Nick),QString::fromStdString(Address),QString::fromStdString(Extra));
 							}
 						}
 						else { emit incomingData(this, line); }

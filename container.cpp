@@ -316,6 +316,11 @@ void Container::channelMessageReceived(IRCClient *client, const QString &chan, c
 		CCtoHTML str(AddLine.toStdString());
 		chanWindow->appendBuffer(QString::fromStdString(str.translate()));
 	}
+	else if (event == "ACTION") {
+		QString AddLine = Qt::escape("7* " + nick + " " + message);
+		CCtoHTML str(AddLine.toStdString());
+		chanWindow->appendBuffer(QString::fromStdString(str.translate()));
+	}
 }
 
 void Container::incomingData(IRCClient *client, const QString &data) // FIXME: Remove this later
