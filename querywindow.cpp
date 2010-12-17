@@ -1,4 +1,5 @@
 #include "querywindow.h"
+#include "cctohtml.h"
 
 QueryWindow::QueryWindow(IRCClient *client, const QString &otherNick, QWidget *parent)
   : QMdiSubWindow(parent, 0)
@@ -85,7 +86,11 @@ void QueryWindow::inputBufferReturnPressed()
 	if (!msg.startsWith("/")) {
 		// TODO: Use the IRCCommandParser to check for any commands
 		this->client->sendRawMessage("PRIVMSG " + this->otherNick + " :" + msg);
-		this->chatBuffer->append("[me]" + msg);
+
+		QString AddLine = Qt::escape("9<" + QString::fromStdString(this->client->Me) + "9> " + msg);
+		CCtoHTML str(AddLine.toStdString());
+
+		this->chatBuffer->append(QString::fromStdString(str.translate()));
 	}
 
 	this->inputBuffer->clear();

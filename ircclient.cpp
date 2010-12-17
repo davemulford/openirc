@@ -1,5 +1,6 @@
 #include "ircclient.h"
 #include "pcrecpp.h"
+#include <sstream>
 
 using namespace std;
 
@@ -55,7 +56,7 @@ void IRCClient::dataReceived()
 {
 	string NorS;
 	string Event;
-	string Args;
+	string args;
 	string Extra;
 
 	pcrecpp::RE ParseLine("^(?:\\x3a(\\S+) )?(\\d{3}|[a-zA-Z]+)(?: ((?:[^\\x00\\x0a\\x0d\\x20\\x3a][^\\x00\\x0a\\x0d\\x20]*)(?: [^\\x00\\x0a\\x0d\\x20\\x3a][^\\x00\\x0a\\x0d\\x20]*)*))?(?: \\x3a([^\\x00\\x0a\\x0d]*))?\\x20*$");
@@ -68,7 +69,14 @@ void IRCClient::dataReceived()
 		line.remove('\r');
 		line.remove('\n');
 		if (!line.isEmpty()) {
-  			if (ParseLine.PartialMatch(line.toStdString(), &NorS, &Event, &Args, &Extra)) {
+  			if (ParseLine.PartialMatch(line.toStdString(), &NorS, &Event, &args, &Extra)) {
+				istringstream oss(args);
+    				vector<string> Args;
+				string word;
+				while(oss >> word) {
+					Args.push_back(word);
+				}
+
 				if (NorS == "") {
 	    				if (Event == "PING") { this->sendRawMessage(QString::fromStdString("PONG " + Extra)); }
 				}
@@ -78,7 +86,7 @@ void IRCClient::dataReceived()
 						Server Message
 						trigger RAW event
 						*/
-						Me = Args;
+						Me = Args.at(0);
 						if (Event == "001") {
 							//set server NorS
 							//find out our userhost info
@@ -106,12 +114,12 @@ void IRCClient::dataReceived()
 						string Address;
 						NickUser.PartialMatch(NorS, &Nick, &Address);
 						if (Event == "JOIN" || Event == "PART") {
-							emit channelMessageReceived(this, QString::fromStdString((IsChan.PartialMatch(Extra) > 0 ? Extra : Args)).trimmed(),QString::fromStdString(Event).trimmed(),QString::fromStdString(Nick).trimmed(),QString::fromStdString(Address).trimmed(),QString::fromStdString(Extra).trimmed());
+							emit channelMessageReceived(this, QString::fromStdString((IsChan.PartialMatch(Extra) > 0 ? Extra : Args.at(0))).trimmed(),QString::fromStdString(Event).trimmed(),QString::fromStdString(Nick).trimmed(),QString::fromStdString(Address).trimmed(),QString::fromStdString(Extra).trimmed());
 						}
 						else if (Event == "PRIVMSG") {
-							if (IsChan.PartialMatch(Args)) {
+							if (IsChan.PartialMatch(Args.at(0))) {
 								//emit incomingData(this, line);
-								emit channelMessageReceived(this, QString::fromStdString(Args).trimmed(),QString::fromStdString(Event).trimmed(),QString::fromStdString(Nick).trimmed(),QString::fromStdString(Address).trimmed(),QString::fromStdString(Extra).trimmed());
+								emit channelMessageReceived(this, QString::fromStdString(Args.at(0)).trimmed(),QString::fromStdString(Event).trimmed(),QString::fromStdString(Nick).trimmed(),QString::fromStdString(Address).trimmed(),QString::fromStdString(Extra).trimmed());
 							}
 							else { 
 								emit privateMessageReceived(this, QString::fromStdString(Nick).trimmed(),QString::fromStdString(Address).trimmed(),QString::fromStdString(Extra).trimmed());

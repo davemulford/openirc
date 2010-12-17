@@ -288,19 +288,19 @@ void Container::channelMessageReceived(IRCClient *client, const QString &chan, c
 	}
 
 	if (event == "JOIN") {
-		string AddLine = "10*** Joins: " + nick.toStdString() + " (" + address.toStdString() + ")";
-		CCtoHTML str(AddLine);
+		QString AddLine = Qt::escape("10* Joins: " + nick + " (" + address + ")");
+		CCtoHTML str(AddLine.toStdString());
 		chanWindow->appendBuffer(QString::fromStdString(str.translate()));
 	}
 	else if (event == "PART") {
-		string AddLine = "10*** Parts: " + nick.toStdString() + " (" + address.toStdString() + ")";
-		CCtoHTML str(AddLine);
+		QString AddLine = Qt::escape("10* Parts: " + nick + " (" + address + ")");
+		CCtoHTML str(AddLine.toStdString());
 		chanWindow->appendBuffer(QString::fromStdString(str.translate()));
 	}
 	else if (event == "PRIVMSG") {
-		QString msg = Qt::escape(message);
-		CCtoHTML str(msg.toStdString());
-		chanWindow->appendBuffer("<span style=\"color: #0000FC\">&lt;</span><b>" + nick + "</b><span style=\"color: #0000FC\">&gt;</span> " + QString::fromStdString(str.translate()));
+		QString AddLine = Qt::escape("12<" + nick + "12> " + message);
+		CCtoHTML str(AddLine.toStdString());
+		chanWindow->appendBuffer(QString::fromStdString(str.translate()));
 	}
 }
 
