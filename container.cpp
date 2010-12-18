@@ -227,6 +227,7 @@ void Container::connected(IRCClient *client)
 		return;
 	}
 
+	this->windowTree->renameItem(client->cid, statusWindow->hashName(), client->peerName());
 	statusWindow->setWindowTitle("Status: " + this->configFile->value("UserInfo", "nick") + " on (" + client->peerName() + ")");
 	statusWindow->append("--- Connected to " + client->peerName());
 
@@ -312,6 +313,8 @@ void Container::privateMessageReceived(IRCClient *client, const QString &nick, c
 		queryWindow = this->newQueryWindow(client, nick, address);
 	}
 
+	this->windowTree->maybeHighlightItem(client->cid, queryWindow->hashName());
+
 	QString msg = Qt::escape(message);
 	CCtoHTML str(msg.toStdString());
 	queryWindow->append("<span style=\"color: #0000FC\">&lt;</span><b>" + nick + "</b><span style=\"color: #0000FC\">&gt;</span> " + QString::fromStdString(str.translate()));
@@ -340,6 +343,8 @@ void Container::channelMessageReceived(IRCClient *client, const QString &chan, c
 	if (chanWindow == 0) {
 		return;
 	}
+
+	this->windowTree->maybeHighlightItem(client->cid, chanWindow->hashName());
 
 	if (event == "JOIN") {
 		QString AddLine = Qt::escape("10* Joins: " + nick + " (" + address + ")");

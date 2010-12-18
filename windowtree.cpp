@@ -25,6 +25,33 @@ WindowTree::WindowTree(QWidget *parent, Qt::WindowFlags flags)
 	this->setWidget(this->containerWidget);
 }
 
+WindowTreeItem *WindowTree::findItem(const int cid, const QString &hashName)
+{
+	qDebug() << "WindowTree::findItem() called on cid=" << cid << " hashName=" << hashName << endl;
+
+	if (this->rootItems.contains(cid)) {
+		WindowTreeItem *topLevelItem = this->rootItems[cid];
+
+		// Are we looking for the top-level window?
+		if (topLevelItem->window()->hashName() == hashName) {
+			qDebug() << "WindowTree::findItem() returning top-level window" << endl;
+			return(topLevelItem);
+		} else {
+			int i, childCount = topLevelItem->childCount();
+			
+			for (i = 0; i < childCount; i++) {
+				WindowTreeItem *child = (WindowTreeItem *)topLevelItem->child(i);
+
+				if (child->window()->hashName() == hashName) {
+					return(child);
+				}
+			}
+		}
+	}
+
+	return(0);
+}
+
 void WindowTree::addStatusWindow(const unsigned int cid, const QString &name, MdiWindow *window)
 {
 	// Add status window gets added as a root-level item,
@@ -63,7 +90,7 @@ void WindowTree::addQueryWindow(const unsigned int cid, const QString &name, Mdi
 	}
 }
 
-void WindowTree::removeItem(const unsigned int cid, const QString hashName)
+void WindowTree::removeItem(const unsigned int cid, const QString &hashName)
 {
 	if (this->rootItems.contains(cid)) {
 
@@ -97,9 +124,51 @@ void WindowTree::removeItem(const unsigned int cid, const QString hashName)
 	}
 }
 
+void WindowTree::renameItem(const unsigned int cid, const QString &hashName, const QString &newName)
+{
+	if (this->rootItems.contains(cid)) {
+
+		// Get the root item, then find all child items
+		WindowTreeItem *root = this->rootItems[cid];
+		
+		// Are we changing the name of the root item?
+		if (root->window()->hashName() == hashName) {
+			root->setText(0, newName);
+		} else {
+			int i, childCount = root->childCount();
+
+			for (i = 0; i < childCount; i++) {
+				WindowTreeItem *child = (WindowTreeItem *)root->child(i);
+
+				if (child->window()->hashName() == hashName) {
+					child->setText(0, newName);
+				}
+			}
+		}
+	}
+}
+
+void WindowTree::maybeHighlightItem(const unsigned int cid, const QString &hashName)
+{
+	WindowTreeItem *itemToHighlight = 0;
+
+	qDebug() << "WindowTree::maybeHighlightItem() called on cid=" << cid << " hashName=" << hashName << endl;
+
+	if ((itemToHighlight = this->findItem(cid, hashName)) != 0) {
+		qDebug() << "WindowTree::maybeHighlightItem() found item to highlight" << endl;
+		if (itemToHighlight->window()->isActiveWindow() == false) {
+			qDebug() << "WindowTree::maybeHighlightItem() window is not the active window...highlighting" << endl;
+			itemToHighlight->setForeground(0, QBrush(QColor("#880000")));
+		}
+	}
+}
+
 void WindowTree::itemClicked(QTreeWidgetItem *item, int column)
 {
 	WindowTreeItem *treeItem = (WindowTreeItem *)item;
+
+	// Unhighlight the item (just in case it was highlighted)
+	treeItem->setForeground(0, QBrush(QColor("#000000")));
 
 	treeItem->window()->show();
 	emit windowItemClicked(treeItem->window());

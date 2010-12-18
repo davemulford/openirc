@@ -17,7 +17,9 @@ class WindowTree : public QDockWidget
 	void addChannelWindow(const unsigned int cid, const QString &name, MdiWindow *window);
 	void addQueryWindow(const unsigned int cid, const QString &name, MdiWindow *window);
 
-	void removeItem(const unsigned int cid, const QString hashName);
+	void removeItem(const unsigned int cid, const QString &hashName);
+	void renameItem(const unsigned int cid, const QString &hashName, const QString &newName);
+	void maybeHighlightItem(const unsigned int cid, const QString &hashName);
 
   Q_SIGNALS:
 	void windowItemClicked(MdiWindow *subWindow);
@@ -33,6 +35,8 @@ class WindowTree : public QDockWidget
 	QStandardItemModel *model;
 
 	QHash<int, WindowTreeItem *> rootItems;
+
+	WindowTreeItem *findItem(const int cid, const QString &hashName);
 };
 
 #endif
