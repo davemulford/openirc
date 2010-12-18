@@ -33,8 +33,6 @@ class WindowTree : public QDockWidget
 	QStandardItemModel *model;
 
 	QHash<int, WindowTreeItem *> rootItems;
-
-	void createMockItems(void);
 };
 
 #endif

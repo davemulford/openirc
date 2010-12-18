@@ -35,5 +35,7 @@
      <file>images/openirc.png</file>
      <file>images/tile.png</file>
      <file>images/server.png</file>
+     <file>images/query.png</file>
+     <file>images/channel.png</file>
  </qresource>
  </RCC>

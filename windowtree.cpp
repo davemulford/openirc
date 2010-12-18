@@ -30,6 +30,8 @@ void WindowTree::addStatusWindow(const unsigned int cid, const QString &name, Md
 	// Add status window gets added as a root-level item,
 	// so its parent MUST be set to the tree
 	WindowTreeItem *item = new WindowTreeItem(this->tree, cid, window);
+
+	item->setIcon(0, QIcon(":images/servers.png"));
 	this->rootItems.insert(cid, item);
 
 	if (name.isEmpty() || name.isNull()) {
@@ -45,6 +47,7 @@ void WindowTree::addChannelWindow(const unsigned int cid, const QString &name, M
 		WindowTreeItem *networkItem = this->rootItems[cid];
 		WindowTreeItem *channelItem = new WindowTreeItem(networkItem, cid, window);
 
+		channelItem->setIcon(0, QIcon(":images/channel.png"));
 		channelItem->setText(0, name);
 	}
 }
@@ -55,6 +58,7 @@ void WindowTree::addQueryWindow(const unsigned int cid, const QString &name, Mdi
 		WindowTreeItem *networkItem = this->rootItems[cid];
 		WindowTreeItem *queryItem = new WindowTreeItem(networkItem, cid, window);
 
+		queryItem->setIcon(0, QIcon(":images/query.png"));
 		queryItem->setText(0, name);
 	}
 }
@@ -75,8 +79,8 @@ void WindowTree::removeItem(const unsigned int cid, const QString hashName)
 			// TODO: Go through and attempt to close all child windows
 
 			this->rootItems.remove(cid);
+			delete removedRoot;
 
-			delete root;
 
 		} else {
 			for (int i = 0; i < childCount; i++) {
@@ -91,18 +95,6 @@ void WindowTree::removeItem(const unsigned int cid, const QString hashName)
 			}
 		}
 	}
-}
-
-void WindowTree::createMockItems(void)
-{
-	QTreeWidgetItem *cities = new QTreeWidgetItem(this->tree);
-	cities->setText(0, tr("Cities"));
-
-	QTreeWidgetItem *planets = new QTreeWidgetItem(this->tree, cities);
-	planets->setText(0, tr("Planets"));
-
-	QTreeWidgetItem *osloItem = new QTreeWidgetItem(cities);
-	osloItem->setText(0, tr("Oslo"));
 }
 
 void WindowTree::itemClicked(QTreeWidgetItem *item, int column)
