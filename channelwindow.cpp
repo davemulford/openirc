@@ -89,3 +89,15 @@ void ChannelWindow::inputBufferReturnPressed()
 
 	this->inputBuffer->clear();
 }
+
+void ChannelWindow::closeEvent(QCloseEvent *event)
+{
+	qDebug() << "ChannelWindow::closeEvent() -- Attempting to close a channel window" << endl;
+
+	if (this->client()->state() == QAbstractSocket::ConnectedState) {
+		qDebug() << "ChannelWindow::closeEvent() -- Attempt to gracefully PART from " << this->channel() << endl;
+		this->client()->sendRawMessage("PART " + this->channel());
+	}
+
+	MdiWindow::closeEvent(event);
+}

@@ -50,3 +50,10 @@ void MdiWindow::setClient(IRCClient *client)
 {
 	this->Client = client;
 }
+
+void MdiWindow::closeEvent(QCloseEvent *event)
+{
+	qDebug() << "MdiWindow::closeEvent() -- Emitting closeEventTriggered() and accepting close event" << endl;
+	emit closeEventTriggered(this->client()->cid, this->hashName());
+	event->accept();
+}

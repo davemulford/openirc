@@ -19,6 +19,8 @@ class ChannelWindow : public MdiWindow
 	QString channel();
 	void setChannel(const QString &channel);
 
+	void closeEvent(QCloseEvent *event);
+
   public slots:
 	void inputBufferReturnPressed();
 	

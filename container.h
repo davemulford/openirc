@@ -60,7 +60,10 @@ class Container : public QMainWindow
 	void serversWindowConnectClicked(const QString &server, const int port);
 
 	// The slot to handle when an item is clicked in the window tree
-  	void windowItemClicked(QMdiSubWindow *subWindow);
+  	void windowItemClicked(MdiWindow *subWindow);
+
+	// Handles when a child window has been closed
+	void subWindowClosed(const int cid, const QString &hashName);
 
   private:
 	QMenuBar *menubar;

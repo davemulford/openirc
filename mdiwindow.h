@@ -27,6 +27,19 @@ class MdiWindow : public QMdiSubWindow
 	virtual void append(const QString &) = 0;
 	virtual MdiWindow::WindowType windowType() = 0;
 
+	/////////////////////////////////////
+	/// Implemented virtual functions ///
+	/////////////////////////////////////
+
+	// QWidget::closeEvent() implementation. From the doc...
+	// This function is called when a close event for a top-level widget is received. 
+	virtual void closeEvent(QCloseEvent *event);
+
+  Q_SIGNALS:
+
+  	// Emitted when a close event is received
+	void closeEventTriggered(const int cid, const QString &hashName);
+
   protected:
 	QVBoxLayout *layout;
 	QToolBar 	*toolbar;

@@ -16,6 +16,8 @@ class StatusWindow : public MdiWindow
 	void append(const QString &string);
 	MdiWindow::WindowType windowType();
 
+	void closeEvent(QCloseEvent *event);
+
   Q_SIGNALS:
 	void newStatusWin();
 

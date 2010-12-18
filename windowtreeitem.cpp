@@ -1,20 +1,25 @@
 #include "windowtreeitem.h"
 
-WindowTreeItem::WindowTreeItem(QTreeWidget *parent, const unsigned int cid, QMdiSubWindow *window)
+WindowTreeItem::WindowTreeItem(QTreeWidget *parent, const unsigned int cid, MdiWindow *window)
   : QTreeWidgetItem(parent, 0)
 {
-	this->cid = cid;
-	this->_window = window;
+	this->Cid = cid;
+	this->Window = window;
 }
 
-WindowTreeItem::WindowTreeItem(WindowTreeItem *parent, const unsigned int cid, QMdiSubWindow *window)
+WindowTreeItem::WindowTreeItem(WindowTreeItem *parent, const unsigned int cid, MdiWindow *window)
   : QTreeWidgetItem(parent, 0)
 {
-	this->cid = cid;
-	this->_window = window;
+	this->Cid = cid;
+	this->Window = window;
 }
 
-QMdiSubWindow *WindowTreeItem::window()
+int WindowTreeItem::cid()
 {
-	return(this->_window);
+	return(this->Cid);
+}
+
+MdiWindow *WindowTreeItem::window()
+{
+	return(this->Window);
 }

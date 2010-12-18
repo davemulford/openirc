@@ -25,7 +25,7 @@ WindowTree::WindowTree(QWidget *parent, Qt::WindowFlags flags)
 	this->setWidget(this->containerWidget);
 }
 
-void WindowTree::addStatusWindow(const unsigned int cid, const QString &name, QMdiSubWindow *window)
+void WindowTree::addStatusWindow(const unsigned int cid, const QString &name, MdiWindow *window)
 {
 	// Add status window gets added as a root-level item,
 	// so its parent MUST be set to the tree
@@ -39,7 +39,7 @@ void WindowTree::addStatusWindow(const unsigned int cid, const QString &name, QM
 	}
 }
 
-void WindowTree::addChannelWindow(const unsigned int cid, const QString &name, QMdiSubWindow *window)
+void WindowTree::addChannelWindow(const unsigned int cid, const QString &name, MdiWindow *window)
 {
 	if (this->rootItems.contains(cid)) {
 		WindowTreeItem *networkItem = this->rootItems[cid];
@@ -49,13 +49,47 @@ void WindowTree::addChannelWindow(const unsigned int cid, const QString &name, Q
 	}
 }
 
-void WindowTree::addQueryWindow(const unsigned int cid, const QString &name, QMdiSubWindow *window)
+void WindowTree::addQueryWindow(const unsigned int cid, const QString &name, MdiWindow *window)
 {
 	if (this->rootItems.contains(cid)) {
 		WindowTreeItem *networkItem = this->rootItems[cid];
 		WindowTreeItem *queryItem = new WindowTreeItem(networkItem, cid, window);
 
 		queryItem->setText(0, name);
+	}
+}
+
+void WindowTree::removeItem(const unsigned int cid, const QString hashName)
+{
+	if (this->rootItems.contains(cid)) {
+
+		// Get the root item, we'll go after its children then ;)
+		WindowTreeItem *root = this->rootItems[cid];
+		int childCount = root->childCount();
+
+		// Are we removing a status window?
+		if (root->window()->hashName() == hashName) {
+			int rootIndex = this->tree->indexOfTopLevelItem(root);
+			WindowTreeItem *removedRoot = (WindowTreeItem *)this->tree->takeTopLevelItem(rootIndex);
+
+			// TODO: Go through and attempt to close all child windows
+
+			this->rootItems.remove(cid);
+
+			delete root;
+
+		} else {
+			for (int i = 0; i < childCount; i++) {
+				WindowTreeItem *child = (WindowTreeItem *)root->child(i);
+
+				if (child->window()->hashName() == hashName) {
+					root->removeChild(child);
+
+					delete child;
+					break;
+				}
+			}
+		}
 	}
 }
 
@@ -75,11 +109,6 @@ void WindowTree::itemClicked(QTreeWidgetItem *item, int column)
 {
 	WindowTreeItem *treeItem = (WindowTreeItem *)item;
 
-	//qDebug() << "Attempting to activate and raise a subwindow" << endl;
-
-	emit windowItemClicked(treeItem->window());
-
-	//treeItem->window()->activateWindow();
-	//treeItem->window()->raise();
 	treeItem->window()->show();
+	emit windowItemClicked(treeItem->window());
 }

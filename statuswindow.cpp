@@ -77,3 +77,12 @@ void StatusWindow::connectDisconnectButtonClicked(bool checked)
 {
 	this->append(tr("*** Connect/Disconnect button clicked"));
 }
+
+void StatusWindow::closeEvent(QCloseEvent *event)
+{
+	if (this->client()->state() == QAbstractSocket::ConnectedState) {
+		this->client()->sendRawMessage("QUIT :Leaving");
+	}
+
+	MdiWindow::closeEvent(event);
+}

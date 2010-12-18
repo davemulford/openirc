@@ -26,15 +26,6 @@ Container::Container(QWidget *parent, Qt::WindowFlags flags)
 	this->menu_File->setTitle(QApplication::translate("MainWindow", "&File", 0, QApplication::UnicodeUTF8));
 	this->menu_File_Exit->setText(QApplication::translate("MainWindow", "E&xit", 0, QApplication::UnicodeUTF8));
 
-	/*this->toolbar = new QToolBar(this);
-	this->toolbar->setObjectName(QString::fromUtf8("toolBar"));
-
-	this->MainAction = new QAction(QIcon(":/images/whois.png"), tr(""), this->toolbar);
-	this->MainAction->setToolTip(tr("Whois"));
-	this->toolbar->addAction(this->MainAction);
-
-	this->addToolBar(Qt::TopToolBarArea, toolbar);*/
-
 	// Create the dock window
 	this->contextBar = new ContextBar(this, 0);
 	this->addDockWidget(Qt::TopDockWidgetArea, this->contextBar);
@@ -42,7 +33,7 @@ Container::Container(QWidget *parent, Qt::WindowFlags flags)
 	this->windowTree = new WindowTree(this, 0);
 	this->addDockWidget(Qt::LeftDockWidgetArea, this->windowTree);
 
-	connect(this->windowTree, SIGNAL(windowItemClicked(QMdiSubWindow *)), this, SLOT(windowItemClicked(QMdiSubWindow *)));
+	connect(this->windowTree, SIGNAL(windowItemClicked(MdiWindow *)), this, SLOT(windowItemClicked(MdiWindow *)));
 
 	// Create the mdi area
 	this->mdiArea = new QMdiArea(this);
@@ -103,6 +94,8 @@ void Container::newStatusWindow(const QString &server, const int port)
 
 	// connect the new status button to new status window
 	connect(statusWindow, SIGNAL(newStatusWin()), this, SLOT(newStatusWindow()));
+	connect(statusWindow, SIGNAL(closeEventTriggered(const int, const QString &)), this, SLOT(subWindowClosed(const int, const QString &)));
+
 	statusWindow->show();
 }
 
@@ -125,7 +118,8 @@ QueryWindow *Container::newQueryWindow(IRCClient *client, const QString &queryNa
 		this->windows[client->cid].insert(queryWindow->hashName(), queryWindow);
 		queryWindow->show();
 
-		// TODO: Connect any signals to slots
+		// Connect any signals to slots
+		connect(queryWindow, SIGNAL(closeEventTriggered(const int, const QString &)), this, SLOT(subWindowClosed(const int, const QString &)));
 	}
 
 	return(queryWindow);
@@ -151,7 +145,8 @@ ChannelWindow *Container::newChannelWindow(IRCClient *client, const QString &cha
 		this->windows[client->cid].insert(chanWindow->hashName(), chanWindow);
 		chanWindow->show();
 
-		// TODO: Connect any signals to slots
+		// Connect any signals to slots
+		connect(chanWindow, SIGNAL(closeEventTriggered(const int, const QString &)), this, SLOT(subWindowClosed(const int, const QString &)));
 	}
 
 	return(chanWindow);
@@ -337,8 +332,13 @@ void Container::channelMessageReceived(IRCClient *client, const QString &chan, c
 		}
 	}
 
-	if (chanWindow == 0) {
+	// Only open a window on client JOIN
+	if ((chanWindow == 0) && (event == "JOIN") && (nick == QString::fromStdString(client->Me))) {
 		chanWindow = this->newChannelWindow(client, chan);
+	}
+
+	if (chanWindow == 0) {
+		return;
 	}
 
 	if (event == "JOIN") {
@@ -393,7 +393,22 @@ void Container::serversWindowConnectClicked(const QString &server, const int por
 	this->newStatusWindow(server, port);
 }
 
-void Container::windowItemClicked(QMdiSubWindow *subWindow)
+void Container::windowItemClicked(MdiWindow *subWindow)
 {
 	this->mdiArea->setActiveSubWindow(subWindow);
+}
+
+void Container::subWindowClosed(const int cid, const QString &hashName)
+{
+	qDebug() << "Container::subWindowClosed() -- Attempting to remove window from window hash" << endl;
+	// Remove the window from the internal hash list
+	if (this->windows.contains(cid)) {
+		qDebug() << "Container::subWindowClosed() -- Removing <" << cid << " , " << hashName << "> from internal window hash" << endl;
+		this->windows[cid].remove(hashName);
+	}
+
+	// Remove the window from the window tree
+	this->windowTree->removeItem(cid, hashName);
+
+	//qDebug() << "Child window closed (cid=" << cid << ") (hashName=" << hashName << ")" << endl;
 }
