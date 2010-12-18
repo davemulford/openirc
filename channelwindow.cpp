@@ -4,6 +4,7 @@
 ChannelWindow::ChannelWindow(IRCClient *client, const QString &channel, QWidget *parent)
   : QMdiSubWindow(parent, 0)
 {
+	this->setWindowIcon(QIcon(":/images/openirc.png"));
 	this->client = client;
 	this->channel = channel;
 

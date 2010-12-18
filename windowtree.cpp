@@ -8,8 +8,10 @@ WindowTree::WindowTree(QWidget *parent, Qt::WindowFlags flags)
 	this->setTitleBarWidget(titleWidget);
 
 	this->containerWidget = new QWidget(this);
-
+	QStringList labels;
+	labels << "IRC Servers";
 	this->tree = new QTreeWidget();
+	this->tree->setHeaderLabels(labels);
 	this->tree->setColumnCount(1);
 
 	connect(this->tree, SIGNAL(itemClicked(QTreeWidgetItem *, int)), this, SLOT(itemClicked(QTreeWidgetItem *, int)));

@@ -15,11 +15,11 @@ class WindowTree : public QDockWidget
 	void addChannelWindow(const unsigned int cid, const QString &name, QMdiSubWindow *window);
 	void addQueryWindow(const unsigned int cid, const QString &name, QMdiSubWindow *window);
 
+  Q_SIGNALS:
+	void windowItemClicked(QMdiSubWindow *subWindow);
+
   public slots:
   	void itemClicked(QTreeWidgetItem *item, int column);
-
-  Q_SIGNALS:
-  	void windowItemClicked(QMdiSubWindow *subWindow);
 
   private:
   	QVBoxLayout *layout;

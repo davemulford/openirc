@@ -60,7 +60,7 @@ void IRCClient::dataReceived()
 	string Extra;
 	string Action;
 
-	pcrecpp::RE ParseLine("^(?:\\x3a(\\S+) )?(\\d{3}|[a-zA-Z]+)(?: ((?:[^\\x00\\x0a\\x0d\\x20\\x3a][^\\x00\\x0a\\x0d\\x20]*)(?: [^\\x00\\x0a\\x0d\\x20\\x3a][^\\x00\\x0a\\x0d\\x20]*)*))? (?:\\x3a([^\\x00\\x0a\\x0d]*))?\\x20*$");
+	pcrecpp::RE ParseLine("^(?:\\x3a(\\S+) )?(\\d{3}|[a-zA-Z]+)(?: ((?:[^\\x00\\x0a\\x0d\\x20\\x3a][^\\x00\\x0a\\x0d\\x20]*)(?: [^\\x00\\x0a\\x0d\\x20\\x3a][^\\x00\\x0a\\x0d\\x20]*)*))? ?(?:\\x3a([^\\x00\\x0a\\x0d]*))?\\x20*$");
 	pcrecpp::RE NickOrServer("^[^!@]+$");
 	pcrecpp::RE NickUser("^([^!]+)!(.*)$");
 	pcrecpp::RE IsChan("^\\#");
@@ -72,6 +72,8 @@ void IRCClient::dataReceived()
 		line.remove('\n');
 		if (!line.isEmpty()) {
   			if (ParseLine.PartialMatch(line.toStdString(), &NorS, &Event, &args, &Extra)) {
+			qDebug() << "Split Data: NorS(" + QString::fromStdString(NorS) + ") Event(" + QString::fromStdString(Event) + ") args(" + QString::fromStdString(args) + ") Extra(" + QString::fromStdString(Extra) + ")" << endl;
+
 				istringstream oss(args);
     				vector<string> Args;
 				string word;

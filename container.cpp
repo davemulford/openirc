@@ -42,7 +42,7 @@ Container::Container(QWidget *parent, Qt::WindowFlags flags)
 	this->windowTree = new WindowTree(this, 0);
 	this->addDockWidget(Qt::LeftDockWidgetArea, this->windowTree);
 
-	connect(this->windowTree, SIGNAL(windowItemClicked(QMdiSubWIndow *)), this, SLOT(windowItemClicked(QMdiSubWindow *)));
+	connect(this->windowTree, SIGNAL(windowItemClicked(QMdiSubWindow *)), this, SLOT(windowItemClicked(QMdiSubWindow *)));
 
 	// Create the mdi area
 	this->mdiArea = new QMdiArea(this);
@@ -320,6 +320,9 @@ void Container::channelMessageReceived(IRCClient *client, const QString &chan, c
 		QString AddLine = Qt::escape("7* " + nick + " " + message);
 		CCtoHTML str(AddLine.toStdString());
 		chanWindow->appendBuffer(QString::fromStdString(str.translate()));
+	}
+        else {
+		chanWindow->appendBuffer("* Error: chan(" + chan + ") event(" + event + ") nick(" + nick + ") addres(" + address + ") message(" + message + ")");
 	}
 }
 

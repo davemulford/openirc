@@ -4,6 +4,7 @@
 QueryWindow::QueryWindow(IRCClient *client, const QString &otherNick, QWidget *parent)
   : QMdiSubWindow(parent, 0)
 {
+	this->setWindowIcon(QIcon(":/images/openirc.png"));
 	// Set the minimum size of the query window
 	this->setMinimumSize(250, 250);
 

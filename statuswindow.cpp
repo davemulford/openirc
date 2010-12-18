@@ -7,6 +7,7 @@ using namespace std;
 StatusWindow::StatusWindow(QWidget *parent)
   : QMdiSubWindow(parent, 0) 
 {
+	this->setWindowIcon(QIcon(":/images/openirc.png"));
 	// Set the minimum size of the status window
 	this->setMinimumSize(250, 250);
 
