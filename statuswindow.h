@@ -2,20 +2,19 @@
 #define OPENIRC_STATUSWINDOW_H
 
 #include <QtGui>
+
+#include "mdiwindow.h"
 #include "ircclient.h"
 
-class StatusWindow : public QMdiSubWindow
+class StatusWindow : public MdiWindow
 {
 	Q_OBJECT
 
   public:
   	StatusWindow(QWidget *parent = 0);
-	void setTitle(const QString &title);
 
-	IRCClient *client();
-	void setClient(IRCClient *);
-
-	void appendToMainBuffer(const QString &);
+	void append(const QString &string);
+	MdiWindow::WindowType windowType();
 
   Q_SIGNALS:
 	void newStatusWin();
@@ -26,17 +25,12 @@ class StatusWindow : public QMdiSubWindow
 	void connectDisconnectButtonClicked(bool checked);
 
   private:
-	QWidget *internalWidget;
-	QVBoxLayout *layout;
-
 	QTextEdit *mainBuffer;
 	QLineEdit *inputBuffer;
 
-	QToolBar *toolbar;
+	// Action which will be added to the toolbar
 	QAction *newConnectionAction;
 	QAction *connectDisconnectAction;
-
-	IRCClient *_client;
 };
 
 #endif

@@ -2,27 +2,30 @@
 #define OPENIRC_QUERYWINDOW_H
 
 #include <QtGui>
+
+#include "mdiwindow.h"
 #include "ircclient.h"
 
-class QueryWindow : public QMdiSubWindow
+class QueryWindow : public MdiWindow
 {
 	Q_OBJECT
 
   public:
-  	QueryWindow(IRCClient *client, const QString &otherNick, QWidget *parent = 0);
-	void setTitle(const QString &title);
-	void appendBuffer(const QString &string);
+  	QueryWindow(QWidget *parent = 0);
+
+	void append(const QString &string);
+	MdiWindow::WindowType windowType();
+
+	QString otherNick();
+	void setOtherNick(const QString &otherNick);
 
   public slots:
   	void inputBufferReturnPressed();
 
   private:
-	QWidget *internalWidget;
-	QVBoxLayout *layout;
 	QTextEdit *chatBuffer;
 	QLineEdit *inputBuffer;
 
-  	QToolBar *toolbar;
 	QAction *whoisAction;
 	QAction *ctcpPingAction;
 	QAction *ctcpVersionAction;
@@ -30,8 +33,7 @@ class QueryWindow : public QMdiSubWindow
 	QAction *dccSendAction;
 	QAction *addNotifyAction;
 
-	IRCClient *client;
-	QString otherNick;
+	QString them;
 };
 
 #endif

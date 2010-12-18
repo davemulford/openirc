@@ -12,6 +12,7 @@
 #include "querywindow.h"
 #include "channelwindow.h"
 #include "windowtree.h"
+#include "mdiwindow.h"
 
 class Container : public QMainWindow
 {
@@ -76,12 +77,7 @@ class Container : public QMainWindow
 	QAction *MainAction;
 
 	QList<IRCClient *> clients;
-
-	QHash<int, QHash<QString, QMdiSubWindow *> > windows;
-
-	//QList<StatusWindow *> statusWindows;
-	//QList<QMdiSubWindow *> channelWindows;
-	//QList<QMdiSubWindow *> queryWindows;
+	QHash<int, QHash<QString, MdiWindow *> > windows;
 
 	IniFile *configFile;
 	void readConfigFile(const QString &filename = "openirc.ini");

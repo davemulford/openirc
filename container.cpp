@@ -69,7 +69,7 @@ void Container::newStatusWindow(const QString &server, const int port)
 {
 	// Create the new status window
 	StatusWindow *statusWindow = new StatusWindow(this->mdiArea);
-	statusWindow->setTitle(tr("Not Connected"));
+	statusWindow->setWindowTitle(tr("Not Connected"));
 
 	// Create the new IRCClient
 	IRCClient *client = new IRCClient(this);
@@ -80,16 +80,16 @@ void Container::newStatusWindow(const QString &server, const int port)
 
 	char newbuf[100];
 	sprintf(newbuf,"--- Connection id: %d",client->cid);
-	statusWindow->appendToMainBuffer(newbuf);
+	statusWindow->append(newbuf);
 
-	QHash<QString, QMdiSubWindow *> windowHash;
-	windowHash.insert("__STATUS__", statusWindow);
+	QHash<QString, MdiWindow *> windowHash;
+	windowHash.insert(statusWindow->hashName(), statusWindow);
 
 	this->windows.insert(client->cid, windowHash);
 
 	if ((!server.isEmpty()) && (port > 0)) {
 		// TODO: Connect to the server
-		statusWindow->appendToMainBuffer("--- Connecting to " + server + " (" + QString::number(port) + ")");
+		statusWindow->append("--- Connecting to " + server + " (" + QString::number(port) + ")");
 		client->connectToHost(server, port);
 	}
 
@@ -113,14 +113,16 @@ QueryWindow *Container::newQueryWindow(IRCClient *client, const QString &queryNa
 	if ((client != 0) && (this->windows.contains(client->cid))) {
 
 		// Create the query window
-		queryWindow = new QueryWindow(client, queryName);
-		queryWindow->setTitle(queryName + " (" + address + ")");
-		this->mdiArea->addSubWindow(queryWindow);
+		queryWindow = new QueryWindow(this->mdiArea);
+
+		queryWindow->setWindowTitle(queryName + " (" + address + ")");
+		queryWindow->setOtherNick(queryName);
+		queryWindow->setClient(client);
 
 		// Add an entry in the window tree
 		this->windowTree->addQueryWindow(client->cid, queryName, queryWindow);
 
-		this->windows[client->cid].insert(queryName, queryWindow);
+		this->windows[client->cid].insert(queryWindow->hashName(), queryWindow);
 		queryWindow->show();
 
 		// TODO: Connect any signals to slots
@@ -136,14 +138,17 @@ ChannelWindow *Container::newChannelWindow(IRCClient *client, const QString &cha
 	if ((client != 0) && (this->windows.contains(client->cid))) {
 
 		// Create the query window
-		chanWindow = new ChannelWindow(client, chanName);
-		chanWindow->setTitle(chanName);
-		this->mdiArea->addSubWindow(chanWindow);
+		chanWindow = new ChannelWindow(this->mdiArea);
+
+		chanWindow->setWindowTitle(chanName);
+		chanWindow->setChannel(chanName);
+		chanWindow->setClient(client);
+		//this->mdiArea->addSubWindow(chanWindow);
 
 		// Add an entry in the window tree
 		this->windowTree->addChannelWindow(client->cid, chanName, chanWindow);
 
-		this->windows[client->cid].insert(chanName, chanWindow);
+		this->windows[client->cid].insert(chanWindow->hashName(), chanWindow);
 		chanWindow->show();
 
 		// TODO: Connect any signals to slots
@@ -209,14 +214,30 @@ void Container::nextWindowButtonClicked()
 void Container::connected(IRCClient *client)
 {
 	//int statusWindowsCount = statusWindows.count();
-	StatusWindow *statusWindow = (StatusWindow *)this->windows[client->cid]["__STATUS__"];
+	StatusWindow *statusWindow = 0;
 
-	statusWindow->setTitle("Status: " + this->configFile->value("UserInfo", "nick") + " on (" + client->peerName() + ")");
-	statusWindow->appendToMainBuffer("--- Connected to " + client->peerName());
+	QHash<QString, MdiWindow *>::const_iterator windowIter;
+	QHash<QString, MdiWindow *> windows = this->windows[client->cid];
+
+	for (windowIter = windows.constBegin(); windowIter != windows.constEnd(); windowIter++) {
+		MdiWindow *window = *windowIter;
+
+		if (window->windowType() == MdiWindow::StatusWindow) {
+			statusWindow = (StatusWindow *)(*windowIter);
+			break;
+		}
+	}
+
+	if (statusWindow == 0) {
+		return;
+	}
+
+	statusWindow->setWindowTitle("Status: " + this->configFile->value("UserInfo", "nick") + " on (" + client->peerName() + ")");
+	statusWindow->append("--- Connected to " + client->peerName());
 
         char newbuf[100];
         sprintf(newbuf,"--- Connection id: %d",client->cid);
-        statusWindow->appendToMainBuffer(newbuf);
+        statusWindow->append(newbuf);
 
 
 	client->sendRawMessage("NICK " + this->configFile->value("UserInfo", "nick"));
@@ -249,8 +270,8 @@ void Container::connected(IRCClient *client)
 
 void Container::disconnected(IRCClient *client)
 {
-	StatusWindow *statusWindow = (StatusWindow *)this->windows[client->cid]["__STATUS__"];
-	statusWindow->appendToMainBuffer("--- Disconnected from server");
+	//StatusWindow *statusWindow = (StatusWindow *)this->windows[client->cid]["__STATUS__"];
+	//statusWindow->append("--- Disconnected from server");
 
 /*	int statusWindowsCount = statusWindows.count();
 
@@ -279,67 +300,88 @@ void Container::ircError(IRCClient *client, QAbstractSocket::SocketError error)
 
 void Container::privateMessageReceived(IRCClient *client, const QString &nick, const QString &address, const QString &message)
 {
-	QueryWindow *queryWindow;
+	QueryWindow *queryWindow = 0;
 
-	if (!this->windows[client->cid].contains(nick)) {
-		queryWindow = this->newQueryWindow(client, nick, address);
-	} else {
-		queryWindow = (QueryWindow *)this->windows[client->cid][nick];
+	QHash<QString, MdiWindow *>::const_iterator queryIter;
+	QHash<QString, MdiWindow *> queryWindows = this->windows[client->cid];
+
+	for (queryIter = queryWindows.constBegin(); queryIter != queryWindows.constEnd(); queryIter++) {
+		MdiWindow *mdiWindow = (*queryIter);
+
+		if ((mdiWindow->windowType() == MdiWindow::QueryWindow) && (((QueryWindow *)mdiWindow)->otherNick() == nick)) {
+			queryWindow = (QueryWindow *)mdiWindow;
+		}
 	}
+
+	if (queryWindow == 0) {
+		queryWindow = this->newQueryWindow(client, nick, address);
+	}
+
 	QString msg = Qt::escape(message);
 	CCtoHTML str(msg.toStdString());
-	queryWindow->appendBuffer("<span style=\"color: #0000FC\">&lt;</span><b>" + nick + "</b><span style=\"color: #0000FC\">&gt;</span> " + QString::fromStdString(str.translate()));
+	queryWindow->append("<span style=\"color: #0000FC\">&lt;</span><b>" + nick + "</b><span style=\"color: #0000FC\">&gt;</span> " + QString::fromStdString(str.translate()));
 }
 
 void Container::channelMessageReceived(IRCClient *client, const QString &chan, const QString &event, const QString &nick, const QString &address, const QString &message)
 {
-	ChannelWindow *chanWindow;
+	ChannelWindow *chanWindow = 0;
 
-	if (!this->windows[client->cid].contains(chan)) {
+	QHash<QString, MdiWindow *>::const_iterator chanIter;
+	QHash<QString, MdiWindow *> chanWindows = this->windows[client->cid];
+
+	for (chanIter = chanWindows.constBegin(); chanIter != chanWindows.constEnd(); chanIter++) {
+		MdiWindow *mdiWindow = (*chanIter);
+
+		if ((mdiWindow->windowType() == MdiWindow::ChannelWindow) && (((ChannelWindow *)mdiWindow)->channel() == chan)) {
+			chanWindow = (ChannelWindow *)mdiWindow;
+		}
+	}
+
+	if (chanWindow == 0) {
 		chanWindow = this->newChannelWindow(client, chan);
-	} else {
-		chanWindow = (ChannelWindow *)this->windows[client->cid][chan];
 	}
 
 	if (event == "JOIN") {
 		QString AddLine = Qt::escape("10* Joins: " + nick + " (" + address + ")");
 		CCtoHTML str(AddLine.toStdString());
-		chanWindow->appendBuffer(QString::fromStdString(str.translate()));
+		chanWindow->append(QString::fromStdString(str.translate()));
 	}
 	else if (event == "PART") {
 		QString AddLine = Qt::escape("10* Parts: " + nick + " (" + address + ")");
 		CCtoHTML str(AddLine.toStdString());
-		chanWindow->appendBuffer(QString::fromStdString(str.translate()));
+		chanWindow->append(QString::fromStdString(str.translate()));
 	}
 	else if (event == "PRIVMSG") {
 		QString AddLine = Qt::escape("12<" + nick + "12> " + message);
 		CCtoHTML str(AddLine.toStdString());
-		chanWindow->appendBuffer(QString::fromStdString(str.translate()));
+		chanWindow->append(QString::fromStdString(str.translate()));
 	}
 	else if (event == "ACTION") {
 		QString AddLine = Qt::escape("7* " + nick + " " + message);
 		CCtoHTML str(AddLine.toStdString());
-		chanWindow->appendBuffer(QString::fromStdString(str.translate()));
+		chanWindow->append(QString::fromStdString(str.translate()));
 	}
         else {
-		chanWindow->appendBuffer("* Error: chan(" + chan + ") event(" + event + ") nick(" + nick + ") addres(" + address + ") message(" + message + ")");
+		chanWindow->append("* Error: chan(" + chan + ") event(" + event + ") nick(" + nick + ") addres(" + address + ") message(" + message + ")");
 	}
 }
 
 void Container::incomingData(IRCClient *client, const QString &data) // FIXME: Remove this later
 {
-	StatusWindow *statusWindow = (StatusWindow *)this->windows[client->cid]["__STATUS__"];
-	statusWindow->appendToMainBuffer(data);
+	//StatusWindow *statusWindow = (StatusWindow *)this->windows[client->cid]["__STATUS__"];
+	//statusWindow->append(data);
 
-/*	int statusWindowsCount = statusWindows.count();
+	QHash<QString, MdiWindow *>::const_iterator windowIter;
+	QHash<QString, MdiWindow *> windows = this->windows[client->cid];
 
-	for (int i = 0; i < statusWindowsCount; i++) {
-		StatusWindow *statusWindow = statusWindows.at(i);
-		if (statusWindow->client() == client) {
-			statusWindow->appendToMainBuffer(data);
+	for (windowIter = windows.constBegin(); windowIter != windows.constEnd(); windowIter++) {
+		MdiWindow *window = *windowIter;
+
+		if (window->windowType() == MdiWindow::StatusWindow) {
+			window->append(data);
+			break;
 		}
 	}
-*/
 }
 
 void Container::serversWindowConnectClicked(const QString &server, const int port)

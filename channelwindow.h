@@ -2,16 +2,22 @@
 #define OPENIRC_CHANNELWINDOW_H
 
 #include <QtGui>
+
+#include "mdiwindow.h"
 #include "ircclient.h"
 
-class ChannelWindow : public QMdiSubWindow
+class ChannelWindow : public MdiWindow
 {
 	Q_OBJECT
 
   public:
-  	ChannelWindow(IRCClient *client, const QString &channel, QWidget *parent = 0);
-	void setTitle(const QString &title);
-	void appendBuffer(const QString &string);
+  	ChannelWindow(QWidget *parent = 0);
+
+	void append(const QString &string);
+	MdiWindow::WindowType windowType();
+
+	QString channel();
+	void setChannel(const QString &channel);
 
   public slots:
 	void inputBufferReturnPressed();
@@ -21,20 +27,17 @@ class ChannelWindow : public QMdiSubWindow
   	QVBoxLayout *mainLayout;
 
 	QWidget *chatContainer;
-	QWidget *internalWidget;
 
   	QTextEdit *chatBuffer;
 	QLineEdit *inputBuffer;
 	QListView *nickList;
 	QSplitter *chatSplitter;
 
-	QToolBar *toolbar;
 	QAction *channelInfoAction;
 	QAction *channelStatsAction;
 	QAction *cycleChannelAction;
 
-	IRCClient *client;
-	QString channel;
+	QString Channel;
 };
 
 #endif

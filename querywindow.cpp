@@ -1,27 +1,9 @@
 #include "querywindow.h"
 #include "cctohtml.h"
 
-QueryWindow::QueryWindow(IRCClient *client, const QString &otherNick, QWidget *parent)
-  : QMdiSubWindow(parent, 0)
+QueryWindow::QueryWindow(QWidget *parent)
+  : MdiWindow(parent)
 {
-	this->setWindowIcon(QIcon(":/images/openirc.png"));
-	// Set the minimum size of the query window
-	this->setMinimumSize(250, 250);
-
-	this->client = client;
-	this->otherNick = otherNick;
-
-	// Create internalWidget
-	this->internalWidget = new QWidget(this);
-
-	// Create the layout
-	this->layout = new QVBoxLayout(this->internalWidget);
-	this->layout->setSpacing(0);
-	this->layout->setContentsMargins(0,0,0,0);
-
-	// Create the toolbar
-	this->toolbar = new QToolBar(this);
-
 	this->whoisAction = new QAction(QIcon(":/images/whois.png"), tr(""), this->toolbar);
 	this->whoisAction->setToolTip(tr("Whois"));
 	this->toolbar->addAction(this->whoisAction);
@@ -59,25 +41,31 @@ QueryWindow::QueryWindow(IRCClient *client, const QString &otherNick, QWidget *p
 	this->chatBuffer->setReadOnly(true);
 
 	// Add the controls to the layout
-	this->layout->addWidget(this->toolbar);
 	this->layout->addWidget(this->chatBuffer);
 	this->layout->addWidget(this->inputBuffer);
-
-	// Set the widget of the window to internalWidget
-	this->setWidget(this->internalWidget);
 
 	// Connect signals to slots
 	connect(this->inputBuffer, SIGNAL(returnPressed()), this, SLOT(inputBufferReturnPressed()));
 }
 
-void QueryWindow::setTitle(const QString &title)
-{
-	this->setWindowTitle(title);
-}
-
-void QueryWindow::appendBuffer(const QString &string)
+void QueryWindow::append(const QString &string)
 {
 	this->chatBuffer->append(string);
+}
+
+MdiWindow::WindowType QueryWindow::windowType()
+{
+	return(MdiWindow::QueryWindow);
+}
+
+QString QueryWindow::otherNick()
+{
+	return(this->them);
+}
+
+void QueryWindow::setOtherNick(const QString &otherNick)
+{
+	this->them = otherNick;
 }
 
 void QueryWindow::inputBufferReturnPressed()
@@ -86,12 +74,12 @@ void QueryWindow::inputBufferReturnPressed()
 
 	if (!msg.startsWith("/")) {
 		// TODO: Use the IRCCommandParser to check for any commands
-		this->client->sendRawMessage("PRIVMSG " + this->otherNick + " :" + msg);
+		this->client()->sendRawMessage("PRIVMSG " + this->them + " :" + msg);
 
-		QString AddLine = Qt::escape("9<" + QString::fromStdString(this->client->Me) + "9> " + msg);
+		QString AddLine = Qt::escape("9<" + QString::fromStdString(this->client()->Me) + "9> " + msg);
 		CCtoHTML str(AddLine.toStdString());
 
-		this->chatBuffer->append(QString::fromStdString(str.translate()));
+		this->append(QString::fromStdString(str.translate()));
 	}
 
 	this->inputBuffer->clear();
