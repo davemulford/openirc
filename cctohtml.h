@@ -11,8 +11,8 @@ class CCtoHTML
 		bool italic;
 		int fg;
 		int bg;
-		map<int, string> ColorChart;
 	public:
+		map<int, string> ColorChart;
 		string Text;
 		CCtoHTML(string text);
                 string ReturnHTML(string control, string text);

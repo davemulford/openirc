@@ -13,7 +13,7 @@ class StatusWindow : public MdiWindow
   public:
   	StatusWindow(QWidget *parent = 0);
 
-	void append(const QString &string);
+	void append(int color, const QString &string);
 	MdiWindow::WindowType windowType();
 
 	void closeEvent(QCloseEvent *event);

@@ -13,7 +13,7 @@ class QueryWindow : public MdiWindow
   public:
   	QueryWindow(QWidget *parent = 0);
 
-	void append(const QString &string);
+	void append(int color, const QString &string);
 	MdiWindow::WindowType windowType();
 
 	QString otherNick();

@@ -71,7 +71,7 @@ void Container::newStatusWindow(const QString &server, const int port)
 
 	char newbuf[100];
 	sprintf(newbuf,"--- Connection id: %d",client->cid);
-	statusWindow->append(newbuf);
+	statusWindow->append(1,newbuf);
 
 	QHash<QString, MdiWindow *> windowHash;
 	windowHash.insert(statusWindow->hashName(), statusWindow);
@@ -80,7 +80,7 @@ void Container::newStatusWindow(const QString &server, const int port)
 
 	if ((!server.isEmpty()) && (port > 0)) {
 		// TODO: Connect to the server
-		statusWindow->append("--- Connecting to " + server + " (" + QString::number(port) + ")");
+		statusWindow->append(1,"--- Connecting to " + server + " (" + QString::number(port) + ")");
 		client->connectToHost(server, port);
 	}
 
@@ -229,11 +229,11 @@ void Container::connected(IRCClient *client)
 
 	this->windowTree->renameItem(client->cid, statusWindow->hashName(), client->peerName());
 	statusWindow->setWindowTitle("Status: " + this->configFile->value("UserInfo", "nick") + " on (" + client->peerName() + ")");
-	statusWindow->append("--- Connected to " + client->peerName());
+	statusWindow->append(1,"--- Connected to " + client->peerName());
 
         char newbuf[100];
         sprintf(newbuf,"--- Connection id: %d",client->cid);
-        statusWindow->append(newbuf);
+        statusWindow->append(1,newbuf);
 
 
 	client->sendRawMessage("NICK " + this->configFile->value("UserInfo", "nick"));
@@ -314,10 +314,7 @@ void Container::privateMessageReceived(IRCClient *client, const QString &nick, c
 	}
 
 	this->windowTree->maybeHighlightItem(client->cid, queryWindow->hashName());
-
-	QString msg = Qt::escape(message);
-	CCtoHTML str(msg.toStdString());
-	queryWindow->append("<span style=\"color: #0000FC\">&lt;</span><b>" + nick + "</b><span style=\"color: #0000FC\">&gt;</span> " + QString::fromStdString(str.translate()));
+	queryWindow->append(1,"12<" + nick + "12> " + message);
 }
 
 void Container::channelMessageReceived(IRCClient *client, const QString &chan, const QString &event, const QString &nick, const QString &address, const QString &message)
@@ -346,28 +343,12 @@ void Container::channelMessageReceived(IRCClient *client, const QString &chan, c
 
 	this->windowTree->maybeHighlightItem(client->cid, chanWindow->hashName());
 
-	if (event == "JOIN") {
-		QString AddLine = Qt::escape("10* Joins: " + nick + " (" + address + ")");
-		CCtoHTML str(AddLine.toStdString());
-		chanWindow->append(QString::fromStdString(str.translate()));
-	}
-	else if (event == "PART") {
-		QString AddLine = Qt::escape("10* Parts: " + nick + " (" + address + ")");
-		CCtoHTML str(AddLine.toStdString());
-		chanWindow->append(QString::fromStdString(str.translate()));
-	}
-	else if (event == "PRIVMSG") {
-		QString AddLine = Qt::escape("12<" + nick + "12> " + message);
-		CCtoHTML str(AddLine.toStdString());
-		chanWindow->append(QString::fromStdString(str.translate()));
-	}
-	else if (event == "ACTION") {
-		QString AddLine = Qt::escape("7* " + nick + " " + message);
-		CCtoHTML str(AddLine.toStdString());
-		chanWindow->append(QString::fromStdString(str.translate()));
-	}
+	if (event == "JOIN") { chanWindow->append(10,Qt::escape("* Joins: " + nick + " (" + address + ")")); }
+	else if (event == "PART") { chanWindow->append(10,Qt::escape("10* Parts: " + nick + " (" + address + ")")); }
+	else if (event == "PRIVMSG") { chanWindow->append(1,Qt::escape("12<" + nick + "12> " + message)); }
+	else if (event == "ACTION") { chanWindow->append(7,Qt::escape("7* " + nick + " " + message)); }
         else {
-		chanWindow->append("* Error: chan(" + chan + ") event(" + event + ") nick(" + nick + ") addres(" + address + ") message(" + message + ")");
+		chanWindow->append(12,"* Error: chan(" + chan + ") event(" + event + ") nick(" + nick + ") addres(" + address + ") message(" + message + ")");
 	}
 }
 
@@ -383,7 +364,7 @@ void Container::incomingData(IRCClient *client, const QString &data) // FIXME: R
 		MdiWindow *window = *windowIter;
 
 		if (window->windowType() == MdiWindow::StatusWindow) {
-			window->append(data);
+			window->append(1,data);
 			break;
 		}
 	}

@@ -72,7 +72,7 @@ void IRCClient::dataReceived()
 		line.remove('\n');
 		if (!line.isEmpty()) {
   			if (ParseLine.PartialMatch(line.toStdString(), &NorS, &Event, &args, &Extra)) {
-			qDebug() << "Split Data: NorS(" + QString::fromStdString(NorS) + ") Event(" + QString::fromStdString(Event) + ") args(" + QString::fromStdString(args) + ") Extra(" + QString::fromStdString(Extra) + ")" << endl;
+			//qDebug() << "Split Data: NorS(" + QString::fromStdString(NorS) + ") Event(" + QString::fromStdString(Event) + ") args(" + QString::fromStdString(args) + ") Extra(" + QString::fromStdString(Extra) + ")";
 
 				istringstream oss(args);
     				vector<string> Args;
@@ -137,6 +137,9 @@ void IRCClient::dataReceived()
 					}
 				}
 			}
+		}
+		else {
+			qDebug() << "Parse Failed! line(" + line + ")";
 		}
 	}
 

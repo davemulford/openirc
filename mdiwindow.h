@@ -24,7 +24,7 @@ class MdiWindow : public QMdiSubWindow
 
 	// Pure virtual functions
 	// They MUST be defined ONLY by descendant classes
-	virtual void append(const QString &) = 0;
+	virtual void append(int color, const QString &) = 0;
 	virtual MdiWindow::WindowType windowType() = 0;
 
 	/////////////////////////////////////

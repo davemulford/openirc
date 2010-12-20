@@ -1,6 +1,7 @@
 #include "statuswindow.h"
 #include "irccommandparser.h"
-
+#include "cctohtml.h"
+#include "time.h"
 #include <iostream>
 using namespace std;
 
@@ -9,7 +10,7 @@ StatusWindow::StatusWindow(QWidget *parent)
 {
 	this->Buffer = new QStringList;
 	this->toolbar->setStyleSheet("QToolBar { border: 0px }");
-	this->setGeometry(-1,-1,320,240);
+	this->setGeometry(0,0,320,240);
 
 	// Create the widgets that the window will hold.
 	this->mainBuffer = new QTextEdit(this);
@@ -35,9 +36,18 @@ StatusWindow::StatusWindow(QWidget *parent)
 	connect(this->connectDisconnectAction, SIGNAL(triggered(bool)), this, SLOT(connectDisconnectButtonClicked(bool)));
 }
 
-void StatusWindow::append(const QString &string)
+
+void StatusWindow::append(int color, const QString &string)
 {
-	this->Buffer->push_back("<div style=\"white-space: pre-wrap\">" + string + "</div>");
+	time_t TimeOf = time(NULL);
+	tm *now = localtime(&TimeOf);
+	QString timestamp;
+	timestamp.sprintf("[%.2d:%.2d]",now->tm_hour,now->tm_min);
+
+	QString AddLine = timestamp + " " + string;
+	CCtoHTML str(AddLine.toStdString());
+
+	this->Buffer->push_back("<div style=\"color: " + QString::fromStdString(str.ColorChart[color]) + "; white-space: pre-wrap\">" + QString::fromStdString(str.translate()) + "</div>");
 	if (this->Buffer->size() > 500) { this->Buffer->pop_front(); }
 	this->mainBuffer->setText(this->Buffer->join("\n"));
 
@@ -60,11 +70,11 @@ void StatusWindow::inputBufferReturnPressed()
 		QStringList serverArgs = parser->argList();
 
 		if (serverArgs.isEmpty()) {
-			this->mainBuffer->append(tr("!!! /server: two arguments possible: host (required), port (optional)"));
+			this->append(1,tr("!!! /server: two arguments possible: host (required), port (optional)"));
 		} else {
 			QString host = serverArgs.at(0);
 			int port = (serverArgs.count() > 1 ? (serverArgs.at(1).toInt()) : 6667);
-			this->append(tr("--- Connecting to server..."));
+			this->append(1,tr("--- Connecting to server..."));
 			this->client()->connectToHost(host, port);
 		}
 	} else if (parser->type() == IRCCommandParser::IRCMessage) {
@@ -81,7 +91,7 @@ void StatusWindow::newButtonClicked(bool checked) {
 
 void StatusWindow::connectDisconnectButtonClicked(bool checked)
 {
-	this->append(tr("*** Connect/Disconnect button clicked"));
+	this->append(1,tr("*** Connect/Disconnect button clicked"));
 }
 
 void StatusWindow::closeEvent(QCloseEvent *event)

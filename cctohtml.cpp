@@ -25,7 +25,7 @@ CCtoHTML::CCtoHTML(string text) {
 	Text = text;
 	string ctrl;
 	string txt;
-	bold = underline = false;
+	bold = underline = italic = false;
 	fg = bg = 16;
 	pcrecpp::RE ParseCC("((?:(?:\\d\\d?),)?(?:\\d\\d?)|[])([^]*)");
 	while (ParseCC.PartialMatch(Text,&ctrl,&txt) > 0) {
@@ -62,3 +62,4 @@ string CCtoHTML::ReturnHTML(string control, string text) {
 string CCtoHTML::translate() {
 	return Text;
 }
+

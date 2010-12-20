@@ -1,5 +1,6 @@
 #include "channelwindow.h"
 #include "cctohtml.h"
+#include "time.h"
 
 ChannelWindow::ChannelWindow(QWidget *parent)
   : MdiWindow(parent)
@@ -7,7 +8,7 @@ ChannelWindow::ChannelWindow(QWidget *parent)
 	this->Buffer = new QStringList;
 	this->setWindowIcon(QIcon(":/images/channel.png"));
 	this->toolbar->setStyleSheet("QToolBar { border: 0px }");
-	this->setGeometry(-1,-1,400,240);
+	this->setGeometry(0,0,400,240);
 
 	// Create our layouts and container widgets
 	this->chatContainer = new QWidget(this->internalWidget);
@@ -59,9 +60,17 @@ ChannelWindow::ChannelWindow(QWidget *parent)
 	connect(this->inputBuffer, SIGNAL(returnPressed()), this, SLOT(inputBufferReturnPressed()));
 }
 
-void ChannelWindow::append(const QString &string)
+void ChannelWindow::append(int color, const QString &string)
 {
-	this->Buffer->push_back("<div style=\"white-space: pre-wrap\">" + string + "</div>");
+	time_t TimeOf = time(NULL);
+	tm *now = localtime(&TimeOf);
+	QString timestamp;
+	timestamp.sprintf("[%.2d:%.2d]",now->tm_hour,now->tm_min);
+
+	QString AddLine = timestamp + " " + string;
+	CCtoHTML str(AddLine.toStdString());
+
+	this->Buffer->push_back("<div style=\"color: " + QString::fromStdString(str.ColorChart[color]) + "; white-space: pre-wrap\">" + QString::fromStdString(str.translate()) + "</div>");
 	if (this->Buffer->size() > 500) { this->Buffer->pop_front(); }
 	this->chatBuffer->setText(this->Buffer->join("\n"));
 
@@ -91,11 +100,7 @@ void ChannelWindow::inputBufferReturnPressed()
 	if (!msg.startsWith("/")) {
 		// TODO: Use the IRCCommandParser to check for any commands
 		this->client()->sendRawMessage("PRIVMSG " + this->Channel + " :" + msg);
-
-		QString AddLine = Qt::escape("9<" + QString::fromStdString(this->client()->Me) + "9> " + msg);
-		CCtoHTML str(AddLine.toStdString());
-
-		this->append(QString::fromStdString(str.translate()));
+		this->append(1, Qt::escape("9<" + QString::fromStdString(this->client()->Me) + "9> " + msg));
 	}
 
 	this->inputBuffer->clear();
