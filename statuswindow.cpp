@@ -7,6 +7,10 @@ using namespace std;
 StatusWindow::StatusWindow(QWidget *parent)
   : MdiWindow(parent) 
 {
+	this->Buffer = new QStringList;
+	this->toolbar->setStyleSheet("QToolBar { border: 0px }");
+	this->setGeometry(-1,-1,320,240);
+
 	// Create the widgets that the window will hold.
 	this->mainBuffer = new QTextEdit(this);
 	this->mainBuffer->setReadOnly(true);
@@ -33,10 +37,12 @@ StatusWindow::StatusWindow(QWidget *parent)
 
 void StatusWindow::append(const QString &string)
 {
-	this->mainBuffer->append(string);
+	this->Buffer->push_back("<div style=\"white-space: pre-wrap\">" + string + "</div>");
+	if (this->Buffer->size() > 500) { this->Buffer->pop_front(); }
+	this->mainBuffer->setText(this->Buffer->join("\n"));
 
 	QScrollBar *sb = this->mainBuffer->verticalScrollBar();
-	sb->setValue(sb->maximum());
+	sb->setValue(sb->maximum() + 1);
 }
 
 MdiWindow::WindowType StatusWindow::windowType()

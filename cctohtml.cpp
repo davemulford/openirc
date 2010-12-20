@@ -27,7 +27,7 @@ CCtoHTML::CCtoHTML(string text) {
 	string txt;
 	bold = underline = false;
 	fg = bg = 16;
-	pcrecpp::RE ParseCC("((?:(?:\\d\\d?),)?(?:\\d\\d?)|[])([^]*)");
+	pcrecpp::RE ParseCC("((?:(?:\\d\\d?),)?(?:\\d\\d?)|[])([^]*)");
 	while (ParseCC.PartialMatch(Text,&ctrl,&txt) > 0) {
 		ParseCC.Replace(ReturnHTML(ctrl,txt),&Text);
 	}
@@ -40,19 +40,22 @@ string CCtoHTML::ReturnHTML(string control, string text) {
 	pcrecpp::RE ParseColor("^(\\d\\d?),(\\d\\d?)$");
 	pcrecpp::RE ParseBold("^$");
 	pcrecpp::RE ParseUnder("^$");
+	pcrecpp::RE ParseItalic("^$");
 	//todo reverse? not important imho...
 	pcrecpp::RE ParseStop("^$");
-        if (ParseBold.PartialMatch(control)) { bold = (bold == true ? false : true); }
-        if (ParseUnder.PartialMatch(control)) { underline = (underline == true ? false : true); }
         if (ParseEmptyColor.PartialMatch(control)) { fg = bg = 16; }
-        if (ParseStop.PartialMatch(control)) { bold = underline = false; fg = bg = 16; }
-        if (ParseColorFGOnly.PartialMatch(control,&fg)) { colored = true; }
-        if (ParseColor.PartialMatch(control,&fg,&bg)) { colored = true; }
+        else if (ParseColorFGOnly.PartialMatch(control,&fg)) { colored = true; }
+        else if (ParseColor.PartialMatch(control,&fg,&bg)) { colored = true; }
+        else if (ParseBold.PartialMatch(control)) { bold = (bold == true ? false : true); }
+        else if (ParseUnder.PartialMatch(control)) { underline = (underline == true ? false : true); }
+        else if (ParseItalic.PartialMatch(control)) { italic = (italic == true ? false : true); }
+        else if (ParseStop.PartialMatch(control)) { bold = underline = italic = false; fg = bg = 16; }
 
-	if (fg < 16) { styles += " color: " + ColorChart[fg] + ";"; }
-	if (bg < 16) { styles += " background-color: " + ColorChart[bg] + ";"; }
-        if (bold == true) { styles += " font-weight: bold;"; }
+	if (fg < 16) { styles += " color:" + ColorChart[fg] + ";"; }
+	if (bg < 16) { styles += " background-color:" + ColorChart[bg] + ";"; }
+        if (bold == true) { styles += " font-weight:bold;"; }
         if (underline == true) { styles += " text-decoration:underline;"; }
+        if (italic == true) { styles += " font-style:italic;"; }
 
 	return "<span style=\"" + styles + "\">" + text + "</span>";
 }

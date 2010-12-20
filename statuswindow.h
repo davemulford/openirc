@@ -27,6 +27,7 @@ class StatusWindow : public MdiWindow
 	void connectDisconnectButtonClicked(bool checked);
 
   private:
+	QStringList *Buffer;
 	QTextEdit *mainBuffer;
 	QLineEdit *inputBuffer;
 

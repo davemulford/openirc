@@ -4,6 +4,11 @@
 ChannelWindow::ChannelWindow(QWidget *parent)
   : MdiWindow(parent)
 {
+	this->Buffer = new QStringList;
+	this->setWindowIcon(QIcon(":/images/channel.png"));
+	this->toolbar->setStyleSheet("QToolBar { border: 0px }");
+	this->setGeometry(-1,-1,400,240);
+
 	// Create our layouts and container widgets
 	this->chatContainer = new QWidget(this->internalWidget);
 	this->chatLayout = new QHBoxLayout(this->chatContainer);
@@ -25,6 +30,7 @@ ChannelWindow::ChannelWindow(QWidget *parent)
 	this->nickList = new QListView(this->chatContainer);
 
 	this->chatBuffer->setReadOnly(true);
+	//this->chatBuffer->setStyleSheet("QToolBar { border: 0px }");
 	this->nickList->setMaximumWidth(350);
 	this->nickList->setMinimumWidth(120);
 
@@ -34,7 +40,7 @@ ChannelWindow::ChannelWindow(QWidget *parent)
 
 	QList<int> splitterSizes;
 
-	splitterSizes << 300 << 100;
+	splitterSizes << 400 << 100;
 	this->chatSplitter->setSizes(splitterSizes);
 
 	this->chatLayout->addWidget(this->chatSplitter);
@@ -55,7 +61,12 @@ ChannelWindow::ChannelWindow(QWidget *parent)
 
 void ChannelWindow::append(const QString &string)
 {
-	this->chatBuffer->append(string);
+	this->Buffer->push_back("<div style=\"white-space: pre-wrap\">" + string + "</div>");
+	if (this->Buffer->size() > 500) { this->Buffer->pop_front(); }
+	this->chatBuffer->setText(this->Buffer->join("\n"));
+
+	QScrollBar *sb = this->chatBuffer->verticalScrollBar();
+	sb->setValue(sb->maximum() + 1);
 }
 
 MdiWindow::WindowType ChannelWindow::windowType()

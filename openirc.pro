@@ -44,3 +44,6 @@ unix {
 	CONFIG += link_pkgconfig link_libpcrecpp
 	PKGCONFIG += glib-2.0 libpcrecpp
 }
+win32 {
+	LIBS += -lpcrecpp.dll
+}

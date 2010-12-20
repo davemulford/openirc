@@ -26,6 +26,7 @@ ContextBar::ContextBar(QWidget *parent, Qt::WindowFlags flags)
 
 	// Create the toolbar
 	this->toolbar = new QToolBar(this);
+	this->toolbar->setStyleSheet("QToolBar { border: 0px }");
 
 	this->optionsAction = new QAction(QIcon(":/images/configure.png"), tr(""), this->toolbar);
 	this->optionsAction->setToolTip(tr("Options"));

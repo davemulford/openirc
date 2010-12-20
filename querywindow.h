@@ -23,6 +23,7 @@ class QueryWindow : public MdiWindow
   	void inputBufferReturnPressed();
 
   private:
+	QStringList *Buffer;
 	QTextEdit *chatBuffer;
 	QLineEdit *inputBuffer;
 

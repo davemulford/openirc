@@ -1,9 +1,15 @@
 #include "querywindow.h"
 #include "cctohtml.h"
+#include <QSize>
 
 QueryWindow::QueryWindow(QWidget *parent)
   : MdiWindow(parent)
 {
+	this->Buffer = new QStringList;
+	this->setWindowIcon(QIcon(":/images/query.png"));
+	this->toolbar->setStyleSheet("QToolBar { border: 0px }");
+	this->setGeometry(-1,-1,320,240);
+
 	this->whoisAction = new QAction(QIcon(":/images/whois.png"), tr(""), this->toolbar);
 	this->whoisAction->setToolTip(tr("Whois"));
 	this->toolbar->addAction(this->whoisAction);
@@ -50,7 +56,12 @@ QueryWindow::QueryWindow(QWidget *parent)
 
 void QueryWindow::append(const QString &string)
 {
-	this->chatBuffer->append(string);
+	this->Buffer->push_back("<div style=\"white-space: pre-wrap\">" + string + "</div>");
+	if (this->Buffer->size() > 500) { this->Buffer->pop_front(); }
+	this->chatBuffer->setText(this->Buffer->join("\n"));
+
+	QScrollBar *sb = this->chatBuffer->verticalScrollBar();
+	sb->setValue(sb->maximum() + 1);
 }
 
 MdiWindow::WindowType QueryWindow::windowType()

@@ -66,6 +66,7 @@ void WindowTree::addStatusWindow(const unsigned int cid, const QString &name, Md
 	} else {
 		item->setText(0, name);
 	}
+	item->setExpanded(true);
 }
 
 void WindowTree::addChannelWindow(const unsigned int cid, const QString &name, MdiWindow *window)
@@ -76,6 +77,7 @@ void WindowTree::addChannelWindow(const unsigned int cid, const QString &name, M
 
 		channelItem->setIcon(0, QIcon(":images/channel.png"));
 		channelItem->setText(0, name);
+		networkItem->sortChildren(0,Qt::AscendingOrder);
 	}
 }
 
@@ -87,6 +89,7 @@ void WindowTree::addQueryWindow(const unsigned int cid, const QString &name, Mdi
 
 		queryItem->setIcon(0, QIcon(":images/query.png"));
 		queryItem->setText(0, name);
+		networkItem->sortChildren(0,Qt::AscendingOrder);
 	}
 }
 

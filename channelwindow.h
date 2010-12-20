@@ -30,6 +30,7 @@ class ChannelWindow : public MdiWindow
 
 	QWidget *chatContainer;
 
+	QStringList *Buffer;
   	QTextEdit *chatBuffer;
 	QLineEdit *inputBuffer;
 	QListView *nickList;
