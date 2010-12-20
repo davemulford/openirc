@@ -385,15 +385,39 @@ void Container::windowItemClicked(MdiWindow *subWindow)
 
 void Container::subWindowClosed(const int cid, const QString &hashName)
 {
-	qDebug() << "Container::subWindowClosed() -- Attempting to remove window from window hash" << endl;
+	bool isStatusWindow = false;
+
 	// Remove the window from the internal hash list
 	if (this->windows.contains(cid)) {
-		qDebug() << "Container::subWindowClosed() -- Removing <" << cid << " , " << hashName << "> from internal window hash" << endl;
+		MdiWindow *window = 0;
+		
+		if (((window = this->windows[cid][hashName]) != 0)) {
+			isStatusWindow = (window->windowType() == MdiWindow::StatusWindow);
+		}
+
 		this->windows[cid].remove(hashName);
 	}
 
 	// Remove the window from the window tree
 	this->windowTree->removeItem(cid, hashName);
 
-	//qDebug() << "Child window closed (cid=" << cid << ") (hashName=" << hashName << ")" << endl;
+	// If we removed a status window, we're disconnected from the server
+	// better remove ALL windows
+	if (isStatusWindow == true) {
+		QHash<QString, MdiWindow *> windows = this->windows[cid];
+		QHash<QString, MdiWindow *>::const_iterator windowsIter;
+
+		for (windowsIter = windows.constBegin(); windowsIter != windows.constEnd(); windowsIter++) {
+			MdiWindow *window = (MdiWindow *)windowsIter.value();
+			this->windowTree->removeItem(cid, windowsIter.key());
+
+			window->close();
+			delete window;
+		}
+
+		// Remove the hash stuff
+		this->windows.remove(cid);
+	}
+
+
 }
