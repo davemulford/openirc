@@ -160,7 +160,7 @@ void WindowTree::maybeHighlightItem(const unsigned int cid, const QString &hashN
 
 	if ((itemToHighlight = this->findItem(cid, hashName)) != 0) {
 		qDebug() << "WindowTree::maybeHighlightItem() found item to highlight" << endl;
-		if (itemToHighlight->window()->isActiveWindow() == false) {
+		if (((QMdiArea *)itemToHighlight->window()->parent())->activeSubWindow() != itemToHighlight->window()) {
 			qDebug() << "WindowTree::maybeHighlightItem() window is not the active window...highlighting" << endl;
 			itemToHighlight->setForeground(0, QBrush(QColor("#880000")));
 		}
