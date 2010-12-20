@@ -312,9 +312,9 @@ void Container::privateMessageReceived(IRCClient *client, const QString &nick, c
 	if (queryWindow == 0) {
 		queryWindow = this->newQueryWindow(client, nick, address);
 	}
+	queryWindow->append(1,Qt::escape("12<" + nick + "12> " + message));
 
 	this->windowTree->maybeHighlightItem(client->cid, queryWindow->hashName());
-	queryWindow->append(1,"12<" + nick + "12> " + message);
 }
 
 void Container::channelMessageReceived(IRCClient *client, const QString &chan, const QString &event, const QString &nick, const QString &address, const QString &message)
@@ -341,8 +341,6 @@ void Container::channelMessageReceived(IRCClient *client, const QString &chan, c
 		return;
 	}
 
-	this->windowTree->maybeHighlightItem(client->cid, chanWindow->hashName());
-
 	if (event == "JOIN") { chanWindow->append(10,Qt::escape("* Joins: " + nick + " (" + address + ")")); }
 	else if (event == "PART") { chanWindow->append(10,Qt::escape("10* Parts: " + nick + " (" + address + ")")); }
 	else if (event == "PRIVMSG") { chanWindow->append(1,Qt::escape("12<" + nick + "12> " + message)); }
@@ -350,6 +348,8 @@ void Container::channelMessageReceived(IRCClient *client, const QString &chan, c
         else {
 		chanWindow->append(12,"* Error: chan(" + chan + ") event(" + event + ") nick(" + nick + ") addres(" + address + ") message(" + message + ")");
 	}
+
+	this->windowTree->maybeHighlightItem(client->cid, chanWindow->hashName());
 }
 
 void Container::incomingData(IRCClient *client, const QString &data) // FIXME: Remove this later

@@ -8,7 +8,7 @@ ChannelWindow::ChannelWindow(QWidget *parent)
 	this->Buffer = new QStringList;
 	this->setWindowIcon(QIcon(":/images/channel.png"));
 	this->toolbar->setStyleSheet("QToolBar { border: 0px }");
-	this->setGeometry(0,0,400,240);
+	this->setGeometry(0,0,420,240);
 
 	// Create our layouts and container widgets
 	this->chatContainer = new QWidget(this->internalWidget);
@@ -64,18 +64,20 @@ void ChannelWindow::append(int color, const QString &string)
 {
 	time_t TimeOf = time(NULL);
 	tm *now = localtime(&TimeOf);
-	QString timestamp;
-	timestamp.sprintf("[%.2d:%.2d]",now->tm_hour,now->tm_min);
-
-	QString AddLine = timestamp + " " + string;
+	QString AddLine;
+	AddLine.sprintf("[%.2d:%.2d] %s",now->tm_hour,now->tm_min,string.toAscii().constData());
 	CCtoHTML str(AddLine.toStdString());
 
+	if (this->Buffer->size() >= 500) { 
+		this->Buffer->pop_front();
+		//this->chatBuffer->setText(this->Buffer->join("\n"));
+		QTextCursor tc = this->chatBuffer->textCursor();
+		tc.movePosition( QTextCursor::Start );
+		tc.select( QTextCursor::LineUnderCursor );
+		tc.removeSelectedText();
+	}
 	this->Buffer->push_back("<div style=\"color: " + QString::fromStdString(str.ColorChart[color]) + "; white-space: pre-wrap\">" + QString::fromStdString(str.translate()) + "</div>");
-	if (this->Buffer->size() > 500) { this->Buffer->pop_front(); }
-	this->chatBuffer->setText(this->Buffer->join("\n"));
-
-	QScrollBar *sb = this->chatBuffer->verticalScrollBar();
-	sb->setValue(sb->maximum() + 1);
+	this->chatBuffer->append(this->Buffer->at(this->Buffer->size() - 1));
 }
 
 MdiWindow::WindowType ChannelWindow::windowType()

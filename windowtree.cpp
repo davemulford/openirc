@@ -47,8 +47,9 @@ WindowTreeItem *WindowTree::findItem(const int cid, const QString &hashName)
 				}
 			}
 		}
+		qDebug() << "something fucked up in rootitems...";
 	}
-
+	qDebug() << "window not contained in rootitems!";
 	return(0);
 }
 
