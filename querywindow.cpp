@@ -68,7 +68,7 @@ void QueryWindow::append(int color, const QString &string)
 		//this->chatBuffer->setText(this->Buffer->join("\n"));
 		QTextCursor tc = this->chatBuffer->textCursor();
 		tc.movePosition( QTextCursor::Start );
-		tc.select( QTextCursor::LineUnderCursor );
+		tc.select(QTextCursor::BlockUnderCursor);
 		tc.removeSelectedText();
 	}
 	this->Buffer->push_back("<div style=\"color: " + QString::fromStdString(str.ColorChart[color]) + "; white-space: pre-wrap\">" + QString::fromStdString(str.translate()) + "</div>");
