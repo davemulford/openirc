@@ -68,12 +68,12 @@ void ChannelWindow::append(int color, const QString &string)
 	AddLine.sprintf("[%.2d:%.2d] %s",now->tm_hour,now->tm_min,string.toAscii().constData());
 	CCtoHTML str(AddLine.toStdString());
 
-	if (this->Buffer->size() >= 10) { 
+	if (this->Buffer->size() >= 500) { 
 		this->Buffer->pop_front();
 		//this->chatBuffer->setText(this->Buffer->join("\n"));
 		QTextCursor tc = this->chatBuffer->textCursor();
-		tc.movePosition( QTextCursor::Start );
-		tc.select(QTextCursor::BlockUnderCursor);
+		tc.movePosition(QTextCursor::Start);
+		tc.movePosition(QTextCursor::NextBlock,QTextCursor::KeepAnchor);
 		tc.removeSelectedText();
 	}
 	this->Buffer->push_back("<div style=\"color: " + QString::fromStdString(str.ColorChart[color]) + "; white-space: pre-wrap\">" + QString::fromStdString(str.translate()) + "</div>");

@@ -5,7 +5,6 @@
 #include "optionswindow.h"
 #include "serverswindow.h"
 #include "pcrecpp.h"
-#include "cctohtml.h"
 
 #include <QTextDocument>
 
