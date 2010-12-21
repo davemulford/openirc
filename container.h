@@ -48,11 +48,11 @@ class Container : public QMainWindow
 
 	void ircError(IRCClient *client, QAbstractSocket::SocketError error);
 
-  	//void channelJoined(IRCClient *client, const QString &channel, const QString &nick);
-	//void channelParted(IRCClient *client, const QString &channel, const QString &nick);
+	void channelMessageReceived(IRCClient *client, const QString &chan, const QString &event, const QString &nick, const QString &address, const QString &message);
+  	void channelJoined(IRCClient *client, const QString &channel, const QString &nick);
+	void channelParted(IRCClient *client, const QString &channel, const QString &nick);
 
 	void privateMessageReceived(IRCClient *client, const QString &nick, const QString &address, const QString &message);
-	void channelMessageReceived(IRCClient *client, const QString &chan, const QString &event, const QString &nick, const QString &address, const QString &message);
 
 	void incomingData(IRCClient *client, const QString &data); // FIXME: Remove this later
 
@@ -83,7 +83,9 @@ class Container : public QMainWindow
 	QHash<int, QHash<QString, MdiWindow *> > windows;
 
 	IniFile *configFile;
+
 	void readConfigFile(const QString &filename = "openirc.ini");
+	ChannelWindow *findChannelWindow(const int cid, const QString &channel);
 };
 
 #endif

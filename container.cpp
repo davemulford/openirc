@@ -90,6 +90,8 @@ void Container::newStatusWindow(const QString &server, const int port)
 	connect(client, SIGNAL(privateMessageReceived(IRCClient *, const QString &, const QString &, const QString &)), this, SLOT(privateMessageReceived(IRCClient *, const QString &, const QString &, const QString &)));
 	connect(client, SIGNAL(channelMessageReceived(IRCClient *, const QString &, const QString &, const QString &, const QString &, const QString &)), this, SLOT(channelMessageReceived(IRCClient *, const QString &, const QString &, const QString &, const QString &, const QString &)));
 	connect(client, SIGNAL(incomingData(IRCClient *, const QString &)), this, SLOT(incomingData(IRCClient *, const QString &)));
+	connect(client, SIGNAL(channelJoined(IRCClient *, const QString &, const QString &)), this, SLOT(channelJoined(IRCClient *, const QString &, const QString &)));
+	connect(client, SIGNAL(void channelParted(IRCClient *, const QString &, const QString &)), this, SLOT(void channelParted(IRCClient *, const QString &, const QString &)));
 
 	// connect the new status button to new status window
 	connect(statusWindow, SIGNAL(newStatusWin()), this, SLOT(newStatusWindow()));
@@ -153,6 +155,24 @@ ChannelWindow *Container::newChannelWindow(IRCClient *client, const QString &cha
 void Container::readConfigFile(const QString &filename)
 {
 	this->configFile = new IniFile(filename);
+}
+
+ChannelWindow *Container::findChannelWindow(const int cid, const QString &channel)
+{
+	if (this->windows.contains(cid)) {
+		QHash<QString, MdiWindow *> windows = this->windows[cid];
+		QHash<QString, MdiWindow *>::const_iterator winIter;
+
+		for (winIter = windows.constBegin(); winIter != windows.constEnd(); winIter++) {
+			MdiWindow *window = (MdiWindow *)(*winIter);
+
+			if ((window->windowType() == MdiWindow::ChannelWindow) && (((ChannelWindow *)window)->channel() == channel)) {
+				return((ChannelWindow *)window);
+			}
+		}
+	}
+
+	return(0);
 }
 
 void Container::optionsButtonClicked()
@@ -351,6 +371,24 @@ void Container::channelMessageReceived(IRCClient *client, const QString &chan, c
 	this->windowTree->maybeHighlightItem(client->cid, chanWindow->hashName());
 }
 
+void Container::channelJoined(IRCClient *client, const QString &channel, const QString &nick)
+{
+	ChannelWindow *channelWindow = 0;
+
+	if ((channelWindow = findChannelWindow(client->cid, channel)) != 0) {
+		channelWindow->addNick(nick);
+	}
+}
+
+void Container::channelParted(IRCClient *client, const QString &channel, const QString &nick)
+{
+	ChannelWindow *channelWindow = 0;
+
+	if ((channelWindow = findChannelWindow(client->cid, channel)) != 0) {
+		channelWindow->removeNick(nick);
+	}
+}
+
 void Container::incomingData(IRCClient *client, const QString &data) // FIXME: Remove this later
 {
 	//StatusWindow *statusWindow = (StatusWindow *)this->windows[client->cid]["__STATUS__"];
@@ -418,6 +456,4 @@ void Container::subWindowClosed(const int cid, const QString &hashName)
 		// Remove the hash stuff
 		this->windows.remove(cid);
 	}
-
-
 }

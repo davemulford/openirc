@@ -1,6 +1,7 @@
 #ifndef OPENIRC_CHANNELWINDOW_H
 #define OPENIRC_CHANNELWINDOW_H
 
+#include <QtCore>
 #include <QtGui>
 
 #include "mdiwindow.h"
@@ -21,12 +22,18 @@ class ChannelWindow : public MdiWindow
 
 	void closeEvent(QCloseEvent *event);
 
+	void addNick(const QString &nick);
+	void removeNick(const QString &nick);
+
   public slots:
 	void inputBufferReturnPressed();
 	
   private:
 	QHBoxLayout *chatLayout;
   	QVBoxLayout *mainLayout;
+
+	QStringList nickStringList;
+	QStringListModel *nickListModel;
 
 	QWidget *chatContainer;
 
@@ -41,6 +48,8 @@ class ChannelWindow : public MdiWindow
 	QAction *cycleChannelAction;
 
 	QString Channel;
+
+	static bool nickListSort(const QString &a, const QString &b);
 };
 
 #endif

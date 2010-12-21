@@ -29,6 +29,8 @@ ChannelWindow::ChannelWindow(QWidget *parent)
 	// Create the chat section
 	this->chatBuffer = new QTextEdit(this->chatContainer);
 	this->nickList = new QListView(this->chatContainer);
+	this->nickListModel = new QStringListModel(this->nickList);
+	this->nickList->setModel(this->nickListModel);
 
 	this->chatBuffer->setReadOnly(true);
 	//this->chatBuffer->setStyleSheet("QToolBar { border: 0px }");
@@ -58,6 +60,29 @@ ChannelWindow::ChannelWindow(QWidget *parent)
 
 	// Connect signals to slots
 	connect(this->inputBuffer, SIGNAL(returnPressed()), this, SLOT(inputBufferReturnPressed()));
+}
+
+bool ChannelWindow::nickListSort(const QString &a, const QString &b)
+{
+	// Remove this later when we figure out a way 
+	// to get access to the IRCClient class
+	string classPrefixes = "@+-";
+
+	QString prefixes = QString::fromStdString(classPrefixes);
+	int i, prefixesCount = prefixes.length();
+
+	QString localA = a;
+	QString localB = b;
+
+	// We simply replace the prefixes with characters starting at character 33 and moving up
+	// We only do this locally, though :)
+	int chr = 33;
+	for (i = 0; i < prefixesCount; i++) {
+		localA.replace(prefixes[i], QChar(chr), Qt::CaseInsensitive);
+		localB.replace(prefixes[i], QChar(chr++), Qt::CaseInsensitive);
+	}
+	
+	return(localA.toLower() < localB.toLower());
 }
 
 void ChannelWindow::append(int color, const QString &string)
@@ -122,4 +147,23 @@ void ChannelWindow::closeEvent(QCloseEvent *event)
 	}
 
 	MdiWindow::closeEvent(event);
+}
+
+void ChannelWindow::addNick(const QString &nick)
+{
+	this->removeNick(nick);
+	this->nickStringList << nick;
+
+	qSort(this->nickStringList.begin(), this->nickStringList.end(), ChannelWindow::nickListSort);
+	this->nickListModel->setStringList(this->nickStringList);
+}
+
+void ChannelWindow::removeNick(const QString &nick)
+{
+	int index = this->nickStringList.indexOf(nick);
+
+	if (index >= 0) {
+		this->nickStringList.removeAt(index);
+		this->nickListModel->setStringList(this->nickStringList);
+	}
 }
