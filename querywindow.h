@@ -15,6 +15,7 @@ class QueryWindow : public MdiWindow
 
 	void append(int color, const QString &string);
 	MdiWindow::WindowType windowType();
+	void scrollToBottom();
 
 	QString otherNick();
 	void setOtherNick(const QString &otherNick);

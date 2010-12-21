@@ -13,8 +13,8 @@ StatusWindow::StatusWindow(QWidget *parent)
 	this->setGeometry(0,0,320,240);
 
 	// Create the widgets that the window will hold.
-	this->mainBuffer = new QTextEdit(this);
-	this->mainBuffer->setReadOnly(true);
+	this->chatBuffer = new QTextEdit(this);
+	this->chatBuffer->setReadOnly(true);
 
 	this->inputBuffer = new QLineEdit(this);
 
@@ -27,7 +27,7 @@ StatusWindow::StatusWindow(QWidget *parent)
 	this->toolbar->addAction(this->connectDisconnectAction);
 
 	// We add the controls to the vertical layout
-	layout->addWidget(this->mainBuffer);
+	layout->addWidget(this->chatBuffer);
 	layout->addWidget(this->inputBuffer);
 
 	// Connect any signals/slots we want
@@ -46,24 +46,30 @@ void StatusWindow::append(int color, const QString &string)
 	AddLine.sprintf("[%.2d:%.2d] %s",now->tm_hour,now->tm_min,string.toAscii().constData());
 	CCtoHTML str(AddLine.toStdString());
 
-	QScrollBar *sb = this->mainBuffer->verticalScrollBar();
+	QScrollBar *sb = this->chatBuffer->verticalScrollBar();
 	if (sb->value() == sb->maximum()) { follow = true; }
 	if (this->Buffer->size() >= 500) { 
 		this->Buffer->pop_front();
 		//this->chatBuffer->setText(this->Buffer->join("\n"));
-		QTextCursor tc = this->mainBuffer->textCursor();
+		QTextCursor tc = this->chatBuffer->textCursor();
 		tc.movePosition(QTextCursor::Start);
 		tc.movePosition(QTextCursor::NextBlock,QTextCursor::KeepAnchor);
 		tc.removeSelectedText();
 	}
 	this->Buffer->push_back("<div style=\"color: " + QString::fromStdString(str.ColorChart[color]) + "; white-space: pre-wrap\">" + QString::fromStdString(str.translate()) + "</div>");
-	this->mainBuffer->append(this->Buffer->at(this->Buffer->size() - 1));
+	this->chatBuffer->append(this->Buffer->at(this->Buffer->size() - 1));
 	if (follow == true) { sb->setValue(sb->maximum()); }
 }
 
 MdiWindow::WindowType StatusWindow::windowType()
 {
 	return(MdiWindow::StatusWindow);
+}
+
+void StatusWindow::scrollToBottom()
+{
+	QScrollBar *sb = this->chatBuffer->verticalScrollBar();
+	sb->setValue(sb->maximum());
 }
 
 void StatusWindow::inputBufferReturnPressed()

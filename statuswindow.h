@@ -15,6 +15,7 @@ class StatusWindow : public MdiWindow
 
 	void append(int color, const QString &string);
 	MdiWindow::WindowType windowType();
+	void scrollToBottom();
 
 	void closeEvent(QCloseEvent *event);
 
@@ -28,7 +29,7 @@ class StatusWindow : public MdiWindow
 
   private:
 	QStringList *Buffer;
-	QTextEdit *mainBuffer;
+	QTextEdit *chatBuffer;
 	QLineEdit *inputBuffer;
 
 	// Action which will be added to the toolbar

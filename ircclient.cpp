@@ -95,11 +95,11 @@ void IRCClient::dataReceived()
 						Server Message
 						trigger RAW event
 						*/
-						Me = Args.at(0);
 						if (Event == "001") {
 							//set server NorS
 							//find out our userhost info
 							this->sendRawMessage(QString::fromStdString("USERHOST " + Me));
+							Me = Args.at(0);
 						}
 						/*
 						SERIOUS parsing of 005 for chanmodes, chantypes, modes, network, prefix, nickmode,namesx,uhnames...
@@ -116,10 +116,29 @@ void IRCClient::dataReceived()
 							//we set ourself away
 						}
 						else if (Event == "353") {
+							QString channel = QString::fromStdString(Args.at(Args.size() - 1));
+							QStringList nicklist;
+
+							if (this->tempChannelJoins.contains(channel)) {
+								nicklist = this->tempChannelJoins[channel];
+							}
+
 							pcrecpp::StringPiece ExData(Extra);
 							while (ParseJoin.Consume(&ExData,&JoinPrefix,&JoinNick,&JoinAddress)) {
-								emit channelJoined(this,QString::fromStdString(Args.at(Args.size() - 1)),QString::fromStdString(JoinNick));
-							}							
+								nicklist << QString::fromStdString(JoinNick);
+							//	emit channelJoined(this,QString::fromStdString(Args.at(Args.size() - 1)),QString::fromStdString(JoinNick));
+							}
+
+							if (!this->tempChannelJoins.contains(channel)) {
+								this->tempChannelJoins.insert(channel, nicklist);
+							}
+						} else if (Event == "366") {
+							QString channel = QString::fromStdString(Args.at(Args.size() - 1));
+
+							if (this->tempChannelJoins.contains(channel)) {
+								QStringList nicklist = this->tempChannelJoins.take(channel);
+								emit channelJoinCompleteNickList(this, channel, nicklist);
+							}
 						}
 						emit incomingData(this, line);
 					}

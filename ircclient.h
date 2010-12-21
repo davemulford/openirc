@@ -12,6 +12,9 @@ class IRCClient : public QTcpSocket
 
   private:
   	static int Cid;
+	QHash<QString, QStringList> tempChannelJoins;
+
+
   public:
 	string Me;
 	int cid;
@@ -33,6 +36,7 @@ class IRCClient : public QTcpSocket
 
   	void channelJoined(IRCClient *client, const QString &channel, const QString &nick);
 	void channelParted(IRCClient *client, const QString &channel, const QString &nick);
+	void channelJoinCompleteNickList(IRCClient *client, const QString &channel, const QStringList &list);
 
 	void privateMessageReceived(IRCClient *client, const QString &nick, const QString &address, const QString &message);
 	void channelMessageReceived(IRCClient *client, const QString &chan, const QString &event, const QString &nick, const QString &address, const QString &message);

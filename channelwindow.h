@@ -16,6 +16,7 @@ class ChannelWindow : public MdiWindow
 
 	void append(int color, const QString &string);
 	MdiWindow::WindowType windowType();
+	void scrollToBottom();
 
 	QString channel();
 	void setChannel(const QString &channel);
@@ -24,6 +25,7 @@ class ChannelWindow : public MdiWindow
 
 	void addNick(const QString &nick);
 	void removeNick(const QString &nick);
+	void setNickList(const QStringList &list);
 
   public slots:
 	void inputBufferReturnPressed();

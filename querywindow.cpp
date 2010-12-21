@@ -84,6 +84,12 @@ MdiWindow::WindowType QueryWindow::windowType()
 	return(MdiWindow::QueryWindow);
 }
 
+void QueryWindow::scrollToBottom()
+{
+	QScrollBar *sb = this->chatBuffer->verticalScrollBar();
+	sb->setValue(sb->maximum());
+}
+
 QString QueryWindow::otherNick()
 {
 	return(this->them);

@@ -91,7 +91,8 @@ void Container::newStatusWindow(const QString &server, const int port)
 	connect(client, SIGNAL(channelMessageReceived(IRCClient *, const QString &, const QString &, const QString &, const QString &, const QString &)), this, SLOT(channelMessageReceived(IRCClient *, const QString &, const QString &, const QString &, const QString &, const QString &)));
 	connect(client, SIGNAL(incomingData(IRCClient *, const QString &)), this, SLOT(incomingData(IRCClient *, const QString &)));
 	connect(client, SIGNAL(channelJoined(IRCClient *, const QString &, const QString &)), this, SLOT(channelJoined(IRCClient *, const QString &, const QString &)));
-	connect(client, SIGNAL(void channelParted(IRCClient *, const QString &, const QString &)), this, SLOT(void channelParted(IRCClient *, const QString &, const QString &)));
+	connect(client, SIGNAL(channelParted(IRCClient *, const QString &, const QString &)), this, SLOT(channelParted(IRCClient *, const QString &, const QString &)));
+	connect(client, SIGNAL(channelJoinCompleteNickList(IRCClient *, const QString &, const QStringList &)), this, SLOT(channelJoinCompleteNickList(IRCClient *, const QString &, const QStringList &)));
 
 	// connect the new status button to new status window
 	connect(statusWindow, SIGNAL(newStatusWin()), this, SLOT(newStatusWindow()));
@@ -389,6 +390,15 @@ void Container::channelParted(IRCClient *client, const QString &channel, const Q
 	}
 }
 
+void Container::channelJoinCompleteNickList(IRCClient *client, const QString &channel, const QStringList &list)
+{
+	ChannelWindow *channelWindow = 0;
+
+	if ((channelWindow = findChannelWindow(client->cid, channel)) != 0) {
+		channelWindow->setNickList(list);
+	}
+}
+
 void Container::incomingData(IRCClient *client, const QString &data) // FIXME: Remove this later
 {
 	//StatusWindow *statusWindow = (StatusWindow *)this->windows[client->cid]["__STATUS__"];
@@ -419,6 +429,7 @@ void Container::serversWindowConnectClicked(const QString &server, const int por
 void Container::windowItemClicked(MdiWindow *subWindow)
 {
 	this->mdiArea->setActiveSubWindow(subWindow);
+	subWindow->scrollToBottom();
 }
 
 void Container::subWindowClosed(const int cid, const QString &hashName)

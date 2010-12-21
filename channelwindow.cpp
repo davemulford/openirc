@@ -114,6 +114,12 @@ MdiWindow::WindowType ChannelWindow::windowType()
 	return(MdiWindow::ChannelWindow);
 }
 
+void ChannelWindow::scrollToBottom()
+{
+	QScrollBar *sb = this->chatBuffer->verticalScrollBar();
+	sb->setValue(sb->maximum());
+}
+
 QString ChannelWindow::channel()
 {
 	return(this->Channel);
@@ -166,4 +172,12 @@ void ChannelWindow::removeNick(const QString &nick)
 		this->nickStringList.removeAt(index);
 		this->nickListModel->setStringList(this->nickStringList);
 	}
+}
+
+void ChannelWindow::setNickList(const QStringList &list)
+{
+	this->nickStringList = list;
+
+	qSort(this->nickStringList.begin(), this->nickStringList.end(), ChannelWindow::nickListSort);
+	this->nickListModel->setStringList(this->nickStringList);
 }
