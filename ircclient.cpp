@@ -60,7 +60,12 @@ void IRCClient::dataReceived()
 	string Extra;
 	string Action;
 
+	string JoinPrefix;
+	string JoinNick;
+	string JoinAddress;
+
 	pcrecpp::RE ParseLine("^(?:\\x3a(\\S+) )?(\\d{3}|[a-zA-Z]+)(?: ((?:[^\\x00\\x0a\\x0d\\x20\\x3a][^\\x00\\x0a\\x0d\\x20]*)(?: [^\\x00\\x0a\\x0d\\x20\\x3a][^\\x00\\x0a\\x0d\\x20]*)*))? ?(?:\\x3a([^\\x00\\x0a\\x0d]*))?\\x20*$");
+	pcrecpp::RE ParseJoin("(?:^| )([\\@\\+\\-]+)?([^! ]+)!?([^ ]+)?");
 	pcrecpp::RE NickOrServer("^[^!@]+$");
 	pcrecpp::RE NickUser("^([^!]+)!(.*)$");
 	pcrecpp::RE IsChan("^\\#");
@@ -110,6 +115,12 @@ void IRCClient::dataReceived()
 						else if (Event == "306") {
 							//we set ourself away
 						}
+						else if (Event == "353") {
+							pcrecpp::StringPiece ExData(Extra);
+							while (ParseJoin.Consume(&ExData,&JoinPrefix,&JoinNick,&JoinAddress)) {
+								emit channelJoined(this,QString::fromStdString(Args.at(1) == "=" ? Args.at(2) : Args.at(1)),QString::fromStdString(JoinNick));
+							}							
+						}
 						emit incomingData(this, line);
 					}
 					else {
@@ -119,6 +130,12 @@ void IRCClient::dataReceived()
 						NickUser.PartialMatch(NorS, &Nick, &Address);
 						if (Event == "JOIN" || Event == "PART") {
 							emit channelMessageReceived(this, QString::fromStdString((IsChan.PartialMatch(Extra) > 0 ? Extra : Args.at(0))),QString::fromStdString(Event),QString::fromStdString(Nick),QString::fromStdString(Address),QString::fromStdString(Extra));
+							if (Event == "JOIN") {
+								emit channelJoined(this,QString::fromStdString((IsChan.PartialMatch(Extra) > 0 ? Extra : Args.at(0))),QString::fromStdString(Nick));
+							}
+							else {
+								emit channelParted(this,QString::fromStdString((IsChan.PartialMatch(Extra) > 0 ? Extra : Args.at(0))),QString::fromStdString(Nick));
+							}
 						}
 						else if (Event == "PRIVMSG") {
 							if (IsChan.PartialMatch(Args.at(0))) {
