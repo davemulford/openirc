@@ -42,7 +42,7 @@ void StatusWindow::append(int color, const QString &string)
 	QString AddLine = str->TimeStamp() + " " + string;
 	if (this->Buffer->size() >= 500) { 
 		this->Buffer->pop_front();
-		this->chatBuffer->setText(this->Buffer->join("\n"));
+		//this->chatBuffer->setText(this->Buffer->join("\n"));
 		QTextCursor tc = this->chatBuffer->textCursor();
 		tc.movePosition(QTextCursor::Start);
 		tc.movePosition(QTextCursor::NextBlock,QTextCursor::KeepAnchor);
