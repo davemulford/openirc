@@ -118,7 +118,7 @@ void IRCClient::dataReceived()
 						else if (Event == "353") {
 							pcrecpp::StringPiece ExData(Extra);
 							while (ParseJoin.Consume(&ExData,&JoinPrefix,&JoinNick,&JoinAddress)) {
-								emit channelJoined(this,QString::fromStdString(Args.at(1) == "=" ? Args.at(2) : Args.at(1)),QString::fromStdString(JoinNick));
+								emit channelJoined(this,QString::fromStdString(Args.at(Args.size() - 1)),QString::fromStdString(JoinNick));
 							}							
 						}
 						emit incomingData(this, line);
