@@ -37,12 +37,12 @@ ServersWindow::ServersWindow(IniFile *serversFile, QWidget *parent, Qt::WindowFl
 		QStringList groups = serversFile->groups();
 
 		QStringList::const_iterator groupIter;
-		for (groupIter = groups.constBegin(); groupIter != groups.constEnd(); groupIter++) {
+		for (groupIter = groups.constBegin(); groupIter != groups.constEnd(); ++groupIter) {
 			QString groupName = *groupIter;
 			QStringList keys = serversFile->keys(groupName);
 
 			QStringList::const_iterator keyIter;
-			for (keyIter = keys.constBegin(); keyIter != keys.constEnd(); keyIter++) {
+			for (keyIter = keys.constBegin(); keyIter != keys.constEnd(); ++keyIter) {
 				QString keyName = *keyIter;
 				QString value = serversFile->value(groupName, keyName);
 
@@ -72,12 +72,12 @@ void ServersWindow::filterBoxTextChanged(const QString &text)
 
 	int rowId = 0;
 	QStringList::const_iterator networkIter;
-	for (networkIter = networks.constBegin(); networkIter != networks.constEnd(); networkIter++) {
+	for (networkIter = networks.constBegin(); networkIter != networks.constEnd(); ++networkIter) {
 		QString networkName = *networkIter;
 		QStringList keys = serversFile->keys(networkName);
 
 		QStringList::const_iterator keyIter;
-		for (keyIter = keys.constBegin(); keyIter != keys.constEnd(); keyIter++) {
+		for (keyIter = keys.constBegin(); keyIter != keys.constEnd(); ++keyIter) {
 			QString keyName = *keyIter;
 			QString value = serversFile->value(networkName, keyName);
 

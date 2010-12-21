@@ -11,7 +11,7 @@ QStringList IniFile::groups()
 	QStringList groups;
 	QHash<QString, QHash<QString, QString> >::const_iterator groupIterator = this->configItems.constBegin();
 
-	for (groupIterator = this->configItems.constBegin(); groupIterator!= this->configItems.constEnd(); groupIterator++) {
+	for (groupIterator = this->configItems.constBegin(); groupIterator!= this->configItems.constEnd(); ++groupIterator) {
 		groups.append(groupIterator.key());
 	}
 
@@ -26,7 +26,7 @@ QStringList IniFile::keys(const QString &groupName)
 		QHash<QString, QString> groupHash = this->configItems.value(groupName);
 		QHash<QString, QString>::const_iterator keyIterator = groupHash.constBegin();
 
-		for (keyIterator = groupHash.constBegin(); keyIterator != groupHash.constEnd(); keyIterator++) {
+		for (keyIterator = groupHash.constBegin(); keyIterator != groupHash.constEnd(); ++keyIterator) {
 			keys.append(keyIterator.key());
 		}
 	}
@@ -57,12 +57,12 @@ void IniFile::save(const QString &filename)
 	QStringList groups = this->groups();
 
 	QStringList::const_iterator groupIter;
-	for (groupIter = groups.constBegin(); groupIter != groups.constEnd(); groupIter++) {
+	for (groupIter = groups.constBegin(); groupIter != groups.constEnd(); ++groupIter) {
 		QString groupName = *groupIter;
 		QStringList keys = this->keys(groupName);
 
 		QStringList::const_iterator keyIter;
-		for (keyIter = keys.constBegin(); keyIter != keys.constEnd(); keyIter++) {
+		for (keyIter = keys.constBegin(); keyIter != keys.constEnd(); ++keyIter) {
 			QString keyName = *keyIter;
 			QString value = this->value(groupName, keyName);
 

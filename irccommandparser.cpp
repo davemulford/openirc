@@ -30,7 +30,7 @@ void IRCCommandParser::parse()
 		this->_command = splitString.at(0).right(splitString.at(0).length() - 1).toUpper();
 		
 		QStringList::const_iterator iterator;
-		for (iterator = splitString.constBegin(); iterator != splitString.constEnd(); iterator++) {
+		for (iterator = splitString.constBegin(); iterator != splitString.constEnd(); ++iterator) {
 			if (iterator != splitString.constBegin()) {
 				this->_args.append(*iterator);
 				

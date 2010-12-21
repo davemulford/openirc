@@ -1,13 +1,13 @@
 #include "ircclient.h"
 #include "pcrecpp.h"
-#include <sstream>
 
 using namespace std;
 
 int IRCClient::Cid = 0;
 
 IRCClient::IRCClient(QObject *parent, const QString &server, const int port)
-  : QTcpSocket(parent)
+  : QTcpSocket(parent), ParseLine("^(?:\\x3a(\\S+) )?(\\d{3}|[a-zA-Z]+)(?: ((?:[^\\x00\\x0a\\x0d\\x20\\x3a][^\\x00\\x0a\\x0d\\x20]*)(?: [^\\x00\\x0a\\x0d\\x20\\x3a][^\\x00\\x0a\\x0d\\x20]*)*))? ?(?:\\x3a([^\\x00\\x0a\\x0d]*))?\\x20*$"), ParseJoin("(?:^| )([\\@\\+\\-]+)?([^! ]+)!?([^ ]+)?"), NickOrServer("^[^!@]+$"), NickUser("^([^!]+)!(.*)$"), IsChan("^\\#"), IsAction("^ACTION (.*)$")
+
 {
 	this->cid = Cid++;
 
@@ -54,38 +54,16 @@ void IRCClient::networkError(SocketError error)
 
 void IRCClient::dataReceived()
 {
-	string NorS;
-	string Event;
-	string args;
-	string Extra;
-	string Action;
-
-	string JoinPrefix;
-	string JoinNick;
-	string JoinAddress;
-
-	pcrecpp::RE ParseLine("^(?:\\x3a(\\S+) )?(\\d{3}|[a-zA-Z]+)(?: ((?:[^\\x00\\x0a\\x0d\\x20\\x3a][^\\x00\\x0a\\x0d\\x20]*)(?: [^\\x00\\x0a\\x0d\\x20\\x3a][^\\x00\\x0a\\x0d\\x20]*)*))? ?(?:\\x3a([^\\x00\\x0a\\x0d]*))?\\x20*$");
-	pcrecpp::RE ParseJoin("(?:^| )([\\@\\+\\-]+)?([^! ]+)!?([^ ]+)?");
-	pcrecpp::RE NickOrServer("^[^!@]+$");
-	pcrecpp::RE NickUser("^([^!]+)!(.*)$");
-	pcrecpp::RE IsChan("^\\#");
-	pcrecpp::RE IsAction("^ACTION (.*)$");
-
 	while (this->canReadLine()) {
-		QString line = this->readLine();
+		line = this->readLine();
 		line.remove('\r');
 		line.remove('\n');
-		if (!line.isEmpty()) {
-  			if (ParseLine.PartialMatch(line.toStdString(), &NorS, &Event, &args, &Extra)) {
+		if (line.isEmpty()) { return; }
+		else {
+  			if (ParseLine.FullMatch(line.toStdString(), &NorS, &Event, &args, &Extra)) {
 			//qDebug() << "Split Data: NorS(" + QString::fromStdString(NorS) + ") Event(" + QString::fromStdString(Event) + ") args(" + QString::fromStdString(args) + ") Extra(" + QString::fromStdString(Extra) + ")";
-
-				istringstream oss(args);
-    				vector<string> Args;
-				string word;
-				while(oss >> word) {
-					Args.push_back(word);
-				}
-
+				Args.clear();
+				Args = QString::fromStdString(args).split(" ");
 				if (NorS == "") {
 	    				if (Event == "PING") { this->sendRawMessage(QString::fromStdString("PONG " + Extra)); }
 				}
@@ -99,7 +77,7 @@ void IRCClient::dataReceived()
 							//set server NorS
 							//find out our userhost info
 							this->sendRawMessage(QString::fromStdString("USERHOST " + Me));
-							Me = Args.at(0);
+							Me = Args.at(0).toStdString();
 						}
 						/*
 						SERIOUS parsing of 005 for chanmodes, chantypes, modes, network, prefix, nickmode,namesx,uhnames...
@@ -116,7 +94,7 @@ void IRCClient::dataReceived()
 							//we set ourself away
 						}
 						else if (Event == "353") {
-							QString channel = QString::fromStdString(Args.at(Args.size() - 1));
+							QString channel = Args.at(Args.size() - 1);
 							QStringList nicklist;
 
 							if (this->tempChannelJoins.contains(channel)) {
@@ -133,7 +111,7 @@ void IRCClient::dataReceived()
 								this->tempChannelJoins.insert(channel, nicklist);
 							}
 						} else if (Event == "366") {
-							QString channel = QString::fromStdString(Args.at(Args.size() - 1));
+							QString channel = Args.at(Args.size() - 1);
 
 							if (this->tempChannelJoins.contains(channel)) {
 								QStringList nicklist = this->tempChannelJoins.take(channel);
@@ -148,21 +126,21 @@ void IRCClient::dataReceived()
 						string Address;
 						NickUser.PartialMatch(NorS, &Nick, &Address);
 						if (Event == "JOIN" || Event == "PART") {
-							emit channelMessageReceived(this, QString::fromStdString((IsChan.PartialMatch(Extra) > 0 ? Extra : Args.at(0))),QString::fromStdString(Event),QString::fromStdString(Nick),QString::fromStdString(Address),QString::fromStdString(Extra));
+							emit channelMessageReceived(this, (IsChan.PartialMatch(Extra) > 0 ? QString::fromStdString(Extra) : Args.at(0)),QString::fromStdString(Event),QString::fromStdString(Nick),QString::fromStdString(Address),QString::fromStdString(Extra));
 							if (Event == "JOIN") {
-								emit channelJoined(this,QString::fromStdString((IsChan.PartialMatch(Extra) > 0 ? Extra : Args.at(0))),QString::fromStdString(Nick));
+								emit channelJoined(this,(IsChan.PartialMatch(Extra) > 0 ? QString::fromStdString(Extra) : Args.at(0)),QString::fromStdString(Nick));
 							}
 							else {
-								emit channelParted(this,QString::fromStdString((IsChan.PartialMatch(Extra) > 0 ? Extra : Args.at(0))),QString::fromStdString(Nick));
+								emit channelParted(this,(IsChan.PartialMatch(Extra) > 0 ? QString::fromStdString(Extra) : Args.at(0)),QString::fromStdString(Nick));
 							}
 						}
 						else if (Event == "PRIVMSG") {
-							if (IsChan.PartialMatch(Args.at(0))) {
+							if (IsChan.PartialMatch(Args.at(0).toStdString())) {
 								if (IsAction.PartialMatch(Extra,&Action)) {
-									emit channelMessageReceived(this, QString::fromStdString(Args.at(0)),QString::fromStdString("ACTION"),QString::fromStdString(Nick),QString::fromStdString(Address),QString::fromStdString(Action));
+									emit channelMessageReceived(this, Args.at(0),QString::fromStdString("ACTION"),QString::fromStdString(Nick),QString::fromStdString(Address),QString::fromStdString(Action));
 								}
 								else {
-									emit channelMessageReceived(this, QString::fromStdString(Args.at(0)),QString::fromStdString(Event),QString::fromStdString(Nick),QString::fromStdString(Address),QString::fromStdString(Extra));
+									emit channelMessageReceived(this, Args.at(0),QString::fromStdString(Event),QString::fromStdString(Nick),QString::fromStdString(Address),QString::fromStdString(Extra));
 								}
 							}
 							else { 
@@ -174,11 +152,7 @@ void IRCClient::dataReceived()
 				}
 			}
 		}
-		else {
-			qDebug() << "Parse Failed! line(" + line + ")";
-		}
 	}
-
 	//QByteArray data = this->readAll();
 	//emit incomingData(this, QString(data));
 }

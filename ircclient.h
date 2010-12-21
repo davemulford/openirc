@@ -2,7 +2,9 @@
 #define OPENIRC_IRCCLIENT_H
 
 #include <QtNetwork>
+#include <QString>
 #include <string>
+#include "pcrecpp.h"
 
 using namespace std;
 
@@ -13,7 +15,25 @@ class IRCClient : public QTcpSocket
   private:
   	static int Cid;
 	QHash<QString, QStringList> tempChannelJoins;
+	string NorS;
+	string Event;
+	string args;
+	string Extra;
+	string Action;
 
+	string JoinPrefix;
+	string JoinNick;
+	string JoinAddress;
+	string word;
+	QStringList Args;
+	QString line;
+
+	pcrecpp::RE ParseLine;
+	pcrecpp::RE ParseJoin;
+	pcrecpp::RE NickOrServer;
+	pcrecpp::RE NickUser;
+	pcrecpp::RE IsChan;
+	pcrecpp::RE IsAction;
 
   public:
 	string Me;

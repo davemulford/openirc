@@ -164,7 +164,7 @@ ChannelWindow *Container::findChannelWindow(const int cid, const QString &channe
 		QHash<QString, MdiWindow *> windows = this->windows[cid];
 		QHash<QString, MdiWindow *>::const_iterator winIter;
 
-		for (winIter = windows.constBegin(); winIter != windows.constEnd(); winIter++) {
+		for (winIter = windows.constBegin(); winIter != windows.constEnd(); ++winIter) {
 			MdiWindow *window = (MdiWindow *)(*winIter);
 
 			if ((window->windowType() == MdiWindow::ChannelWindow) && (((ChannelWindow *)window)->channel() == channel)) {
@@ -234,7 +234,7 @@ void Container::connected(IRCClient *client)
 	QHash<QString, MdiWindow *>::const_iterator windowIter;
 	QHash<QString, MdiWindow *> windows = this->windows[client->cid];
 
-	for (windowIter = windows.constBegin(); windowIter != windows.constEnd(); windowIter++) {
+	for (windowIter = windows.constBegin(); windowIter != windows.constEnd(); ++windowIter) {
 		MdiWindow *window = *windowIter;
 
 		if (window->windowType() == MdiWindow::StatusWindow) {
@@ -321,7 +321,7 @@ void Container::privateMessageReceived(IRCClient *client, const QString &nick, c
 	QHash<QString, MdiWindow *>::const_iterator queryIter;
 	QHash<QString, MdiWindow *> queryWindows = this->windows[client->cid];
 
-	for (queryIter = queryWindows.constBegin(); queryIter != queryWindows.constEnd(); queryIter++) {
+	for (queryIter = queryWindows.constBegin(); queryIter != queryWindows.constEnd(); ++queryIter) {
 		MdiWindow *mdiWindow = (*queryIter);
 
 		if ((mdiWindow->windowType() == MdiWindow::QueryWindow) && (((QueryWindow *)mdiWindow)->otherNick() == nick)) {
@@ -344,7 +344,7 @@ void Container::channelMessageReceived(IRCClient *client, const QString &chan, c
 	QHash<QString, MdiWindow *>::const_iterator chanIter;
 	QHash<QString, MdiWindow *> chanWindows = this->windows[client->cid];
 
-	for (chanIter = chanWindows.constBegin(); chanIter != chanWindows.constEnd(); chanIter++) {
+	for (chanIter = chanWindows.constBegin(); chanIter != chanWindows.constEnd(); ++chanIter) {
 		MdiWindow *mdiWindow = (*chanIter);
 
 		if ((mdiWindow->windowType() == MdiWindow::ChannelWindow) && (((ChannelWindow *)mdiWindow)->channel() == chan)) {
@@ -407,7 +407,7 @@ void Container::incomingData(IRCClient *client, const QString &data) // FIXME: R
 	QHash<QString, MdiWindow *>::const_iterator windowIter;
 	QHash<QString, MdiWindow *> windows = this->windows[client->cid];
 
-	for (windowIter = windows.constBegin(); windowIter != windows.constEnd(); windowIter++) {
+	for (windowIter = windows.constBegin(); windowIter != windows.constEnd(); ++windowIter) {
 		MdiWindow *window = *windowIter;
 
 		if (window->windowType() == MdiWindow::StatusWindow) {
@@ -456,7 +456,7 @@ void Container::subWindowClosed(const int cid, const QString &hashName)
 		QHash<QString, MdiWindow *> windows = this->windows[cid];
 		QHash<QString, MdiWindow *>::const_iterator windowsIter;
 
-		for (windowsIter = windows.constBegin(); windowsIter != windows.constEnd(); windowsIter++) {
+		for (windowsIter = windows.constBegin(); windowsIter != windows.constEnd(); ++windowsIter) {
 			MdiWindow *window = (MdiWindow *)windowsIter.value();
 			this->windowTree->removeItem(cid, windowsIter.key());
 

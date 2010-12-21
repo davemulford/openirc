@@ -1,9 +1,12 @@
 #include "cctohtml.h"
 #include "pcrecpp.h"
+#include <QtNetwork>
+#include <QString>
+#include <QTime>
 
 using namespace std;
 
-CCtoHTML::CCtoHTML(string text) {
+CCtoHTML::CCtoHTML() {
 	//to be defined later so people can set custom colors... temporary now...
 	ColorChart[0] = "#FFFFFF";
 	ColorChart[1] = "#000000";
@@ -22,44 +25,47 @@ CCtoHTML::CCtoHTML(string text) {
 	ColorChart[14] = "#7F7F7F";
 	ColorChart[15] = "#D2D2D2";
 
-	Text = text;
-	string ctrl;
-	string txt;
 	bold = underline = italic = false;
 	fg = bg = 16;
-	pcrecpp::RE ParseCC("((?:(?:\\d\\d?),)?(?:\\d\\d?)|[])([^]*)");
-	while (ParseCC.PartialMatch(Text,&ctrl,&txt) > 0) {
-		ParseCC.Replace(ReturnHTML(ctrl,txt),&Text);
-	}
 }
-string CCtoHTML::ReturnHTML(string control, string text) {
-	bool colored;
-        string styles;
+string CCtoHTML::ReturnHTML(string *control, string *text) {
 	pcrecpp::RE ParseEmptyColor("^$");
 	pcrecpp::RE ParseColorFGOnly("^(\\d\\d?)$");
 	pcrecpp::RE ParseColor("^(\\d\\d?),(\\d\\d?)$");
 	pcrecpp::RE ParseBold("^$");
 	pcrecpp::RE ParseUnder("^$");
 	pcrecpp::RE ParseItalic("^$");
-	//todo reverse? not important imho...
+	pcrecpp::RE ParseReverse("^$");
 	pcrecpp::RE ParseStop("^$");
-        if (ParseEmptyColor.PartialMatch(control)) { fg = bg = 16; }
-        else if (ParseColorFGOnly.PartialMatch(control,&fg)) { colored = true; }
-        else if (ParseColor.PartialMatch(control,&fg,&bg)) { colored = true; }
-        else if (ParseBold.PartialMatch(control)) { bold = (bold == true ? false : true); }
-        else if (ParseUnder.PartialMatch(control)) { underline = (underline == true ? false : true); }
-        else if (ParseItalic.PartialMatch(control)) { italic = (italic == true ? false : true); }
-        else if (ParseStop.PartialMatch(control)) { bold = underline = italic = false; fg = bg = 16; }
+	//todo reverse? not important imho...
 
-	if (fg < 16) { styles += " color:" + ColorChart[fg] + ";"; }
-	if (bg < 16) { styles += " background-color:" + ColorChart[bg] + ";"; }
-        if (bold == true) { styles += " font-weight:bold;"; }
-        if (underline == true) { styles += " text-decoration:underline;"; }
-        if (italic == true) { styles += " font-style:italic;"; }
+        if (ParseEmptyColor.FullMatch(*control)) { fg = bg = 16; }
+        else if (ParseBold.FullMatch(*control)) { bold = (bold == true ? false : true); }
+        else if (ParseUnder.FullMatch(*control)) { underline = (underline == true ? false : true); }
+        else if (ParseItalic.FullMatch(*control)) { italic = (italic == true ? false : true); }
+        else if (ParseStop.FullMatch(*control)) { bold = underline = italic = false; fg = bg = 16; }
 
-	return "<span style=\"" + styles + "\">" + text + "</span>";
+        ParseColorFGOnly.FullMatch(*control,&fg);
+        ParseColor.FullMatch(*control,&fg,&bg);
+
+	return "<span style=\"" + (fg < 16 ? " color:" + ColorChart[fg] + ";" : "") + (bg < 16 ? " background-color:" + ColorChart[bg] + ";" : "") + (bold == true ? " font-weight:bold;" : "") + (underline == true ? " text-decoration:underline;" : "") + (italic == true ? " font-style:italic;" : "") + "\">" + *text + "</span>";
 }
-string CCtoHTML::translate() {
-	return Text;
+string CCtoHTML::translate(string text) {
+	string ctrl;
+	string txt;
+	string tmp;
+	string ret;
+	pcrecpp::RE ParseCC("((?:(?:\\d\\d?),)?(?:\\d\\d?)|[])([^]*)");
+	while (ParseCC.PartialMatch(text,&ctrl,&txt)) {
+		tmp = ReturnHTML(&ctrl,&txt);
+		pcrecpp::RE("(\\x5C)").GlobalReplace("&#92;",&tmp);
+		ParseCC.Replace(tmp,&text);
+	}
+	return text;
 }
-
+QString CCtoHTML::TimeStamp() {
+	QTime now = QTime::currentTime();
+	QString timeStamp;
+	timeStamp.sprintf("[%.2d:%.2d]",now.hour(),now.minute());
+	return timeStamp;
+}

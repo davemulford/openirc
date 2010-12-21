@@ -1,6 +1,5 @@
 #include "querywindow.h"
 #include "cctohtml.h"
-#include "time.h"
 #include <QSize>
 
 QueryWindow::QueryWindow(QWidget *parent)
@@ -57,26 +56,20 @@ QueryWindow::QueryWindow(QWidget *parent)
 
 void QueryWindow::append(int color, const QString &string)
 {
-	bool follow = false;
-	time_t TimeOf = time(NULL);
-	tm *now = localtime(&TimeOf);
-	QString AddLine;
-	AddLine.sprintf("[%.2d:%.2d] %s",now->tm_hour,now->tm_min,string.toAscii().constData());
-	CCtoHTML str(AddLine.toStdString());
-
-	QScrollBar *sb = this->chatBuffer->verticalScrollBar();
-	if (sb->value() == sb->maximum()) { follow = true; }
+	CCtoHTML *str;
+	str = new CCtoHTML;
+	QString AddLine = str->TimeStamp() + " " + string;
 	if (this->Buffer->size() >= 500) { 
-		this->Buffer->pop_front();
+		//this->Buffer->pop_front();
 		//this->chatBuffer->setText(this->Buffer->join("\n"));
 		QTextCursor tc = this->chatBuffer->textCursor();
 		tc.movePosition(QTextCursor::Start);
 		tc.movePosition(QTextCursor::NextBlock,QTextCursor::KeepAnchor);
 		tc.removeSelectedText();
 	}
-	this->Buffer->push_back("<div style=\"color: " + QString::fromStdString(str.ColorChart[color]) + "; white-space: pre-wrap\">" + QString::fromStdString(str.translate()) + "</div>");
-	this->chatBuffer->append(this->Buffer->at(this->Buffer->size() - 1));
-	if (follow == true) { sb->setValue(sb->maximum()); }
+	this->Buffer->push_back("<div style=\"color: " + QString::fromStdString(str->ColorChart[color]) + "; white-space: pre-wrap\">" + QString::fromStdString(str->translate(AddLine.toStdString())) + "</div>");
+	this->chatBuffer->append(this->Buffer->last());
+	delete str;
 }
 
 MdiWindow::WindowType QueryWindow::windowType()
@@ -87,7 +80,7 @@ MdiWindow::WindowType QueryWindow::windowType()
 void QueryWindow::scrollToBottom()
 {
 	QScrollBar *sb = this->chatBuffer->verticalScrollBar();
-	sb->setValue(sb->maximum());
+	if (sb->value() != sb->maximum()) { sb->setValue(sb->maximum()); }
 }
 
 QString QueryWindow::otherNick()

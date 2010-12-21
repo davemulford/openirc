@@ -1,5 +1,6 @@
 #include <map>
 #include "pcrecpp.h"
+#include <QString>
 
 using namespace std;
 
@@ -13,9 +14,9 @@ class CCtoHTML
 		int bg;
 	public:
 		map<int, string> ColorChart;
-		string Text;
-		CCtoHTML(string text);
-                string ReturnHTML(string control, string text);
-		string translate();
+		CCtoHTML();
+		QString TimeStamp();
+                string ReturnHTML(string *control, string *text);
+		string translate(string text);
 };
 
