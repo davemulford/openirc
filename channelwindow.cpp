@@ -153,7 +153,7 @@ void ChannelWindow::addNick(const QString &nick)
 	this->removeNick(nick);
 	this->nickStringList << nick;
 
-	//qSort(this->nickStringList.begin(), this->nickStringList.end(), ChannelWindow::nickListSort);
+	qSort(this->nickStringList.begin(), this->nickStringList.end(), ChannelWindow::nickListSort);
 	this->nickListModel->setStringList(this->nickStringList);
 }
 
@@ -171,6 +171,6 @@ void ChannelWindow::setNickList(const QStringList &list)
 {
 	this->nickStringList = list;
 
-	//qSort(this->nickStringList.begin(), this->nickStringList.end(), ChannelWindow::nickListSort);
+	qSort(this->nickStringList.begin(), this->nickStringList.end(), ChannelWindow::nickListSort);
 	this->nickListModel->setStringList(this->nickStringList);
 }

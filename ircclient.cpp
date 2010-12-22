@@ -76,14 +76,31 @@ void IRCClient::dataReceived()
 						if (Event == "001") {
 							//set server NorS
 							//find out our userhost info
-							this->sendRawMessage(QString::fromStdString("USERHOST " + Me));
 							Me = Args.at(0).toStdString();
+							this->sendRawMessage(QString::fromStdString("USERHOST " + Me));
 						}
-						/*
-						SERIOUS parsing of 005 for chanmodes, chantypes, modes, network, prefix, nickmode,namesx,uhnames...
 						else if (Event == "005") {
+							pcrecpp::RE ChanModes("^CHANMODES=([^ ]+)$");
+							pcrecpp::RE ChanTypes("^CHANTYPES=([^ ]+)$");
+							pcrecpp::RE Modes("^MODES=([\\d]+)$");
+							pcrecpp::RE Network("^NETWORK=([^ ]+)$");
+							pcrecpp::RE Prefix("^PREFIX=\\((\\w+)\\)([^ ]+)$");
+							for (int x = 0; x < Args.size(); x++) {
+								ChanModes.FullMatch(Args.at(x).toStdString(),&chanmodes);
+								ChanTypes.FullMatch(Args.at(x).toStdString(),&chantypes);
+								Modes.FullMatch(Args.at(x).toStdString(),&modespl);
+								Network.FullMatch(Args.at(x).toStdString(),&network);
+								ChanModes.FullMatch(Args.at(x).toStdString(),&nickmode,&prefix);
+								if (Args.at(x) == "NAMESX") { 
+									usenamesx = true;
+									this->sendRawMessage("PROTOCTL NAMESX");
+								}
+								if (Args.at(x) == "UHNAMES") {
+									useuhnames = true;
+									this->sendRawMessage("PROTOCTL UHNAMES");
+								}
+							}
 						}
-						*/
 						else if (Event == "302") {
 							//userhost return raw use to set ial of ourself
 						}

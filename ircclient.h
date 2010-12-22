@@ -36,7 +36,20 @@ class IRCClient : public QTcpSocket
 	pcrecpp::RE IsAction;
 
   public:
+	//================ Dedicated IRC Parser Variables ==================
 	string Me;
+	string chanmodes;
+	string chantypes;
+	int modespl;
+	string network;
+	string nickmode;
+	string prefix;
+	bool usenamesx; //extended names protocol, show all modes @%+nick
+	bool useuhnames; //extended names protocol, show nick!user@host in raw
+	bool away;
+	int awaytime;
+	//==================================================================
+
 	int cid;
   	IRCClient(QObject *parent = 0, const QString &server = 0, const int port = 6667);
 
