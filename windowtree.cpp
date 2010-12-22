@@ -152,17 +152,16 @@ void WindowTree::renameItem(const unsigned int cid, const QString &hashName, con
 	}
 }
 
-void WindowTree::maybeHighlightItem(const unsigned int cid, const QString &hashName)
+void WindowTree::maybeHighlightItem(const unsigned int cid, const QString &hashName, QMdiSubWindow *activeSubWindow, QString const &color)
 {
 	WindowTreeItem *itemToHighlight = 0;
 
-	//qDebug() << "WindowTree::maybeHighlightItem() called on cid=" << cid << " hashName=" << hashName << endl;
-
 	if ((itemToHighlight = this->findItem(cid, hashName)) != 0) {
-		//qDebug() << "WindowTree::maybeHighlightItem() found item to highlight" << endl;
-		if (((QMdiArea *)itemToHighlight->window()->parent())->activeSubWindow() != itemToHighlight->window()) {
-			//qDebug() << "WindowTree::maybeHighlightItem() window is not the active window...highlighting" << endl;
-			itemToHighlight->setForeground(0, QBrush(QColor("#880000")));
+
+		/* If the application doesn't have focus, activeSubWindow will be 0x0.
+			If it has focus, we'll get a proper window pointer. */
+		if (activeSubWindow != itemToHighlight->window()) {
+			itemToHighlight->setForeground(0, QBrush(QColor(color)));
 		}
 	}
 }
@@ -175,5 +174,6 @@ void WindowTree::itemClicked(QTreeWidgetItem *item, int column)
 	treeItem->setForeground(0, QBrush(QColor("#000000")));
 
 	treeItem->window()->show();
-	emit windowItemClicked(treeItem->window());
+	//((QMdiArea *)treeItem->window()->parent())->setActiveSubWindow(treeItem->window());
+	//emit windowItemClicked(treeItem->window());
 }

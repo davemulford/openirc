@@ -139,7 +139,6 @@ ChannelWindow *Container::newChannelWindow(IRCClient *client, const QString &cha
 		chanWindow->setWindowTitle(chanName);
 		chanWindow->setChannel(chanName);
 		chanWindow->setClient(client);
-		//this->mdiArea->addSubWindow(chanWindow);
 
 		// Add an entry in the window tree
 		this->windowTree->addChannelWindow(client->cid, chanName, chanWindow);
@@ -334,7 +333,7 @@ void Container::privateMessageReceived(IRCClient *client, const QString &nick, c
 	}
 	queryWindow->append(1,Qt::escape("12<" + nick + "12> " + message));
 
-	this->windowTree->maybeHighlightItem(client->cid, queryWindow->hashName());
+	this->windowTree->maybeHighlightItem(client->cid, queryWindow->hashName(), mdiArea->activeSubWindow());
 }
 
 void Container::channelMessageReceived(IRCClient *client, const QString &chan, const QString &event, const QString &nick, const QString &address, const QString &message)
@@ -369,7 +368,7 @@ void Container::channelMessageReceived(IRCClient *client, const QString &chan, c
 		chanWindow->append(12,"* Error: chan(" + chan + ") event(" + event + ") nick(" + nick + ") addres(" + address + ") message(" + message + ")");
 	}
 
-	this->windowTree->maybeHighlightItem(client->cid, chanWindow->hashName());
+	this->windowTree->maybeHighlightItem(client->cid, chanWindow->hashName(), mdiArea->activeSubWindow());
 }
 
 void Container::channelJoined(IRCClient *client, const QString &channel, const QString &nick)
@@ -412,6 +411,7 @@ void Container::incomingData(IRCClient *client, const QString &data) // FIXME: R
 
 		if (window->windowType() == MdiWindow::StatusWindow) {
 			window->append(1,data);
+			windowTree->maybeHighlightItem(client->cid, window->hashName(), mdiArea->activeSubWindow());
 			break;
 		}
 	}

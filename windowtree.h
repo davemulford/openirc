@@ -19,7 +19,7 @@ class WindowTree : public QDockWidget
 
 	void removeItem(const unsigned int cid, const QString &hashName);
 	void renameItem(const unsigned int cid, const QString &hashName, const QString &newName);
-	void maybeHighlightItem(const unsigned int cid, const QString &hashName);
+	void maybeHighlightItem(const unsigned int cid, const QString &hashName, QMdiSubWindow *activeSubWindow = 0, const QString &color = "#8800AA");
 
   Q_SIGNALS:
 	void windowItemClicked(MdiWindow *subWindow);
