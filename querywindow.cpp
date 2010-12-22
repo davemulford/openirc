@@ -60,7 +60,7 @@ void QueryWindow::append(int color, const QString &string)
 	str = new CCtoHTML;
 	QString AddLine = str->TimeStamp() + " " + string;
 	if (this->Buffer->size() >= 500) { 
-		//this->Buffer->pop_front();
+		this->Buffer->pop_front();
 		//this->chatBuffer->setText(this->Buffer->join("\n"));
 		QTextCursor tc = this->chatBuffer->textCursor();
 		tc.movePosition(QTextCursor::Start);
