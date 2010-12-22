@@ -25,7 +25,8 @@ class ChannelWindow : public MdiWindow
 
 	void addNick(const QString &nick);
 	void removeNick(const QString &nick);
-	void setNickList(const QStringList &list);
+	void setPrefixes(const QString &prefixes);
+	void setNickList(const QStringList &list, const QString &prefixes = "@+-");
 
   public slots:
 	void inputBufferReturnPressed();
@@ -49,6 +50,7 @@ class ChannelWindow : public MdiWindow
 	QAction *channelStatsAction;
 	QAction *cycleChannelAction;
 
+	QString prefixes;
 	QString Channel;
 
 	static bool nickListSort(const QString &a, const QString &b);

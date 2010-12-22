@@ -394,7 +394,7 @@ void Container::channelJoinCompleteNickList(IRCClient *client, const QString &ch
 	ChannelWindow *channelWindow = 0;
 
 	if ((channelWindow = findChannelWindow(client->cid, channel)) != 0) {
-		channelWindow->setNickList(list);
+		channelWindow->setNickList(list, QString::fromStdString(client->prefix));
 	}
 }
 

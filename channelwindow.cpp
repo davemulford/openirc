@@ -1,6 +1,8 @@
 #include "channelwindow.h"
 #include "cctohtml.h"
 
+static QString prefix;
+
 ChannelWindow::ChannelWindow(QWidget *parent)
   : MdiWindow(parent)
 {
@@ -67,7 +69,9 @@ bool ChannelWindow::nickListSort(const QString &a, const QString &b)
 	// to get access to the IRCClient class
 	string classPrefixes = "@+-";
 
-	QString prefixes = QString::fromStdString(classPrefixes);
+	qDebug() << "prefix=" << prefix << endl;
+
+	QString prefixes = prefix;
 	int i, prefixesCount = prefixes.length();
 
 	QString localA = a;
@@ -167,9 +171,20 @@ void ChannelWindow::removeNick(const QString &nick)
 	}
 }
 
-void ChannelWindow::setNickList(const QStringList &list)
+void ChannelWindow::setPrefixes(const QString &prefixes)
 {
+	qDebug() << "ChannelWindow::setPrefixes() parameter prefixes=" << prefixes << endl;
+
+	this->prefixes = prefixes;
+	prefix = prefixes;
+}
+
+void ChannelWindow::setNickList(const QStringList &list, const QString &prefixes)
+{
+	qDebug() << "ChannelWindow::setNickList() parameter prefixes=" << prefixes << endl;
 	this->nickStringList = list;
+
+	this->setPrefixes(prefixes);
 
 	qSort(this->nickStringList.begin(), this->nickStringList.end(), ChannelWindow::nickListSort);
 	this->nickListModel->setStringList(this->nickStringList);

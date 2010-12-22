@@ -34,7 +34,6 @@ WindowTreeItem *WindowTree::findItem(const int cid, const QString &hashName)
 
 		// Are we looking for the top-level window?
 		if (topLevelItem->window()->hashName() == hashName) {
-			qDebug() << "WindowTree::findItem() returning top-level window" << endl;
 			return(topLevelItem);
 		} else {
 			int i, childCount = topLevelItem->childCount();
@@ -47,9 +46,7 @@ WindowTreeItem *WindowTree::findItem(const int cid, const QString &hashName)
 				}
 			}
 		}
-		qDebug() << "something fucked up in rootitems...";
 	}
-	qDebug() << "window not contained in rootitems!";
 	return(0);
 }
 
@@ -75,6 +72,8 @@ void WindowTree::addChannelWindow(const unsigned int cid, const QString &name, M
 	if (this->rootItems.contains(cid)) {
 		WindowTreeItem *networkItem = this->rootItems[cid];
 		WindowTreeItem *channelItem = new WindowTreeItem(networkItem, cid, window);
+
+		qDebug() << "ChannelWindow(" << window << ") has parent(" << window->parent() << ")" << endl;
 
 		channelItem->setIcon(0, QIcon(":images/channel.png"));
 		channelItem->setText(0, name);
@@ -175,5 +174,5 @@ void WindowTree::itemClicked(QTreeWidgetItem *item, int column)
 
 	treeItem->window()->show();
 	//((QMdiArea *)treeItem->window()->parent())->setActiveSubWindow(treeItem->window());
-	//emit windowItemClicked(treeItem->window());
+	emit windowItemClicked(treeItem->window());
 }

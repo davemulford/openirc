@@ -90,7 +90,7 @@ void IRCClient::dataReceived()
 								ChanTypes.FullMatch(Args.at(x).toStdString(),&chantypes);
 								Modes.FullMatch(Args.at(x).toStdString(),&modespl);
 								Network.FullMatch(Args.at(x).toStdString(),&network);
-								ChanModes.FullMatch(Args.at(x).toStdString(),&nickmode,&prefix);
+								Prefix.FullMatch(Args.at(x).toStdString(),&nickmode,&prefix);
 								if (Args.at(x) == "NAMESX") { 
 									usenamesx = true;
 									this->sendRawMessage("PROTOCTL NAMESX");
@@ -120,7 +120,7 @@ void IRCClient::dataReceived()
 
 							pcrecpp::StringPiece ExData(Extra);
 							while (ParseJoin.Consume(&ExData,&JoinPrefix,&JoinNick,&JoinAddress)) {
-								nicklist << QString::fromStdString(JoinNick);
+								nicklist << QString::fromStdString(JoinPrefix + JoinNick);
 							//	emit channelJoined(this,QString::fromStdString(Args.at(Args.size() - 1)),QString::fromStdString(JoinNick));
 							}
 
