@@ -49,7 +49,7 @@ void StatusWindow::append(int color, const QString &string)
 		tc.movePosition(QTextCursor::NextBlock,QTextCursor::KeepAnchor);
 		tc.removeSelectedText();
 	}
-	this->Buffer->push_back("<div style=\"color: " + QString::fromStdString(str->ColorChart[color]) + "; white-space: pre-wrap\">" + QString::fromStdString(str->translate(AddLine.toStdString())) + "</div>");
+	this->Buffer->push_back("<div style=\"color: " + QString::fromStdString(str->ColorChart[color]) + "; white-space: pre-wrap\">" + QString::fromLocal8Bit(str->translate(AddLine.toStdString()).c_str()) + "</div>");
 	this->chatBuffer->append(this->Buffer->last());
 	delete str;
 }
