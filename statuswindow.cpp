@@ -2,10 +2,11 @@
 #include "irccommandparser.h"
 #include "cctohtml.h"
 #include <iostream>
+#include "commandparser.h"
 using namespace std;
 
-StatusWindow::StatusWindow(QWidget *parent)
-  : MdiWindow(parent) 
+StatusWindow::StatusWindow(QWidget *parent, CommandParser *parser)
+  : MdiWindow(parent, parser) 
 {
 	this->Buffer = new QStringList;
 	this->toolbar->setStyleSheet("QToolBar { border: 0px }");
@@ -67,6 +68,11 @@ void StatusWindow::scrollToBottom()
 void StatusWindow::inputBufferReturnPressed()
 {
 	QString inputText = this->inputBuffer->text();
+	parser->parse(this->client(), this, inputText);
+	this->inputBuffer->clear();
+}
+/*{
+	QString inputText = this->inputBuffer->text();
 
 	IRCCommandParser *parser = new IRCCommandParser(inputText);
 
@@ -87,7 +93,7 @@ void StatusWindow::inputBufferReturnPressed()
 
 	// Clear the input buffer
 	this->inputBuffer->clear();
-}
+}*/
 
 void StatusWindow::newButtonClicked(bool checked) {
 	emit newStatusWin();

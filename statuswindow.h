@@ -11,7 +11,7 @@ class StatusWindow : public MdiWindow
 	Q_OBJECT
 
   public:
-  	StatusWindow(QWidget *parent = 0);
+  	StatusWindow(QWidget *parent = 0, CommandParser *parser = 0);
 
 	void append(int color, const QString &string);
 	MdiWindow::WindowType windowType();

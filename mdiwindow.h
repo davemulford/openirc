@@ -4,6 +4,8 @@
 #include <QtGui>
 #include "ircclient.h"
 
+class CommandParser;
+
 class MdiWindow : public QMdiSubWindow
 {
   Q_OBJECT
@@ -12,10 +14,11 @@ class MdiWindow : public QMdiSubWindow
   	enum WindowType {
 		StatusWindow,
 		ChannelWindow,
-		QueryWindow
+		QueryWindow,
+		PictureWindow
 	};
 
-  	MdiWindow(QWidget *parent = 0);
+  	MdiWindow(QWidget *parent = 0, CommandParser *parser = 0);
 
 	QString hashName();
 
@@ -45,6 +48,7 @@ class MdiWindow : public QMdiSubWindow
 	QVBoxLayout *layout;
 	QToolBar 	*toolbar;
 	QWidget 	*internalWidget;
+	CommandParser *parser;
 
   private:
 	QString uuid;

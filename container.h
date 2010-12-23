@@ -5,6 +5,7 @@
 #include <QtGui>
 #include <QtNetwork>
 
+#include "picturewindow.h"
 #include "statuswindow.h"
 #include "contextbar.h"
 #include "ircclient.h"
@@ -14,6 +15,8 @@
 #include "windowtree.h"
 #include "mdiwindow.h"
 
+class CommandParser;
+
 class Container : public QMainWindow
 {
   Q_OBJECT
@@ -21,8 +24,11 @@ class Container : public QMainWindow
   public:
 	Container(QWidget *parent = 0, Qt::WindowFlags flags = 0);
 
+	void newPictureWindow(const QString &winName);
 	QueryWindow *newQueryWindow(IRCClient *client, const QString &queryName, const QString &address);
 	ChannelWindow *newChannelWindow(IRCClient *client, const QString &chanName);
+
+	void picWinDrawLine(const QString &winName, const int color, const int lineWidth, QVector<QPoint> pointPairs);
 
 	/*newQueryWindow();
 	  newStatusWindow();
@@ -82,11 +88,16 @@ class Container : public QMainWindow
 
 	QList<IRCClient *> clients;
 	QHash<int, QHash<QString, MdiWindow *> > windows;
+	QHash<QString, PictureWindow *> picwins;
 
 	IniFile *configFile;
 
 	void readConfigFile(const QString &filename = "openirc.ini");
 	ChannelWindow *findChannelWindow(const int cid, const QString &channel);
+
+	PictureWindow *findPicWin(const QString &winName);
+
+	CommandParser *parser;
 };
 
 #endif

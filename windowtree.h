@@ -11,7 +11,7 @@ class WindowTree : public QDockWidget
   Q_OBJECT
 
   public:
-  	WindowTree(QWidget *parent = 0, Qt::WindowFlags flags = 0);
+  	WindowTree(QMdiArea *mdi, QWidget *parent = 0, Qt::WindowFlags flags = 0);
 
 	void addStatusWindow(const unsigned int cid, const QString &name, MdiWindow *window);
 	void addChannelWindow(const unsigned int cid, const QString &name, MdiWindow *window);
@@ -36,6 +36,7 @@ class WindowTree : public QDockWidget
 
 	QHash<int, WindowTreeItem *> rootItems;
 
+	QMdiArea *mdiArea;
 	WindowTreeItem *findItem(const int cid, const QString &hashName);
 };
 

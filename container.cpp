@@ -1,12 +1,11 @@
-#include "container.h"
+#include <QTextDocument>
 
-#include "statuswindow.h"
-#include "channelwindow.h"
 #include "optionswindow.h"
 #include "serverswindow.h"
 #include "pcrecpp.h"
+#include "commandparser.h"
 
-#include <QTextDocument>
+#include "container.h"
 
 Container::Container(QWidget *parent, Qt::WindowFlags flags)
   : QMainWindow(parent, flags)
@@ -25,19 +24,18 @@ Container::Container(QWidget *parent, Qt::WindowFlags flags)
 	this->menu_File->setTitle(QApplication::translate("MainWindow", "&File", 0, QApplication::UnicodeUTF8));
 	this->menu_File_Exit->setText(QApplication::translate("MainWindow", "E&xit", 0, QApplication::UnicodeUTF8));
 
+	// Create the mdi area
+	this->mdiArea = new QMdiArea(this);
+	this->setCentralWidget(this->mdiArea);
+
 	// Create the dock window
 	this->contextBar = new ContextBar(this, 0);
 	this->addDockWidget(Qt::TopDockWidgetArea, this->contextBar);
 
-	this->windowTree = new WindowTree(this, 0);
+	this->windowTree = new WindowTree(mdiArea, this, 0);
 	this->addDockWidget(Qt::LeftDockWidgetArea, this->windowTree);
 
 	connect(this->windowTree, SIGNAL(windowItemClicked(MdiWindow *)), this, SLOT(windowItemClicked(MdiWindow *)));
-
-	// Create the mdi area
-	this->mdiArea = new QMdiArea(this);
-	//this->mdiArea->setViewMode(QMdiArea::TabbedView);
-	this->setCentralWidget(this->mdiArea);
 
 	this->statusbar = new QStatusBar(this);
 	this->statusbar->setObjectName(QString::fromUtf8("statusbar"));
@@ -51,14 +49,43 @@ Container::Container(QWidget *parent, Qt::WindowFlags flags)
 	connect(this->contextBar, SIGNAL(previousWindowClicked()), this, SLOT(previousWindowButtonClicked()));
 	connect(this->contextBar, SIGNAL(nextWindowClicked()), this, SLOT(nextWindowButtonClicked()));
 
+	parser = new CommandParser(this);
+
 	this->readConfigFile();
 	this->newStatusWindow();
+	//this->newPictureWindow();
+}
+
+void Container::newPictureWindow(const QString &winName)
+{
+	if (!picwins.contains(winName)) {
+		PictureWindow *picwin = new PictureWindow(mdiArea);
+
+		picwins.insert(winName, picwin);
+
+		picwin->setWindowTitle(winName);
+		picwin->show();
+	}
+
+	/*QVector<QPoint> points = QVector<QPoint>()
+								<< QPoint(0, 100) << QPoint(86, 82)
+								<< QPoint(86, 82) << QPoint(128, 6)
+								<< QPoint(128, 6) << QPoint(170, 82)
+								<< QPoint(170, 82) << QPoint(255, 100)
+								<< QPoint(255, 100) << QPoint(196, 162)
+								<< QPoint(196, 162) << QPoint(208, 248)
+								<< QPoint(208, 248) << QPoint(128, 211)
+								<< QPoint(128, 211) << QPoint(48, 248)
+								<< QPoint(48, 248) << QPoint(59, 162)
+								<< QPoint(59, 162) << QPoint(0, 100);
+
+	picwin->drawLines(7, 2, points);*/
 }
 
 void Container::newStatusWindow(const QString &server, const int port)
 {
 	// Create the new status window
-	StatusWindow *statusWindow = new StatusWindow(this->mdiArea);
+	StatusWindow *statusWindow = new StatusWindow(mdiArea, parser);
 	statusWindow->setWindowTitle(tr("Not Connected"));
 
 	// Create the new IRCClient
@@ -152,6 +179,16 @@ ChannelWindow *Container::newChannelWindow(IRCClient *client, const QString &cha
 
 	return(chanWindow);
 }
+
+void Container::picWinDrawLine(const QString &winName, const int color, const int lineWidth, QVector<QPoint> pointPairs)
+{
+	PictureWindow *picWin = 0;
+	
+	if ((picWin = findPicWin(winName)) != 0) {
+		picWin->drawLines(color, lineWidth, pointPairs);
+	}
+}
+
 void Container::readConfigFile(const QString &filename)
 {
 	this->configFile = new IniFile(filename);
@@ -170,6 +207,15 @@ ChannelWindow *Container::findChannelWindow(const int cid, const QString &channe
 				return((ChannelWindow *)window);
 			}
 		}
+	}
+
+	return(0);
+}
+
+PictureWindow *Container::findPicWin(const QString &winName)
+{
+	if (this->picwins.contains(winName)) {
+		return(this->picwins[winName]);
 	}
 
 	return(0);

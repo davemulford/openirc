@@ -1,11 +1,15 @@
+#include "commandparser.h"
 #include "mdiwindow.h"
 
-MdiWindow::MdiWindow(QWidget *parent)
+MdiWindow::MdiWindow(QWidget *parent, CommandParser *parser)
   : QMdiSubWindow(parent, 0)
 {
 	// Setup UI elements shared among descendants
 	this->setMinimumSize(250, 250);
 	this->setWindowIcon(QIcon(":/images/openirc.png"));
+
+	this->Client = 0;
+	this->parser = parser;
 
 	// Generate UUID for use with the Container classes internal hashes
 	this->uuid = QUuid::createUuid().toString();
@@ -53,7 +57,10 @@ void MdiWindow::setClient(IRCClient *client)
 
 void MdiWindow::closeEvent(QCloseEvent *event)
 {
-	qDebug() << "MdiWindow::closeEvent() -- Emitting closeEventTriggered() and accepting close event" << endl;
-	emit closeEventTriggered(this->client()->cid, this->hashName());
+	if (this->client() != 0) {
+		qDebug() << "MdiWindow::closeEvent() -- Emitting closeEventTriggered() and accepting close event" << endl;
+		emit closeEventTriggered(this->client()->cid, this->hashName());
+	}
+
 	event->accept();
 }

@@ -1,11 +1,13 @@
 #include "windowtree.h"
 
-WindowTree::WindowTree(QWidget *parent, Qt::WindowFlags flags)
+WindowTree::WindowTree(QMdiArea *mdi, QWidget *parent, Qt::WindowFlags flags)
   : QDockWidget(parent, flags)
 {
 	this->setFeatures(QDockWidget::NoDockWidgetFeatures | QDockWidget::DockWidgetVerticalTitleBar);
 	QWidget* titleWidget = new QWidget(this);
 	this->setTitleBarWidget(titleWidget);
+
+	this->mdiArea = mdi;
 
 	this->containerWidget = new QWidget(this);
 	QStringList labels;
