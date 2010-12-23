@@ -6,10 +6,19 @@ using namespace std;
 int IRCClient::Cid = 0;
 
 IRCClient::IRCClient(QObject *parent, const QString &server, const int port)
-  : QTcpSocket(parent), ParseLine("^(?:\\x3a(\\S+) )?(\\d{3}|[a-zA-Z]+)(?: ((?:[^\\x00\\x0a\\x0d\\x20\\x3a][^\\x00\\x0a\\x0d\\x20]*)(?: [^\\x00\\x0a\\x0d\\x20\\x3a][^\\x00\\x0a\\x0d\\x20]*)*))? ?(?:\\x3a([^\\x00\\x0a\\x0d]*))?\\x20*$"), ParseJoin("(?:^| )([\\@\\+\\-]+)?([^! ]+)!?([^ ]+)?"), NickOrServer("^[^!@]+$"), NickUser("^([^!]+)!(.*)$"), IsChan("^\\#"), IsAction("^ACTION (.*)$")
+  : QTcpSocket(parent) 
 
 {
+	// Setup default values for various variables incase they aren't passed in raw 005
 	this->cid = Cid++;
+	this->prefix = "@%+";
+	this->nickmode = "ohv";
+	this->chanmodes = "bIe,k,l";
+	this->chantypes = "#&";
+	this->modespl = 3;
+	this->usenamesx = false;
+	this->useuhnames = false;
+	this->away = false;
 
 	 // Connect the signals and slots
 	connect(this, SIGNAL(readyRead()), this, SLOT(dataReceived()));
@@ -54,6 +63,24 @@ void IRCClient::networkError(SocketError error)
 
 void IRCClient::dataReceived()
 {
+	string NorS;
+	string Event;
+	string args;
+	string Extra;
+	string Action;
+
+	string JoinPrefix;
+	string JoinNick;
+	string JoinAddress;
+	string word;
+	QStringList Args;
+	QString line;
+
+	pcrecpp::RE ParseLine("^(?:\\x3a(\\S+) )?(\\d{3}|[a-zA-Z]+)(?: ((?:[^\\x00\\x0a\\x0d\\x20\\x3a][^\\x00\\x0a\\x0d\\x20]*)(?: [^\\x00\\x0a\\x0d\\x20\\x3a][^\\x00\\x0a\\x0d\\x20]*)*))? ?(?:\\x3a([^\\x00\\x0a\\x0d]*))?\\x20*$");
+	pcrecpp::RE NickOrServer("^[^!@]+$");
+	pcrecpp::RE NickUser("^([^!]+)!(.*)$");
+	pcrecpp::RE IsAction("^ACTION (.*)$");
+
 	while (this->canReadLine()) {
 		line = this->readLine();
 		line.remove('\r');
@@ -119,6 +146,8 @@ void IRCClient::dataReceived()
 							}
 
 							pcrecpp::StringPiece ExData(Extra);
+							pcrecpp::RE ParseJoin("(?:^| )([" + this->prefix + "]+)?([^! ]+)!?([^ ]+)?");
+
 							while (ParseJoin.Consume(&ExData,&JoinPrefix,&JoinNick,&JoinAddress)) {
 								nicklist << QString::fromStdString(JoinPrefix + JoinNick);
 							//	emit channelJoined(this,QString::fromStdString(Args.at(Args.size() - 1)),QString::fromStdString(JoinNick));
@@ -138,6 +167,7 @@ void IRCClient::dataReceived()
 						emit incomingData(this, line);
 					}
 					else {
+						pcrecpp::RE IsChan("^[" + this->chantypes + "]");
 						//Nickname Message
 						string Nick;
 						string Address;
