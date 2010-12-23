@@ -38,9 +38,9 @@ void CommandParser::parse(IRCClient *client, MdiWindow *window, const QString &i
 				}
 			}
 
-			// This is a Container command
-			if (container != 0) {
-				container->newStatusWindow(server, port);
+			if (client != 0) {
+				window->append(1, QString("--- Connecting to server..."));
+				client->connectToHost(server, port);
 			}
 
 		////////////////////
@@ -86,6 +86,10 @@ void CommandParser::parse(IRCClient *client, MdiWindow *window, const QString &i
 			} else {
 				window->append(12, QString("* /drawline: invalid parameters: " + QString::fromStdString(args)));
 			}
+		}
+	} else {
+		if (!input.startsWith("/") && (client != 0)) {
+			client->sendRawMessage(input);
 		}
 	}
 }
