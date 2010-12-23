@@ -10,11 +10,12 @@ QT += network
 
 # Input
 HEADERS += canvas.h \
-		   cctohtml.h \
+           cctohtml.h \
            channelwindow.h \
-		   commandparser.h \
+           commandparser.h \
            container.h \
            contextbar.h \
+           ialitem.h \
            inifile.h \
            ircclient.h \
            irccommandparser.h \
@@ -27,9 +28,9 @@ HEADERS += canvas.h \
            windowtree.h \
            windowtreeitem.h
 SOURCES += canvas.cpp \
-		   cctohtml.cpp \
+           cctohtml.cpp \
            channelwindow.cpp \
-		   commandparser.cpp \
+           commandparser.cpp \
            container.cpp \
            contextbar.cpp \
            inifile.cpp \

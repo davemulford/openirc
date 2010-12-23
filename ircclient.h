@@ -1,6 +1,7 @@
 #ifndef OPENIRC_IRCCLIENT_H
 #define OPENIRC_IRCCLIENT_H
 
+#include "ialitem.h"
 #include <QtNetwork>
 #include <QString>
 #include <string>
@@ -14,6 +15,7 @@ class IRCClient : public QTcpSocket
   private:
   	static int Cid;
 	QHash<QString, QStringList> tempChannelJoins;
+	QHash<QString, IALItem> ial;
 
   public:
 	//================ Dedicated IRC Parser Variables ==================
@@ -32,6 +34,7 @@ class IRCClient : public QTcpSocket
 
 	int cid;
   	IRCClient(QObject *parent = 0, const QString &server = 0, const int port = 6667);
+	void AddIAL (const QString &nick);
 
 	void joinChannel(const QString &channel);
 	void partChannel(const QString &channel);

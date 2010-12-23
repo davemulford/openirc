@@ -31,6 +31,14 @@ IRCClient::IRCClient(QObject *parent, const QString &server, const int port)
 	 }
 }
 
+void IRCClient::AddIAL(const QString &nick)
+{
+	if (this->ial.contains(nick) == false) {
+		IALItem pushme;
+		this->ial.insert(nick,pushme);
+	}
+}
+
 void IRCClient::changeNick(const QString &newNick)
 {
 	QString changeNickString("NICK ");
@@ -129,6 +137,14 @@ void IRCClient::dataReceived()
 							}
 						}
 						else if (Event == "302") {
+							string unick,uaddy;
+							pcrecpp::RE ParseUhost("^([^=*]+)(?:\\*)?=(?:[+-])([^ ]+)$");
+							if (ParseUhost.FullMatch(Extra,&unick,&uaddy)) {
+								AddIAL(QString::fromStdString(unick));
+								IALItem *entry = &this->ial[QString::fromStdString(unick)];
+								entry->address = QString::fromStdString(uaddy);
+								qDebug() << "test set of addy: " << entry->address;
+							}
 							//userhost return raw use to set ial of ourself
 						}
 						else if (Event == "305") {
@@ -171,30 +187,36 @@ void IRCClient::dataReceived()
 						//Nickname Message
 						string Nick;
 						string Address;
-						NickUser.PartialMatch(NorS, &Nick, &Address);
-						if (Event == "JOIN" || Event == "PART") {
-							emit channelMessageReceived(this, (IsChan.PartialMatch(Extra) > 0 ? QString::fromStdString(Extra) : Args.at(0)),QString::fromStdString(Event),QString::fromStdString(Nick),QString::fromStdString(Address),QString::fromStdString(Extra));
-							if (Event == "JOIN") {
-								emit channelJoined(this,(IsChan.PartialMatch(Extra) > 0 ? QString::fromStdString(Extra) : Args.at(0)),QString::fromStdString(Nick));
-							}
-							else {
-								emit channelParted(this,(IsChan.PartialMatch(Extra) > 0 ? QString::fromStdString(Extra) : Args.at(0)),QString::fromStdString(Nick));
-							}
-						}
-						else if (Event == "PRIVMSG") {
-							if (IsChan.PartialMatch(Args.at(0).toStdString())) {
-								if (IsAction.PartialMatch(Extra,&Action)) {
-									emit channelMessageReceived(this, Args.at(0),QString::fromStdString("ACTION"),QString::fromStdString(Nick),QString::fromStdString(Address),QString::fromStdString(Action));
+						if (NickUser.PartialMatch(NorS, &Nick, &Address)) {
+							AddIAL(QString::fromStdString(Nick));
+							IALItem *entry = &this->ial[QString::fromStdString(Nick)];
+							entry->address = QString::fromStdString(Address);
+							qDebug() << "test set of addy: " << entry->address;
+
+							if (Event == "JOIN" || Event == "PART") {
+								emit channelMessageReceived(this, (IsChan.PartialMatch(Extra) > 0 ? QString::fromStdString(Extra) : Args.at(0)),QString::fromStdString(Event),QString::fromStdString(Nick),QString::fromStdString(Address),QString::fromStdString(Extra));
+								if (Event == "JOIN") {
+									emit channelJoined(this,(IsChan.PartialMatch(Extra) > 0 ? QString::fromStdString(Extra) : Args.at(0)),QString::fromStdString(Nick));
 								}
 								else {
-									emit channelMessageReceived(this, Args.at(0),QString::fromStdString(Event),QString::fromStdString(Nick),QString::fromStdString(Address),QString::fromStdString(Extra));
+									emit channelParted(this,(IsChan.PartialMatch(Extra) > 0 ? QString::fromStdString(Extra) : Args.at(0)),QString::fromStdString(Nick));
 								}
 							}
-							else { 
-								emit privateMessageReceived(this, QString::fromStdString(Nick),QString::fromStdString(Address),QString::fromStdString(Extra));
+							else if (Event == "PRIVMSG") {
+								if (IsChan.PartialMatch(Args.at(0).toStdString())) {
+									if (IsAction.PartialMatch(Extra,&Action)) {
+										emit channelMessageReceived(this, Args.at(0),QString::fromStdString("ACTION"),QString::fromStdString(Nick),QString::fromStdString(Address),QString::fromStdString(Action));
+									}
+									else {
+										emit channelMessageReceived(this, Args.at(0),QString::fromStdString(Event),QString::fromStdString(Nick),QString::fromStdString(Address),QString::fromStdString(Extra));
+									}
+								}
+								else { 
+									emit privateMessageReceived(this, QString::fromStdString(Nick),QString::fromStdString(Address),QString::fromStdString(Extra));
+								}
 							}
+							else { emit incomingData(this, line); }
 						}
-						else { emit incomingData(this, line); }
 					}
 				}
 			}
