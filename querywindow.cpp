@@ -74,7 +74,7 @@ void QueryWindow::append(int color, const QString &string)
 
 void QueryWindow::appendInput(const QString &text)
 {
-	inputBuffer->setText(inputBuffer->text() + text);
+	inputBuffer->insert(text);
 }
 
 MdiWindow::WindowType QueryWindow::windowType()

@@ -108,7 +108,7 @@ void ChannelWindow::append(int color, const QString &string)
 
 void ChannelWindow::appendInput(const QString &text)
 {
-	inputBuffer->setText(inputBuffer->text() + text);
+	inputBuffer->insert(text);
 }
 
 MdiWindow::WindowType ChannelWindow::windowType()
