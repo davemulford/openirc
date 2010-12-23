@@ -1,8 +1,10 @@
-#include "statuswindow.h"
-#include "irccommandparser.h"
-#include "cctohtml.h"
 #include <iostream>
+//#include "irccommandparser.h"
+#include "cctohtml.h"
 #include "commandparser.h"
+#include "config.h"
+
+#include "statuswindow.h"
 using namespace std;
 
 StatusWindow::StatusWindow(QWidget *parent, CommandParser *parser)
@@ -29,6 +31,8 @@ StatusWindow::StatusWindow(QWidget *parent, CommandParser *parser)
 	// We add the controls to the vertical layout
 	layout->addWidget(this->chatBuffer);
 	layout->addWidget(this->inputBuffer);
+
+	qDebug() << "StatusWindow() and default IRC port is" << Config::defaultPort() << endl;
 
 	// Connect any signals/slots we want
 	connect(this->inputBuffer, SIGNAL(returnPressed()), this, SLOT(inputBufferReturnPressed()));

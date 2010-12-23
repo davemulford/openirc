@@ -13,6 +13,7 @@ HEADERS += canvas.h \
            cctohtml.h \
            channelwindow.h \
            commandparser.h \
+		   config.h \
            container.h \
            contextbar.h \
            ialitem.h \
@@ -31,6 +32,7 @@ SOURCES += canvas.cpp \
            cctohtml.cpp \
            channelwindow.cpp \
            commandparser.cpp \
+		   config.cpp \
            container.cpp \
            contextbar.cpp \
            inifile.cpp \
@@ -49,7 +51,7 @@ RESOURCES += openirc.qrc
 
 unix {
 	CONFIG += link_pkgconfig
-	PKGCONFIG += glib-2.0 libpcrecpp
+	PKGCONFIG += libpcrecpp
 }
 win32 {
 	LIBS += -lpcrecpp.dll

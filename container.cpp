@@ -4,6 +4,7 @@
 #include "serverswindow.h"
 #include "pcrecpp.h"
 #include "commandparser.h"
+#include "config.h"
 
 #include "container.h"
 
@@ -12,6 +13,8 @@ Container::Container(QWidget *parent, Qt::WindowFlags flags)
 {
 	this->setWindowIcon(QIcon(":/images/openirc.png"));
 	this->setWindowTitle("OpenIRC");
+
+	qDebug() << "default IRC Server:" << Config::defaultServer() << endl;
 
 	this->menu_File_Exit = new QAction(this);
 	this->menubar = new QMenuBar(this);

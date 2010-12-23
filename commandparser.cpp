@@ -87,10 +87,18 @@ void CommandParser::parse(IRCClient *client, MdiWindow *window, const QString &i
 			} else {
 				window->append(12, QString("* /drawline: invalid parameters: " + QString::fromStdString(args)));
 			}
-		}
-	} else {
-		if (!input.startsWith("/") && (client != 0)) {
-			client->sendRawMessage(input);
+		} else {
+			if (client != 0) {
+				QString inputCopy;
+
+				if (input.startsWith("/") == true) {
+					inputCopy = input.midRef(1).toString();
+				} else {
+					inputCopy = input;
+				}
+				
+				client->sendRawMessage(inputCopy);
+			}
 		}
 	}
 }
