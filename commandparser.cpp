@@ -26,8 +26,8 @@ void CommandParser::parse(IRCClient *client, MdiWindow *window, const QString &i
 
 		if (parsedCommand == "server") {
 			QString server;
-			int port;
-			QStringList splitArgs(QString::fromStdString(args));
+			int port = 6667;
+			QStringList splitArgs = QString::fromStdString(args).split(" ");
 
 			// Get the arguments into something we understand
 			for (int i = 0; i < splitArgs.count(); i++) {
@@ -40,6 +40,7 @@ void CommandParser::parse(IRCClient *client, MdiWindow *window, const QString &i
 
 			if (client != 0) {
 				window->append(1, QString("--- Connecting to server..."));
+				qDebug() << "Connecting to server" << server << "(" << port << ")" << endl;
 				client->connectToHost(server, port);
 			}
 
