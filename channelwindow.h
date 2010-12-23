@@ -15,6 +15,7 @@ class ChannelWindow : public MdiWindow
   	ChannelWindow(QWidget *parent = 0);
 
 	void append(int color, const QString &string);
+	void appendInput(const QString &text);
 	MdiWindow::WindowType windowType();
 	void scrollToBottom();
 

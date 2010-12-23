@@ -51,6 +51,31 @@ Container::Container(QWidget *parent, Qt::WindowFlags flags)
 
 	parser = new CommandParser(this);
 
+	ctrlB = new QAction(this);
+	ctrlU = new QAction(this);
+	ctrlK = new QAction(this);
+	ctrlI = new QAction(this);
+	ctrlO = new QAction(this);
+
+	ctrlB->setShortcut(Qt::CTRL + Qt::Key_B);
+	ctrlU->setShortcut(Qt::CTRL + Qt::Key_U);
+	ctrlK->setShortcut(Qt::CTRL + Qt::Key_K);
+	ctrlI->setShortcut(Qt::CTRL + Qt::Key_I);
+	ctrlO->setShortcut(Qt::CTRL + Qt::Key_O);
+
+	this->addAction(ctrlB);
+	this->addAction(ctrlU);
+	this->addAction(ctrlK);
+	this->addAction(ctrlI);
+	this->addAction(ctrlO);
+
+	// Connect the color actions
+	connect(ctrlB, SIGNAL(triggered(bool)), this, SLOT(ctrlBTriggered(bool)));
+	connect(ctrlU, SIGNAL(triggered(bool)), this, SLOT(ctrlUTriggered(bool)));
+	connect(ctrlK, SIGNAL(triggered(bool)), this, SLOT(ctrlKTriggered(bool)));
+	connect(ctrlI, SIGNAL(triggered(bool)), this, SLOT(ctrlITriggered(bool)));
+	connect(ctrlO, SIGNAL(triggered(bool)), this, SLOT(ctrlOTriggered(bool)));
+
 	this->readConfigFile();
 	this->newStatusWindow();
 	//this->newPictureWindow();
@@ -512,5 +537,51 @@ void Container::subWindowClosed(const int cid, const QString &hashName)
 
 		// Remove the hash stuff
 		this->windows.remove(cid);
+	}
+}
+
+void Container::ctrlBTriggered(bool checked)
+{
+	if (mdiArea->activeSubWindow() != 0) {
+		MdiWindow *activeWin = (MdiWindow *)mdiArea->activeSubWindow();
+		if ((activeWin->windowType() == MdiWindow::ChannelWindow) || (activeWin->windowType() == MdiWindow::QueryWindow)) {
+			activeWin->appendInput("");
+		}
+	}
+}
+void Container::ctrlUTriggered(bool checked)
+{
+	if (mdiArea->activeSubWindow() != 0) {
+		MdiWindow *activeWin = (MdiWindow *)mdiArea->activeSubWindow();
+		if ((activeWin->windowType() == MdiWindow::ChannelWindow) || (activeWin->windowType() == MdiWindow::QueryWindow)) {
+			activeWin->appendInput("");
+		}
+	}
+}
+void Container::ctrlKTriggered(bool checked)
+{
+	if (mdiArea->activeSubWindow() != 0) {
+		MdiWindow *activeWin = (MdiWindow *)mdiArea->activeSubWindow();
+		if ((activeWin->windowType() == MdiWindow::ChannelWindow) || (activeWin->windowType() == MdiWindow::QueryWindow)) {
+			activeWin->appendInput("");
+		}
+	}
+}
+void Container::ctrlITriggered(bool checked)
+{
+	if (mdiArea->activeSubWindow() != 0) {
+		MdiWindow *activeWin = (MdiWindow *)mdiArea->activeSubWindow();
+		if ((activeWin->windowType() == MdiWindow::ChannelWindow) || (activeWin->windowType() == MdiWindow::QueryWindow)) {
+			activeWin->appendInput("");
+		}
+	}
+}
+void Container::ctrlOTriggered(bool checked)
+{
+	if (mdiArea->activeSubWindow() != 0) {
+		MdiWindow *activeWin = (MdiWindow *)mdiArea->activeSubWindow();
+		if ((activeWin->windowType() == MdiWindow::ChannelWindow) || (activeWin->windowType() == MdiWindow::QueryWindow)) {
+			activeWin->appendInput("");
+		}
 	}
 }

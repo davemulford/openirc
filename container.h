@@ -72,6 +72,13 @@ class Container : public QMainWindow
 	// Handles when a child window has been closed
 	void subWindowClosed(const int cid, const QString &hashName);
 
+	// Color Insert Handling
+	void ctrlBTriggered(bool checked = false);
+	void ctrlUTriggered(bool checked = false);
+	void ctrlKTriggered(bool checked = false);
+	void ctrlITriggered(bool checked = false);
+	void ctrlOTriggered(bool checked = false);
+
   private:
 	QMenuBar *menubar;
 	QMenu *menu_File;
@@ -98,6 +105,12 @@ class Container : public QMainWindow
 	PictureWindow *findPicWin(const QString &winName);
 
 	CommandParser *parser;
+
+	QAction *ctrlB;
+	QAction *ctrlU;
+	QAction *ctrlK;
+	QAction *ctrlI;
+	QAction *ctrlO;
 };
 
 #endif

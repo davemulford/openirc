@@ -106,6 +106,11 @@ void ChannelWindow::append(int color, const QString &string)
 	delete str;
 }
 
+void ChannelWindow::appendInput(const QString &text)
+{
+	inputBuffer->setText(inputBuffer->text() + text);
+}
+
 MdiWindow::WindowType ChannelWindow::windowType()
 {
 	return(MdiWindow::ChannelWindow);

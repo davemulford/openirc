@@ -54,6 +54,10 @@ void StatusWindow::append(int color, const QString &string)
 	delete str;
 }
 
+void StatusWindow::appendInput(const QString &text)
+{
+}
+
 MdiWindow::WindowType StatusWindow::windowType()
 {
 	return(MdiWindow::StatusWindow);

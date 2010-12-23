@@ -14,6 +14,7 @@ class StatusWindow : public MdiWindow
   	StatusWindow(QWidget *parent = 0, CommandParser *parser = 0);
 
 	void append(int color, const QString &string);
+	void appendInput(const QString &text);
 	MdiWindow::WindowType windowType();
 	void scrollToBottom();
 
