@@ -142,7 +142,7 @@ void IRCClient::dataReceived()
 							QStringList nicklist;
 
 							if (this->tempChannelJoins.contains(channel)) {
-								nicklist = this->tempChannelJoins[channel];
+								nicklist = this->tempChannelJoins.take(channel);
 							}
 
 							pcrecpp::StringPiece ExData(Extra);
