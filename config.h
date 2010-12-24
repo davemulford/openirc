@@ -16,6 +16,7 @@ class Config
 
 	static QString defaultServer();
 	static int defaultPort();
+	static int Theme(const QString &section);
 
   private:
 	Config();

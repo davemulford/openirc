@@ -38,6 +38,11 @@ StatusWindow::StatusWindow(QWidget *parent, CommandParser *parser)
 	connect(this->inputBuffer, SIGNAL(returnPressed()), this, SLOT(inputBufferReturnPressed()));
 	connect(this->newConnectionAction, SIGNAL(triggered(bool)), this, SLOT(newButtonClicked(bool)));
 	connect(this->connectDisconnectAction, SIGNAL(triggered(bool)), this, SLOT(connectDisconnectButtonClicked(bool)));
+
+	CCtoHTML *str;
+	str = new CCtoHTML;
+	this->chatBuffer->setStyleSheet("QTextEdit { background: " + QString::fromStdString(str->ColorChart[Config::Theme("mainbg")]) + "; }");
+	this->inputBuffer->setStyleSheet("QLineEdit { border: 0px; background: " + QString::fromStdString(str->ColorChart[Config::Theme("editbg")]) + "; color: " + QString::fromStdString(str->ColorChart[Config::Theme("editfg")]) + "; }");
 }
 
 void StatusWindow::append(int color, const QString &string)
@@ -109,7 +114,7 @@ void StatusWindow::newButtonClicked(bool checked) {
 
 void StatusWindow::connectDisconnectButtonClicked(bool checked)
 {
-	this->append(1,tr("*** Connect/Disconnect button clicked"));
+	this->append(Config::Theme("NORMAL"),tr("*** Connect/Disconnect button clicked"));
 }
 
 void StatusWindow::closeEvent(QCloseEvent *event)

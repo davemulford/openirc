@@ -70,4 +70,6 @@ int Config::defaultPort() {
 		return(6667);
 	}
 }
-
+int Config::Theme(const QString &section) {
+	return(Instance()->iniFile->value("Theme", section).toInt());
+}

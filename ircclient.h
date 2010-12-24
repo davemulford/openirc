@@ -32,10 +32,18 @@ class IRCClient : public QTcpSocket
 	int awaytime;
 	//==================================================================
 
+
+	//==================== Internal List Functions =====================
+	void IALAdd (const QString &nick);
+	void IALDel (const QString &nick);
+	void IALRen (const QString &nick, const QString &newnick);
+	void IALChanAdd(const QString &nick, const QString &chan, QString &prefix);
+	void IALChanDel(const QString &nick, const QString &chan);
+	IALItem* GetIAL(const QString &nick);
+	//==================================================================
+
 	int cid;
   	IRCClient(QObject *parent = 0, const QString &server = 0, const int port = 6667);
-	void AddIAL (const QString &nick);
-
 	void joinChannel(const QString &channel);
 	void partChannel(const QString &channel);
 

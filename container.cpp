@@ -123,10 +123,6 @@ void Container::newStatusWindow(const QString &server, const int port)
 	// Add an entry in the window tree
 	this->windowTree->addStatusWindow(client->cid, server, statusWindow);
 
-	char newbuf[100];
-	sprintf(newbuf,"--- Connection id: %d",client->cid);
-	statusWindow->append(1,newbuf);
-
 	QHash<QString, MdiWindow *> windowHash;
 	windowHash.insert(statusWindow->hashName(), statusWindow);
 
@@ -134,7 +130,7 @@ void Container::newStatusWindow(const QString &server, const int port)
 
 	if ((!server.isEmpty()) && (port > 0)) {
 		// TODO: Connect to the server
-		statusWindow->append(1,"--- Connecting to " + server + " (" + QString::number(port) + ")");
+		statusWindow->append(Config::Theme("INFO"),"--- Connecting to " + server + " (" + QString::number(port) + ")");
 		client->connectToHost(server, port);
 	}
 
@@ -322,12 +318,7 @@ void Container::connected(IRCClient *client)
 
 	this->windowTree->renameItem(client->cid, statusWindow->hashName(), client->peerName());
 	statusWindow->setWindowTitle("Status: " + this->configFile->value("UserInfo", "nick") + " on (" + client->peerName() + ")");
-	statusWindow->append(1,"--- Connected to " + client->peerName());
-
-        char newbuf[100];
-        sprintf(newbuf,"--- Connection id: %d",client->cid);
-        statusWindow->append(1,newbuf);
-
+	statusWindow->append(Config::Theme("INFO"),"--- Connected to " + client->peerName());
 
 	client->sendRawMessage("NICK " + this->configFile->value("UserInfo", "nick"));
 
@@ -405,7 +396,7 @@ void Container::privateMessageReceived(IRCClient *client, const QString &nick, c
 	if (queryWindow == 0) {
 		queryWindow = this->newQueryWindow(client, nick, address);
 	}
-	queryWindow->append(1,Qt::escape("12<" + nick + "12> " + message));
+	queryWindow->append(Config::Theme("NORMAL"),Qt::escape("12<" + nick + "12> " + message));
 
 	this->windowTree->maybeHighlightItem(client->cid, queryWindow->hashName(), mdiArea->activeSubWindow());
 }
@@ -434,12 +425,12 @@ void Container::channelMessageReceived(IRCClient *client, const QString &chan, c
 		return;
 	}
 
-	if (event == "JOIN") { chanWindow->append(10,Qt::escape("* Joins: " + nick + " (" + address + ")")); }
-	else if (event == "PART") { chanWindow->append(10,Qt::escape("10* Parts: " + nick + " (" + address + ")")); }
-	else if (event == "PRIVMSG") { chanWindow->append(1,Qt::escape("12<" + nick + "12> " + message)); }
-	else if (event == "ACTION") { chanWindow->append(7,Qt::escape("7* " + nick + " " + message)); }
+	if (event == "JOIN") { chanWindow->append(Config::Theme("JOIN"),Qt::escape("* Joins: " + nick + " (" + address + ")")); }
+	else if (event == "PART") { chanWindow->append(Config::Theme("PART"),Qt::escape("10* Parts: " + nick + " (" + address + ")")); }
+	else if (event == "PRIVMSG") { chanWindow->append(Config::Theme("NORMAL"),Qt::escape("12<" + nick + "12> " + message)); }
+	else if (event == "ACTION") { chanWindow->append(Config::Theme("ACTION"),Qt::escape("7* " + nick + " " + message)); }
         else {
-		chanWindow->append(12,"* Error: chan(" + chan + ") event(" + event + ") nick(" + nick + ") addres(" + address + ") message(" + message + ")");
+		chanWindow->append(Config::Theme("INFO"),"* Error: chan(" + chan + ") event(" + event + ") nick(" + nick + ") addres(" + address + ") message(" + message + ")");
 	}
 
 	this->windowTree->maybeHighlightItem(client->cid, chanWindow->hashName(), mdiArea->activeSubWindow());
@@ -484,7 +475,7 @@ void Container::incomingData(IRCClient *client, const QString &data) // FIXME: R
 		MdiWindow *window = *windowIter;
 
 		if (window->windowType() == MdiWindow::StatusWindow) {
-			window->append(1,data);
+			window->append(Config::Theme("NORMAL"),data);
 			windowTree->maybeHighlightItem(client->cid, window->hashName(), mdiArea->activeSubWindow());
 			break;
 		}

@@ -58,14 +58,15 @@ void IniFile::save(const QString &filename)
 	for (groupIter = groups.constBegin(); groupIter != groups.constEnd(); groupIter++) {
 		QString groupName = *groupIter;
 		QStringList keys = this->keys(groupName);
-        ini << "[" << groupName.toStdString() << "]\n";
+		ini << "[" << groupName.toStdString() << "]\n";
 
 		QStringList::const_iterator keyIter;
 		for (keyIter = keys.constBegin(); keyIter != keys.constEnd(); keyIter++) {
 			QString keyName = *keyIter;
 			QString value = this->value(groupName, keyName);
-            ini << keyName.toStdString() << "=" << value.toStdString() << "\n";
+			ini << keyName.toStdString() << "=" << value.toStdString() << "\n";
 		}
+		ini << "\n";
 	}
     ini.close();
 }

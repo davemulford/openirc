@@ -19,6 +19,7 @@ void CommandParser::parse(IRCClient *client, MdiWindow *window, const QString &i
 	// Perform the match
 	if (commandRegex.FullMatch(input.toLocal8Bit().constData(), &command, &args) == true) {
 		QString parsedCommand = QString::fromStdString(command).toLower();
+		QStringList splitArgs = QString::fromStdString(args).split(" ");
 
 		////////////////////
 		// SERVER COMMAND //
@@ -27,7 +28,6 @@ void CommandParser::parse(IRCClient *client, MdiWindow *window, const QString &i
 		if (parsedCommand == "server") {
 			QString server;
 			int port = 6667;
-			QStringList splitArgs = QString::fromStdString(args).split(" ");
 
 			// Get the arguments into something we understand
 			for (int i = 0; i < splitArgs.count(); i++) {
@@ -43,23 +43,25 @@ void CommandParser::parse(IRCClient *client, MdiWindow *window, const QString &i
 				qDebug() << "Connecting to server" << server << "(" << port << ")" << endl;
 				client->connectToHost(server, port);
 			}
+		}
 
 		////////////////////
 		// PICWIN COMMAND //
 		////////////////////
 
-		} else if (parsedCommand == "picwin") {
+		else if (parsedCommand == "picwin") {
 			QString picwinName = QString::fromStdString(args);
 
 			if (container != 0) {
 				container->newPictureWindow(picwinName);
 			}
+		}
 
 		//////////////////////
 		// DRAWLINE COMMAND //
 		//////////////////////
 
-		} else if (parsedCommand == "drawline") {
+		else if (parsedCommand == "drawline") {
 			string winName;
 			int color, lineWidth;
 			int x1, y1, x2, y2;
@@ -84,10 +86,17 @@ void CommandParser::parse(IRCClient *client, MdiWindow *window, const QString &i
 				if (container != 0) {
 					container->picWinDrawLine(QString::fromStdString(winName), color, lineWidth, pointPairs);
 				}
-			} else {
+			} 
+			else {
 				window->append(12, QString("* /drawline: invalid parameters: " + QString::fromStdString(args)));
 			}
-		} else {
+		} 
+
+		//////////////////////
+		//    RAW COMMAND   //
+		//////////////////////
+
+		else {
 			if (client != 0) {
 				QString inputCopy;
 

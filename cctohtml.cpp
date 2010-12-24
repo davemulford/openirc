@@ -1,5 +1,7 @@
+#include "config.h"
 #include "cctohtml.h"
 #include "pcrecpp.h"
+
 #include <QtNetwork>
 #include <QString>
 #include <QTime>

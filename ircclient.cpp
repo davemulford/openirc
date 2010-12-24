@@ -31,13 +31,56 @@ IRCClient::IRCClient(QObject *parent, const QString &server, const int port)
 	 }
 }
 
-void IRCClient::AddIAL(const QString &nick)
+
+	void IALAdd (const QString &nick);
+	void IALDel (const QString &nick);
+	void IALRen (const QString &nick, const QString &newnick);
+	void IALChanAdd(const QString &nick, const QString &chan, QString &prefix);
+	void IALChanDel(const QString &nick, const QString &chan);
+	IALItem* GetIAL(const QString &nick);
+
+//==================== IAL Handler functions =======================
+
+void IRCClient::IALAdd(const QString &nick)
 {
 	if (this->ial.contains(nick) == false) {
 		IALItem pushme;
 		this->ial.insert(nick,pushme);
 	}
 }
+
+void IRCClient::IALDel(const QString &nick)
+{
+	if (this->ial.contains(nick)) {
+		this->ial.remove(nick);
+	}
+}
+
+void IRCClient::IALRen(const QString &nick, const QString &newnick)
+{
+	if (this->ial.contains(nick)) {
+		this->ial.insert(newnick,this->ial.take(nick));
+		this->ial.remove(nick);
+	}
+}
+
+void IRCClient::IALChanAdd(const QString &nick, const QString &chan, QString &prefix) {
+	IALAdd(nick);
+	IALItem *entry = GetIAL(nick);
+	entry->channels[chan] = prefix;
+}
+
+void IRCClient::IALChanDel(const QString &nick, const QString &chan) {
+	IALAdd(nick);
+	IALItem *entry = GetIAL(nick);
+	entry->channels.remove(chan);
+}
+
+IALItem* IRCClient::GetIAL(const QString &nick) {
+	return &(this->ial[nick]);
+}
+
+//==================================================================
 
 void IRCClient::changeNick(const QString &newNick)
 {
@@ -140,7 +183,7 @@ void IRCClient::dataReceived()
 							string unick,uaddy;
 							pcrecpp::RE ParseUhost("^([^=*]+)(?:\\*)?=(?:[+-])([^ ]+)$");
 							if (ParseUhost.FullMatch(Extra,&unick,&uaddy)) {
-								AddIAL(QString::fromStdString(unick));
+								IALAdd(QString::fromStdString(unick));
 								IALItem *entry = &this->ial[QString::fromStdString(unick)];
 								entry->address = QString::fromStdString(uaddy);
 								qDebug() << "test set of addy: " << entry->address;
@@ -188,7 +231,7 @@ void IRCClient::dataReceived()
 						string Nick;
 						string Address;
 						if (NickUser.PartialMatch(NorS, &Nick, &Address)) {
-							AddIAL(QString::fromStdString(Nick));
+							IALAdd(QString::fromStdString(Nick));
 							IALItem *entry = &this->ial[QString::fromStdString(Nick)];
 							entry->address = QString::fromStdString(Address);
 							qDebug() << "test set of addy: " << entry->address;
@@ -201,6 +244,10 @@ void IRCClient::dataReceived()
 								else {
 									emit channelParted(this,(IsChan.PartialMatch(Extra) > 0 ? QString::fromStdString(Extra) : Args.at(0)),QString::fromStdString(Nick));
 								}
+							}
+							else if (Event == "NICK") {
+								if (Nick == Me) { Me = Extra; }
+								//todo move ial entry to newnick
 							}
 							else if (Event == "PRIVMSG") {
 								if (IsChan.PartialMatch(Args.at(0).toStdString())) {

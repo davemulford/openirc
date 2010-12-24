@@ -5,6 +5,7 @@
 
 #include "mdiwindow.h"
 #include "ircclient.h"
+#include "inifile.h"
 
 class StatusWindow : public MdiWindow
 {

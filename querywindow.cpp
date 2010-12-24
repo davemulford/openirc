@@ -1,5 +1,6 @@
 #include "querywindow.h"
 #include "cctohtml.h"
+#include "config.h"
 #include <QSize>
 
 QueryWindow::QueryWindow(QWidget *parent)
@@ -52,6 +53,11 @@ QueryWindow::QueryWindow(QWidget *parent)
 
 	// Connect signals to slots
 	connect(this->inputBuffer, SIGNAL(returnPressed()), this, SLOT(inputBufferReturnPressed()));
+
+	CCtoHTML *str;
+	str = new CCtoHTML;
+	this->chatBuffer->setStyleSheet("QTextEdit { background: " + QString::fromStdString(str->ColorChart[Config::Theme("mainbg")]) + "; }");
+	this->inputBuffer->setStyleSheet("QLineEdit { border: 0px; background: " + QString::fromStdString(str->ColorChart[Config::Theme("editbg")]) + "; color: " + QString::fromStdString(str->ColorChart[Config::Theme("editfg")]) + "; }");
 }
 
 void QueryWindow::append(int color, const QString &string)
@@ -105,7 +111,7 @@ void QueryWindow::inputBufferReturnPressed()
 	if (!msg.startsWith("/")) {
 		// TODO: Use the IRCCommandParser to check for any commands
 		this->client()->sendRawMessage("PRIVMSG " + this->them + " :" + msg);
-		this->append(1,Qt::escape("9<" + QString::fromStdString(this->client()->Me) + "9> " + msg));
+		this->append(Config::Theme("OWN"),Qt::escape("9<" + QString::fromStdString(this->client()->Me) + "9> " + msg));
 	}
 
 	this->inputBuffer->clear();

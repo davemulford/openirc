@@ -1,5 +1,6 @@
 #include "channelwindow.h"
 #include "cctohtml.h"
+#include "config.h"
 
 static QString prefix;
 
@@ -61,6 +62,12 @@ ChannelWindow::ChannelWindow(QWidget *parent)
 
 	// Connect signals to slots
 	connect(this->inputBuffer, SIGNAL(returnPressed()), this, SLOT(inputBufferReturnPressed()));
+
+	CCtoHTML *str;
+	str = new CCtoHTML;
+	this->chatBuffer->setStyleSheet("QTextEdit { background: " + QString::fromStdString(str->ColorChart[Config::Theme("mainbg")]) + "; }");
+	this->inputBuffer->setStyleSheet("QLineEdit { border: 0px; background: " + QString::fromStdString(str->ColorChart[Config::Theme("editbg")]) + "; color: " + QString::fromStdString(str->ColorChart[Config::Theme("editfg")]) + "; }");
+	this->nickList->setStyleSheet("QListView { background: " + QString::fromStdString(str->ColorChart[Config::Theme("nickbg")]) + "; color: " + QString::fromStdString(str->ColorChart[Config::Theme("nickfg")]) + "; }");
 }
 
 bool ChannelWindow::nickListSort(const QString &a, const QString &b)
@@ -137,7 +144,7 @@ void ChannelWindow::inputBufferReturnPressed()
 	if (!msg.startsWith("/")) {
 		// TODO: Use the IRCCommandParser to check for any commands
 		this->client()->sendRawMessage("PRIVMSG " + this->Channel + " :" + msg);
-		this->append(1, Qt::escape("9<" + QString::fromStdString(this->client()->Me) + "9> " + msg));
+		this->append(Config::Theme("OWN"), Qt::escape("9<" + QString::fromStdString(this->client()->Me) + "9> " + msg));
 	}
 
 	this->inputBuffer->clear();
