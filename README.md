@@ -23,9 +23,9 @@ You will now have an executable called `openirc` in the project directory.
 
 This shows the main window, connected to multiple IRC servers.
 
-![Main window](docs/images/full-window.png)
+![Main window](doc/images/full-window.png)
 
 These two show the server list and settings windows.
 
-![Server list](docs/images/server-list.png)
-![Settings](docs/images/settings.png)
+![Server list](doc/images/server-list.png)
+![Settings](doc/images/settings.png)
